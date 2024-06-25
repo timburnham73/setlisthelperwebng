@@ -1,0 +1,49 @@
+.spacer {
+  flex: 1 1 auto;
+}
+
+pr-2{
+  padding-right: 50px;
+}
+
+li.break {
+  list-style: none;
+  color: #999;
+}
+
+.lyrics-view {
+  height: calc(100vh - 150px);
+  overflow-y: scroll;
+}
+
+.spinner-container mat-spinner {
+  margin: 130px auto 0 auto;
+}
+
+.chord:not(:last-child) {
+  padding-right: 10px;
+}
+
+.paragraph {
+  margin-bottom: 1em;
+}
+
+.row {
+  display: flex;
+}
+
+.chord:after {
+  content: '\200b';
+}
+
+.lyrics:after {
+  content: '\200b';
+}
+
+.lyrics {
+  font-size: large;
+}
+
+.toolbar-item{
+  padding-right: 10px;
+}

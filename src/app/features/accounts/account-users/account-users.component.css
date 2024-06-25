@@ -1,0 +1,51 @@
+table {
+    width: 100%;
+}
+
+th.mat-sort-header-sorted {
+    color: black;
+}
+
+.spacer {
+    flex: 1 1 auto;
+  }
+
+  .email-group {
+    display: flex;
+    align-items: flex-start;
+  }
+  
+  .email-button{
+    margin-left: 10px;
+    height: 52px;
+    margin-top: 3px;
+  }
+
+  .user-table-container {
+    margin-top: 10px;
+    height: calc(100vh - 450px);
+    min-height: 200px;
+    overflow: auto;
+  }
+
+  .mat-header-row{
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: white;
+  }
+
+  .dialog-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  h4{
+    margin-top: 0px;
+    margin-bottom: 0px;
+  }
+
+  .row-icon{
+    margin-left: 3px;
+  }

@@ -1,0 +1,23 @@
+<form class="dialog-form">
+<div mat-dialog-content>
+  <div class="grid b-b-1 text-xs" *ngFor="let song of filteredSongs"
+  (click)="onCheckSong(song)">
+    <div class="col-10">
+      <div><b>{{song.name}}</b></div>
+      <div>{{songService.getSongDetails(song)}}</div>
+    </div>
+    <div class="col-2 flex align-content-center align-items-center">
+      @if(shouldShowcheck(song)){
+      <div class="mr-1">
+        <mat-icon>check</mat-icon>
+      </div>
+      }
+    </div>
+  </div>
+  
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="dialogRef.close()">Cancel</button>
+  <button mat-raised-button class="mat-primary" (click)="onAdd()">Add</button>
+</div>
+</form>
