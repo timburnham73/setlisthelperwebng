@@ -13,7 +13,7 @@ import { AuthenticationService } from "src/app/core/services/auth.service";
 import { SpinnerService } from "../../core/services/spinner.service";
 import { UserService } from "src/app/core/services/user.service";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
-import { NgIf, AsyncPipe } from "@angular/common";
+import { NgIf, AsyncPipe, NgFor } from "@angular/common";
 import { MatBadgeModule } from "@angular/material/badge";
 import { MatIconModule } from "@angular/material/icon";
 import { MatMenuModule } from "@angular/material/menu";
@@ -21,6 +21,8 @@ import { MatButtonModule } from "@angular/material/button";
 import { RouterLink, RouterOutlet } from "@angular/router";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatToolbarModule } from "@angular/material/toolbar";
+import { AccountService } from "src/app/core/services/account.service";
+import { Account } from "src/app/core/model/account";
 @Component({
     selector: "app-layout-no-sidebar",
     templateUrl: "./layout-no-sidebar.component.html",
@@ -38,6 +40,7 @@ import { MatToolbarModule } from "@angular/material/toolbar";
         MatProgressBarModule,
         RouterOutlet,
         AsyncPipe,
+        NgFor
     ],
 })
 export class LayoutNoSidebarComponent
@@ -50,6 +53,7 @@ export class LayoutNoSidebarComponent
   isAdmin: boolean = false;
   displayUserName$: Observable<string | null>;
   isLoggedOut$: Observable<boolean>;
+  accounts$: Observable<Account[]>;
   private autoLogoutSubscription: Subscription = new Subscription();
 
   constructor(
@@ -57,6 +61,7 @@ export class LayoutNoSidebarComponent
     private media: MediaMatcher,
     public spinnerService: SpinnerService,
     private authService: AuthenticationService,
+    private accountService: AccountService
     
   ) {
     this.displayUserName$ = authService.displayName$;
@@ -67,7 +72,11 @@ export class LayoutNoSidebarComponent
   }
 
   ngOnInit(): void {
-    
+    this.authService.user$.subscribe((user) => {
+      if(user && user.uid){
+        this.accounts$ = this.accountService.getAccounts(user.uid);
+      }
+    });
   }
 
   ngOnDestroy(): void {

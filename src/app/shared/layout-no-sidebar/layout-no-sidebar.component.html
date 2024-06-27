@@ -12,16 +12,14 @@
       <span class="navbar-spacer"></span>
   
       <button mat-icon-button [matMenuTriggerFor]="notificationMenu">
-        <mat-icon matBadge="2" matBadgeColor="accent">notifications</mat-icon>
+        <mat-icon>group</mat-icon>
       </button>
       <mat-menu #notificationMenu="matMenu" xPosition="before" yPosition="above" [overlapTrigger]="false">
   
-        <a mat-menu-item>
-          <span>You have new tasks</span>
+        <a mat-menu-item *ngFor="let account of (accounts$ | async)">
+          <span>{{account.name}}</span>
         </a>
-        <a mat-menu-item>
-          <span>You have a new message</span>
-        </a>
+        
   
       </mat-menu>
   
