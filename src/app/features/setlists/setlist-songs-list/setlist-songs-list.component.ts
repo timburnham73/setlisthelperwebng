@@ -155,13 +155,16 @@ export class SetlistSongsListComponent {
   
   //Events ////////////////
   //Adds a song after the selected row. If no row is selected
-  onAddSetlistSongs(songs: Song[]): void {
-    const startingSequenceNumber = this.getSequenceNumberForAddOrUpdate();
+  onAddSetlistSongs(songs: Song[], songToInsertAfter?: SetlistSong): void {
+    let startingSequenceNumber = this.getSequenceNumberForAddOrUpdate();
+    if(songToInsertAfter){
+      startingSequenceNumber = songToInsertAfter.sequenceNumber;
+    }
     
     if(this.setlist && this.setlist.id){
       this.setlistSongsService.addSetlistSongs(
         startingSequenceNumber,
-        setlistSong,
+        songs,
         this.accountId!,
         this.setlist,
         this.currentUser
@@ -212,8 +215,8 @@ export class SetlistSongsListComponent {
         panelClass: "dialog-responsive",
       });
 
-      dialogRef.afterClosed().subscribe((data) => {
-        console.log(data);
+      dialogRef.afterClosed().subscribe((songs) => {
+        this.onAddSetlistSongs(songs, songToInsertAfter);
       }); 
 
     }

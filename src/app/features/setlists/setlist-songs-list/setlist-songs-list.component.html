@@ -19,11 +19,14 @@
           <span>Add From Catalog</span>
         </a>
       </mat-menu>
+      <div class="vl"></div>
       <button mat-button aria-label="Print Setlist" (click)="onPrintSetlist()">
         <mat-icon>print</mat-icon>
+        <span fxShow fxHide.xs>Print</span>
       </button>
       <button mat-button aria-label="Remove Song" (click)="onEnableDeleteMode()">
-        <span>Delete</span>
+        <mat-icon>delete</mat-icon>
+        <span fxShow fxHide.xs>Delete</span>
       </button>
       
       } @else {
