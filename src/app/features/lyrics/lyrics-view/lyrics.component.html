@@ -88,21 +88,21 @@
         </button>
         <h4 fxShow fxHide.lt-lg>{{ song?.name }}</h4>
 
-        <button mat-button aria-label="Edit Lyrics" title="Edit" (click)="onEditLyric()">
+        <button mat-button aria-label="Edit Lyrics" title="Edit" (click)="onEditLyric()" *ngIf="selectedLyric?.lyrics">
           <mat-icon>edit</mat-icon>
           <span fxShow fxHide.lt-md>
             Edit
           </span>
         </button>
 
-        <button mat-button fxShow fxHide.lt-md aria-label="Toggle Transpose" title="Toggle Transpose"
+        <button mat-button fxShow fxHide.lt-md aria-label="Toggle Transpose" title="Toggle Transpose" *ngIf="selectedLyric?.lyrics"
           (click)="onTranspose()">
           <mat-icon>swap_vert</mat-icon>
           <span fxShow fxHide.lt-md>
             Transpose
           </span>
         </button>
-        <button mat-button fxShow fxHide.lt-md aria-label="Toggle Format" title="Toggle Format"
+        <button mat-button fxShow fxHide.lt-md aria-label="Toggle Format" title="Toggle Format" *ngIf="selectedLyric?.lyrics"
           (click)="onFormatLyrics()">
           <mat-icon>format_color_text</mat-icon>
           <span fxShow fxHide.lt-md>
@@ -113,7 +113,7 @@
 
         <span class="spacer"></span>
         @if(!isDefaultLyric){
-        <button mat-button fxShow fxHide.lt-md aria-label="Set the default lyric for this song."
+        <button mat-button fxShow fxHide.lt-md aria-label="Set the default lyric for this song." *ngIf="selectedLyric?.lyrics"
           title="Set the default lyric for this song." (click)="onSetDefaultUser($event)">
           <mat-icon>star</mat-icon>
           <span fxShow fxHide.lt-md>
@@ -122,7 +122,7 @@
         </button>
         }
         @else {
-        <mat-icon tabindex="0" aria-label="This is the default lyric for this song."
+        <mat-icon tabindex="0" aria-label="This is the default lyric for this song." *ngIf="selectedLyric?.lyrics"
           title="This is the default lyric for this song.">star</mat-icon>
         }
         <ng-container *ngIf="selectedLyric">
@@ -138,7 +138,7 @@
         </ng-container>
       </ng-container>
 
-      <button mat-icon-button [matMenuTriggerFor]="moreMenu" aria-label="Show More" title="Show More">
+      <button mat-icon-button [matMenuTriggerFor]="moreMenu" aria-label="Show More" title="Show More" *ngIf="selectedLyric?.lyrics">
         <mat-icon>more_vert</mat-icon>
       </button>
       <mat-menu #moreMenu="matMenu">
@@ -169,9 +169,11 @@
           </mat-spinner>
         </div>
         <ng-container *ngIf="!loading">
+          <span *ngIf="!selectedLyric?.lyrics">The lyrics are empty.</span>
+          <br>
+          <br>
           <span *ngIf="!selectedLyric"> <a href="#" (click)="onAddLyric($event)">Click here to create lyric
               version.</a></span>
-          <span *ngIf="!selectedLyric?.lyrics">The lyrics are empty.</span>
           <div #lyricSection *ngIf="selectedLyric?.lyrics" [innerHtml]="parsedLyric ?? '' | safeHtml"></div>
         </ng-container>
       </mat-card-content>
