@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { DashboardRoutingModule as AccountsRoutingModule } from './account-routing.module';
+import { AccountsRoutingModule } from './account-routing.module';
 import { AccountHomeComponent } from './account-home/account-home.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { MatButtonModule as MatButtonModule } from '@angular/material/button';

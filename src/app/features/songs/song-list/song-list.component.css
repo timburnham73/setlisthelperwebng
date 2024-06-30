@@ -19,7 +19,7 @@ th.mat-sort-header-sorted {
     overflow: auto;
 }
 .table-container {
-    max-height: calc(100vh - 190px);
+    max-height: calc(100vh - 208px);
     min-width: 300px;
     overflow: auto;
 }

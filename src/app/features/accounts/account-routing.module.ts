@@ -13,33 +13,33 @@ const routes: Routes = [
     component: LayoutNoSidebarComponent,
     children: [
       { path: "", component: AccountHomeComponent },
-      {
-        path: ":accountid/songs",
-        loadChildren: () =>
-          import("../songs/songs.module").then((m) => m.SongsModule),
-        canActivate: [AngularFireAuthGuard],
-        data: { authGuardPipe: redirectUnauthorizedTo },
-      },
-      {
-        path: ":accountid/setlists",
-        loadChildren: () =>
-          import("../setlists/setlist.module").then((m) => m.SetlistModule),
-        canActivate: [AngularFireAuthGuard],
-        data: { authGuardPipe: redirectUnauthorizedTo },
-      },
-      {
-        path: ":accountid/import",
-        loadChildren: () =>
-          import("../import/import.module").then((m) => m.ImportModule),
-        canActivate: [AngularFireAuthGuard],
-        data: { authGuardPipe: redirectUnauthorizedTo },
-      },
     ],
-  }
+  },
+  {
+    path: ":accountid/songs",
+    loadChildren: () =>
+      import("../songs/songs.module").then((m) => m.SongsModule),
+    canActivate: [AngularFireAuthGuard],
+    data: { authGuardPipe: redirectUnauthorizedTo },
+  },
+  {
+    path: ":accountid/setlists",
+    loadChildren: () =>
+      import("../setlists/setlist.module").then((m) => m.SetlistModule),
+    canActivate: [AngularFireAuthGuard],
+    data: { authGuardPipe: redirectUnauthorizedTo },
+  },
+  {
+    path: ":accountid/import",
+    loadChildren: () =>
+      import("../import/import.module").then((m) => m.ImportModule),
+    canActivate: [AngularFireAuthGuard],
+    data: { authGuardPipe: redirectUnauthorizedTo },
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class DashboardRoutingModule {}
+export class AccountsRoutingModule {}

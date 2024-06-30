@@ -1,0 +1,93 @@
+import {
+  Component,
+  OnInit,
+  ChangeDetectorRef,
+  OnDestroy,
+  AfterViewInit,
+} from "@angular/core";
+import { MediaMatcher } from "@angular/cdk/layout";
+import { Observable, timer } from "rxjs";
+import { Subscription } from "rxjs";
+
+import { AuthenticationService } from "src/app/core/services/auth.service";
+import { SpinnerService } from "../../core/services/spinner.service";
+import { UserService } from "src/app/core/services/user.service";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { NgIf, AsyncPipe, NgFor } from "@angular/common";
+import { MatBadgeModule } from "@angular/material/badge";
+import { MatIconModule } from "@angular/material/icon";
+import { MatMenuModule } from "@angular/material/menu";
+import { MatButtonModule } from "@angular/material/button";
+import { RouterLink, RouterOutlet } from "@angular/router";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatToolbarModule } from "@angular/material/toolbar";
+import { AccountService } from "src/app/core/services/account.service";
+import { Account } from "src/app/core/model/account";
+import { FlexLayoutModule, FlexModule } from "ngx-flexible-layout";
+@Component({
+    selector: "app-layout-no-sidebar-child-view",
+    templateUrl: "./layout-no-sidebar-child-view.component.html",
+    styleUrls: ["./layout-no-sidebar-child-view.component.css"],
+    standalone: true,
+    imports: [
+        MatToolbarModule,
+        MatTooltipModule,
+        RouterLink,
+        MatButtonModule,
+        MatMenuModule,
+        MatIconModule,
+        MatBadgeModule,
+        NgIf,
+        MatProgressBarModule,
+        RouterOutlet,
+        AsyncPipe,
+        NgFor,
+        FlexLayoutModule,
+        FlexModule
+    ],
+})
+export class LayoutNoSidebarChildViewComponent
+  implements OnInit, OnDestroy, AfterViewInit
+{
+  private _mobileQueryListener: () => void;
+  mobileQuery: MediaQueryList;
+  showSpinner: boolean = false;
+  userName: string = "";
+  isAdmin: boolean = false;
+  displayUserName$: Observable<string | null>;
+  isLoggedOut$: Observable<boolean>;
+  accounts$: Observable<Account[]>;
+  private autoLogoutSubscription: Subscription = new Subscription();
+
+  constructor(
+    private changeDetectorRef: ChangeDetectorRef,
+    private media: MediaMatcher,
+    public spinnerService: SpinnerService,
+    private authService: AuthenticationService
+    
+  ) {
+    this.displayUserName$ = authService.displayName$;
+    this.mobileQuery = this.media.matchMedia("(max-width: 1000px)");
+    this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+    // tslint:disable-next-line: deprecation
+    this.mobileQuery.addListener(this._mobileQueryListener);
+  }
+
+  ngOnInit(): void {
+    
+  }
+
+  ngOnDestroy(): void {
+    // tslint:disable-next-line: deprecation
+    this.mobileQuery.removeListener(this._mobileQueryListener);
+    this.autoLogoutSubscription.unsubscribe();
+  }
+
+  ngAfterViewInit(): void {
+    this.changeDetectorRef.detectChanges();
+  }
+
+  onLogout() {
+    this.authService.logout();
+  }
+}

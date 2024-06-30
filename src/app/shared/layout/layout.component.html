@@ -15,13 +15,16 @@
 
     <span class="navbar-spacer"></span>
 
-    <button mat-icon-button [matMenuTriggerFor]="notificationMenu">
-      <mat-icon>group</mat-icon>
+    <button mat-button [matMenuTriggerFor]="notificationMenu">
+      <mat-icon>group_2</mat-icon>
+      <span fxShow fxHide.xs>
+        {{selectedAccount.name}}
+      </span>
     </button>
     <mat-menu #notificationMenu="matMenu" xPosition="before" yPosition="above" [overlapTrigger]="false">
 
-      <a mat-menu-item *ngFor="let account of (accounts$ | async)">
-        <span>{{account.name}}</span>
+      <a mat-menu-item *ngFor="let account of (accounts$ | async)" (click)="onChangeAccount(account)">
+        <div>{{account.name}}<mat-icon class="selected-account" *ngIf="selectedAccount.id === account.id">check</mat-icon></div>
       </a>
 
     </mat-menu>
@@ -60,14 +63,14 @@
           <mat-icon mat-list-icon>
             people
           </mat-icon>
-          <span mat-line>Accounts</span>
+          <span mat-line>Groups</span>
         </a>
 
         <a mat-list-item [routerLink]="['/accounts/' + selectedAccount.id  + '/songs/']" routerLinkActive="active">
           <mat-icon mat-list-icon>
             music_note
           </mat-icon>
-          Repertoire
+          Songs
         </a>
         <a mat-list-item [routerLink]="['/accounts/' + selectedAccount.id + '/setlists/']" routerLinkActive="active">
           <mat-icon mat-list-icon>

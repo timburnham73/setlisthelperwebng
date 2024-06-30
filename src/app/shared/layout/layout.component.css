@@ -62,3 +62,7 @@ a.mat-list-item.active {
   position: absolute;
   bottom: 0;
 }
+
+.selected-account {
+  padding-left: 5px;
+}

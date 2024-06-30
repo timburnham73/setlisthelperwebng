@@ -8,8 +8,7 @@ import {
   AngularFireAuthGuard,
   redirectUnauthorizedTo,
 } from "@angular/fire/compat/auth-guard";
-import { LyricsComponent } from "../lyrics/lyrics-view/lyrics.component";
-import { LyricsEditComponent } from "../lyrics/lyrics-edit/lyrics-edit.component";
+import { LayoutNoSidebarChildViewComponent } from "src/app/shared/layout-no-sidebar-child-view/layout-no-sidebar-child-view.component";
 
 const routes: Routes = [
   {
@@ -17,7 +16,13 @@ const routes: Routes = [
     component: LayoutComponent,
     children: [
       { path: "", component: SetlistListComponent },
-      { path: ":setlistid/songs", component: SetlistSongsListComponent },
+    ],
+  },
+  {
+    path: ":setlistid/songs",
+    component: LayoutNoSidebarChildViewComponent,
+    children: [
+      { path: "", component: SetlistSongsListComponent },
     ],
   },
   {

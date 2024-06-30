@@ -5,6 +5,8 @@ import { LayoutComponent } from 'src/app/shared/layout/layout.component';
 import { SongListComponent } from './song-list/song-list.component';
 import { AngularFireAuthGuard, redirectUnauthorizedTo } from '@angular/fire/compat/auth-guard';
 import { SongImportComponent } from './song-import/song-import.component';
+import { LayoutNoSidebarComponent } from 'src/app/shared/layout-no-sidebar/layout-no-sidebar.component';
+import { LayoutNoSidebarChildViewComponent } from 'src/app/shared/layout-no-sidebar-child-view/layout-no-sidebar-child-view.component';
 
 const routes: Routes = [
   {

@@ -3,6 +3,13 @@
   <div fxFlex="100%" fxfill fxlayout="column" class="mobile-card-container" fxShow fxHide.gt-md>
     <mat-toolbar>
       @if(showRemove === false) {
+      <button mat-icon-button aria-label="Back to Song List" (click)="onBackToSetlist()">
+        <mat-icon>arrow_back_ios</mat-icon>
+      </button>
+      <div class="header-container">
+        <h2 style="float: left;">{{setlist?.name}}</h2>
+      </div>
+      <span class="spacer"></span>
       <button mat-button aria-label="Add Song or Break" [matMenuTriggerFor]="addSong">
         <mat-icon>add</mat-icon>
       </button>
@@ -19,15 +26,21 @@
           <span>Add From Catalog</span>
         </a>
       </mat-menu>
-      <div class="vl"></div>
-      <button mat-button aria-label="Print Setlist" (click)="onPrintSetlist()">
-        <mat-icon>print</mat-icon>
-        <span fxShow fxHide.xs>Print</span>
+      
+      <button mat-icon-button [matMenuTriggerFor]="moreMenu" aria-label="Show More" title="Show More">
+        <mat-icon>more_vert</mat-icon>
       </button>
-      <button mat-button aria-label="Remove Song" (click)="onEnableDeleteMode()">
-        <mat-icon>delete</mat-icon>
-        <span fxShow fxHide.xs>Delete</span>
-      </button>
+      <mat-menu #moreMenu="matMenu">
+        <button mat-button aria-label="Print Setlist" (click)="onPrintSetlist()">
+          <mat-icon>print</mat-icon>
+          <span>Print</span>
+        </button>
+        <button mat-button aria-label="Remove Song" (click)="onEnableDeleteMode()">
+          <mat-icon>delete</mat-icon>
+          <span>Delete</span>
+        </button>
+        
+      </mat-menu>
       
       } @else {
       <button mat-icon-button aria-label="Stop Remove Song" (click)="onEnableDeleteMode()">
@@ -144,6 +157,9 @@
       <mat-card-content class="card-content">
         <mat-toolbar>
           @if(showRemove === false) {
+            <button mat-icon-button aria-label="Back to Setlist List" title="Back to Setlist List" (click)="onBackToSetlist()">
+              <mat-icon>arrow_back_ios</mat-icon>
+            </button>
             <button mat-button aria-label="Add Song or Break" [matMenuTriggerFor]="addSong">
             <mat-icon>add</mat-icon>
             <span fxShow fxHide.xs>

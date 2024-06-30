@@ -103,6 +103,7 @@ export class SetlistSongsListComponent {
   selectedRowSequence = -1;
 
   constructor(
+    private activeRoute: ActivatedRoute,
     private logger: NGXLogger,
     private route: ActivatedRoute,
     private titleService: Title,
@@ -153,7 +154,12 @@ export class SetlistSongsListComponent {
     this.filteredSongs = this.allSongs.filter((song) => song.name.toLowerCase().includes(search));
   }
   
+
   //Events ////////////////
+  onBackToSetlist() {
+    this.router.navigate(["../.."], { relativeTo: this.activeRoute });
+  }
+
   //Adds a song after the selected row. If no row is selected
   onAddSetlistSongs(songs: Song[], songToInsertAfter?: SetlistSong): void {
     let startingSequenceNumber = this.getSequenceNumberForAddOrUpdate();
