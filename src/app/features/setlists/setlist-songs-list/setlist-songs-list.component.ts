@@ -1,5 +1,5 @@
 import { SelectionModel } from "@angular/cdk/collections";
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { MatDialog as MatDialog } from "@angular/material/dialog";
 import {
   MatTableDataSource as MatTableDataSource,
@@ -9,7 +9,7 @@ import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Select, Store } from "@ngxs/store";
 import { NGXLogger } from "ngx-logger";
-import { Observable, concat, first } from "rxjs";
+import { Observable, concat, finalize, first } from "rxjs";
 import { Account } from "src/app/core/model/account";
 import { SetlistSong } from "src/app/core/model/setlist-song";
 import { Song } from "src/app/core/model/song";
@@ -24,7 +24,7 @@ import { Lyric } from "src/app/core/model/lyric";
 import { NgIf, NgClass, DatePipe, NgFor } from "@angular/common";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
-import { MatSortModule } from "@angular/material/sort";
+import { MatSort, MatSortModule, Sort } from "@angular/material/sort";
 import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { FormsModule } from "@angular/forms";
@@ -89,6 +89,8 @@ export class SetlistSongsListComponent {
   dsSetlistSongs = new MatTableDataSource<SetlistSong>();
   filteredSongs: Song[];
   allSongs: Song[];
+  songsLoading: Boolean = false;
+  @ViewChild(MatSort, { static: true }) sort: MatSort = new MatSort;
   accountId?: string;
   setlist?: Setlist;
   setlistSongCount: number;
@@ -124,13 +126,14 @@ export class SetlistSongsListComponent {
     const selectedAccount = this.store.selectSnapshot(
       AccountState.selectedAccount
     );
+
     const accountId = this.route.snapshot.paramMap.get("accountid");
     const setlistId = this.route.snapshot.paramMap.get("setlistid");
     if (accountId && setlistId) {
       this.accountId = accountId;
 
       //Get the songs for the song picker
-      this.songService.getSongs(this.accountId).subscribe((songs) => {
+      this.songService.getSongs(this.accountId, "name").subscribe((songs) => {
         this.allSongs = this.filteredSongs = songs;
       });
 
@@ -150,11 +153,20 @@ export class SetlistSongsListComponent {
     }
   }
 
+  sortChange(sortState: Sort) {
+    this.songService.getSongs(this.accountId!, sortState.active, sortState.direction === "asc" ? "asc" : "desc")
+        .pipe(
+          finalize(() => this.songsLoading = false)
+        )
+        .subscribe((songs) => {
+          this.allSongs = this.filteredSongs = songs;
+        });
+  }
+
   search(search: string){
     this.filteredSongs = this.allSongs.filter((song) => song.name.toLowerCase().includes(search));
   }
   
-
   //Events ////////////////
   onBackToSetlist() {
     this.router.navigate(["../.."], { relativeTo: this.activeRoute });

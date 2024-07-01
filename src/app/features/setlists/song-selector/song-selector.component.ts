@@ -84,7 +84,7 @@ export class SongSelectorComponent {
     this.setlistId = this.data.setlistId;
 
     //Get the songs for the song picker
-    this.songService.getSongs(this.accountId).subscribe((songs) => {
+    this.songService.getSongs(this.accountId, "name").subscribe((songs) => {
       this.allSongs = this.filteredSongs = songs;
     });
 

@@ -38,6 +38,7 @@ import { CONFIRM_DIALOG_RESULT, ConfirmDialogComponent } from 'src/app/shared/co
 import { SetlistRef } from 'functions/src/model/setlist';
 import { FlexLayoutModule, FlexModule } from 'ngx-flexible-layout';
 import { MatSidenav } from '@angular/material/sidenav';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 
 @Component({
     selector: 'app-song-list',
@@ -70,8 +71,7 @@ export class SongListComponent implements OnInit {
   accountId: string;
   showRemove = false;
   showFind = false;
-  @ViewChild(MatSort, { static: true })
-  sort: MatSort = new MatSort;
+  @ViewChild(MatSort, { static: true }) sort: MatSort = new MatSort;
   loading = false;
   lastPageLoaded = 0;
 
@@ -91,12 +91,12 @@ export class SongListComponent implements OnInit {
         this.currentUser = user;
       }
     });
-    const selectedAccount = this.store.selectSnapshot(AccountState.selectedAccount);
+    
     const id = this.route.snapshot.paramMap.get('accountid');
     if(id){
       this.loading = false;
       this.accountId = id;
-      this.songService.getSongs(this.accountId)
+      this.songService.getSongs(this.accountId, "name")
         .pipe(
           finalize(() => this.loading = false)
         )
@@ -108,8 +108,6 @@ export class SongListComponent implements OnInit {
 
   ngOnInit() {
     this.titleService.setTitle('Songs');
-    
-    //this.dataSource.sort = this.sort;
   }
 
   search(search: string){
@@ -117,17 +115,19 @@ export class SongListComponent implements OnInit {
   }
 
   sortChange(sortState: Sort) {
-    // if (sortState.direction) {
-    //   this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
-    // } else {
-    //   this._liveAnnouncer.announce('Sorting cleared');
-    // }
+    this.songService.getSongs(this.accountId, sortState.active, sortState.direction === "asc" ? "asc" : "desc")
+        .pipe(
+          finalize(() => this.loading = false)
+        )
+        .subscribe((songs) => {
+          this.allSongs = this.filteredSongs = songs;
+        });
   }
 
   loadMore(){
     this.lastPageLoaded++;
     this.loading = true;
-    this.songService.getSongs(this.accountId, "asc", this.lastPageLoaded)
+    this.songService.getSongs(this.accountId, "name")
         .pipe(
           finalize(() => this.loading = false)
         )
