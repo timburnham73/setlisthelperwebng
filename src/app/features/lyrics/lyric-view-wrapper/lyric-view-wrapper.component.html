@@ -1,0 +1,12 @@
+<div fxLayout="row" fxLayoutAlign="center none">
+    <div fxFlex="98%" fxShow fxHide.lt-md>
+      <mat-card>
+        <mat-card-content class="lyrics-view">
+          <app-lyrics></app-lyrics>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <div fxFlex="100%" fxShow fxHide.gt-sm>
+        <app-lyrics></app-lyrics>
+    </div>
+  </div>

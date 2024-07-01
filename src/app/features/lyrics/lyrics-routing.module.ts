@@ -4,6 +4,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { LyricsComponent } from './lyrics-view/lyrics.component';
 import { LyricsEditComponent } from './lyrics-edit/lyrics-edit.component';
 import { LayoutNoSidebarChildViewComponent } from 'src/app/shared/layout-no-sidebar-child-view/layout-no-sidebar-child-view.component';
+import { LyricViewWrapperComponent } from './lyric-view-wrapper/lyric-view-wrapper.component';
 
 
 const routes: Routes = [
@@ -11,14 +12,14 @@ const routes: Routes = [
     path: '',
     component: LayoutNoSidebarChildViewComponent,
     children: [
-      { path: '', component: LyricsComponent },
+      { path: '', component: LyricViewWrapperComponent },
     ]
   },
   {
     path: ':lyricid',
     component: LayoutNoSidebarChildViewComponent,
     children: [
-      { path: '', component: LyricsComponent },
+      { path: '', component: LyricViewWrapperComponent },
       { path: 'edit', component: LyricsEditComponent },
     ]
   }
