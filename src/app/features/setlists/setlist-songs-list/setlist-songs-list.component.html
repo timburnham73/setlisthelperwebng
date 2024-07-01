@@ -194,10 +194,10 @@
           }
         </mat-toolbar>
         <div class="table-container">
-          <table mat-table cdkDropList (cdkDropListDropped)="onListDrop($event)" [dataSource]="dsSetlistSongs" matSort
+          <table mat-table cdkDropList (cdkDropListDropped)="onListDrop($event)" [dataSource]="dsSetlistSongs"
             #setlistSongList="cdkDropList">
             <ng-container matColumnDef="sequence">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>Num.</th>
+              <th mat-header-cell *matHeaderCellDef>Num.</th>
               <td mat-cell *matCellDef="let element">
                 {{
                 element.isBreak === true
@@ -212,13 +212,13 @@
             </ng-container>
             <!-- Name Column -->
             <ng-container matColumnDef="name">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+              <th mat-header-cell *matHeaderCellDef>Name</th>
               <td mat-cell *matCellDef="let element">{{ element.name }}</td>
             </ng-container>
 
             <!-- Artist Column -->
             <ng-container matColumnDef="artist">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>Artist</th>
+              <th mat-header-cell *matHeaderCellDef>Artist</th>
               <ng-container *matCellDef="let element">
               <td *ngIf="!element.isBreak" mat-cell>
                 {{ element.isBreak ? ""  : element.artist }}
@@ -231,7 +231,7 @@
 
             <!-- Genre Column -->
             <ng-container matColumnDef="genre">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>Genre</th>
+              <th mat-header-cell *matHeaderCellDef>Genre</th>
               <ng-container *matCellDef="let element">
                 <td *ngIf="!element.isBreak" mat-cell>
                   {{ element.isBreak ? "" : element.genre }}
@@ -244,7 +244,7 @@
 
             <!-- Key Column -->
             <ng-container matColumnDef="key">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>Key</th>
+              <th mat-header-cell *matHeaderCellDef>Key</th>
               <td mat-cell *matCellDef="let element">
                 {{ element.isBreak ? "" : element.key }}
               </td>
@@ -252,7 +252,7 @@
 
             <!-- Tempo Column -->
             <ng-container matColumnDef="tempo">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>Tempo</th>
+              <th mat-header-cell *matHeaderCellDef>Tempo</th>
               <td mat-cell *matCellDef="let element">
                 {{ element.isBreak ? "" : element.tempo }}
               </td>
@@ -260,7 +260,7 @@
 
             <!-- Song Length Column -->
             <ng-container matColumnDef="timeSignature">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              <th mat-header-cell *matHeaderCellDef>
                 Time Signature
               </th>
               <td mat-cell *matCellDef="let element">
@@ -274,7 +274,7 @@
 
             <!-- Song Length Column -->
             <ng-container matColumnDef="songLength">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              <th mat-header-cell *matHeaderCellDef>
                 Song Length
               </th>
               <td mat-cell *matCellDef="let element">
