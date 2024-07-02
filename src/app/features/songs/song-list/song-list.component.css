@@ -15,7 +15,7 @@ th.mat-sort-header-sorted {
 }
 
 .mobile-card-container {
-    max-height: calc(100vh - 150px);
+    max-height: calc(100vh - 128px);
     overflow: auto;
 }
 .table-container {
