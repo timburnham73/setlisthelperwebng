@@ -12,20 +12,21 @@ import { AuthenticationService } from 'src/app/core/services/auth.service';
 import { LyricsService } from 'src/app/core/services/lyrics.service';
 import { SongService } from 'src/app/core/services/song.service';
 import { AccountState } from 'src/app/core/store/account.state';
-import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { CONFIRM_DIALOG_RESULT, ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { NgIf } from '@angular/common';
+import { FlexLayoutModule } from 'ngx-flexible-layout';
 
 @Component({
     selector: 'app-lyrics-edit',
     templateUrl: './lyrics-edit.component.html',
     styleUrls: ['./lyrics-edit.component.css'],
     standalone: true,
-    imports: [MatCardModule, MatToolbarModule, MatButtonModule, MatIconModule, FormsModule, ReactiveFormsModule, MatProgressSpinnerModule, NgIf]
+    imports: [MatCardModule, MatToolbarModule, MatButtonModule, MatIconModule, FormsModule, ReactiveFormsModule, MatProgressSpinnerModule, NgIf, FlexLayoutModule]
 })
 export class LyricsEditComponent implements OnInit {
   @ViewChild('lyrics') lyricsInput: ElementRef;
@@ -101,8 +102,26 @@ export class LyricsEditComponent implements OnInit {
   }
 
   onCancel(){
-    
-    this.router.navigate([`../../../lyrics/${this.selectedLyric?.id}`], { relativeTo: this.activeRoute });
+    if(this.lyricsForm.dirty){
+      let message = "You will loose your changes if you do not save. Are you sure you want to go back?";
+      let message2 = "";
+      const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+        data: { title: "Changes", message: message, message2, okButtonText: "Yes", cancelButtonText: "Cancel"},
+        panelClass: "dialog-responsive",
+        width: '300px',
+        enterAnimationDuration: '200ms', 
+        exitAnimationDuration: '200ms',
+        
+      })
+      .afterClosed().subscribe((data) => {
+        if(data && data.result === CONFIRM_DIALOG_RESULT.OK){
+          this.router.navigate([`../../../lyrics/${this.selectedLyric?.id}`], { relativeTo: this.activeRoute });    
+        }
+      });
+    }
+    else {
+      this.router.navigate([`../../../lyrics/${this.selectedLyric?.id}`], { relativeTo: this.activeRoute });    
+    }
   }
 
 }

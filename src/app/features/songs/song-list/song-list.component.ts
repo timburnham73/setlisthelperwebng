@@ -106,9 +106,11 @@ export class SongListComponent implements OnInit {
         )
         .subscribe((songs) => {
           this.allSongs = this.filteredSongs = songs;
-          this.scrollSongtoView(songId);
+          
         });
+      this.scrollSongtoView(songId);
     }
+    
   }
 
   private scrollSongtoView(songId: string | null) {
@@ -118,7 +120,7 @@ export class SongListComponent implements OnInit {
         if (selectedRow) {
           selectedRow.scrollIntoView({ block: 'center' });
         }
-      }, 100);
+      }, 400);
     }
   }
 

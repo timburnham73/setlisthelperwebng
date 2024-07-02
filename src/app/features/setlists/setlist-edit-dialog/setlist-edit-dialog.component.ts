@@ -63,7 +63,7 @@ export class SetlistEditDialogComponent {
   saving = false;
   isNew = true;
   get name() { return this.setlistForm.get('name'); }
-  get gigDate() { return this.setlistForm.get('name'); }
+  get gigDate() { return this.setlistForm.get('gigDatePicker'); }
 
   @ViewChild('picker', { static: true }) picker: any;
 

@@ -95,7 +95,7 @@ export class LyricsComponent {
   lyrics: Lyric[];
   lyricVersions = new FormControl("");
   currentUser: User;
-  loading = false;
+  loading = true;
 
   isTransposing = false;
   isFormatting = false;

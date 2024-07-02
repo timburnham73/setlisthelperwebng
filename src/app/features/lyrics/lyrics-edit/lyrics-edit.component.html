@@ -1,29 +1,34 @@
-<div class="container" fxLayout="row" fxLayoutAlign="center none">
-    <div fxFlex="95%">
-      
+<div fxLayout="row">
+    <div fxFlex="98%" fxShow fxHide.lt-md>
       <mat-card>
-        <mat-card-content class="lyrics-view">
-          <div class="spinner-container" *ngIf="loading">
-            <mat-spinner>
-  
-            </mat-spinner>
-          </div>
-          <ng-container *ngIf="!loading">
+        <mat-card-content class="lyrics-view" >
           <mat-toolbar  >
+            <button mat-icon-button aria-label="Stop Transpose" (click)="onCancel()">
+              <mat-icon>arrow_back_ios</mat-icon>
+            </button>
             <button mat-icon-button aria-label="Add Song" (click)="onSaveSong()">
               <mat-icon>save</mat-icon>
-            </button>
-            <button mat-icon-button aria-label="Add Song" (click)="onCancel()">
-                <mat-icon>cancel</mat-icon>
             </button>
             <span class="spacer"></span>
           </mat-toolbar>
           <form class="dialog-form" [formGroup]="lyricsForm">
             <textarea id="lyrics" formControlName="lyrics"></textarea>
           </form>
-        </ng-container>
         </mat-card-content>
       </mat-card>
-  
+    </div>
+    <div fxFlex="100%" fxShow fxHide.gt-sm fxFlex="100%">
+      <mat-toolbar  >
+        <button mat-icon-button aria-label="Stop Transpose" (click)="onCancel()">
+          <mat-icon>arrow_back_ios</mat-icon>
+        </button>
+        <button mat-icon-button aria-label="Add Song" (click)="onSaveSong()">
+          <mat-icon>save</mat-icon>
+        </button>
+        <span class="spacer"></span>
+      </mat-toolbar>
+      <form class="dialog-form" [formGroup]="lyricsForm">
+        <textarea id="lyrics-mobile" formControlName="lyrics"></textarea>
+      </form>
     </div>
   </div>
