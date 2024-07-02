@@ -38,6 +38,7 @@ import { CONFIRM_DIALOG_RESULT, ConfirmDialogComponent } from 'src/app/shared/co
 import { SetlistRef } from 'functions/src/model/setlist';
 import { FlexLayoutModule, FlexModule } from 'ngx-flexible-layout';
 import { MatSidenav } from '@angular/material/sidenav';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 
 @Component({
@@ -59,7 +60,9 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
       MatSortModule,
       MatSidenav,
       FlexModule,
-      FlexLayoutModule]
+      FlexLayoutModule,
+      MatPaginatorModule
+    ]
 })
 export class SongListComponent implements OnInit {
   @Select(AccountState.selectedAccount) 
@@ -96,13 +99,26 @@ export class SongListComponent implements OnInit {
     if(id){
       this.loading = false;
       this.accountId = id;
+      const songId = this.route.snapshot.queryParamMap.get('songid');
       this.songService.getSongs(this.accountId, "name")
         .pipe(
           finalize(() => this.loading = false)
         )
         .subscribe((songs) => {
           this.allSongs = this.filteredSongs = songs;
+          this.scrollSongtoView(songId);
         });
+    }
+  }
+
+  private scrollSongtoView(songId: string | null) {
+    if (songId) {
+      setTimeout(() => {
+        const selectedRow = document.getElementById(songId);
+        if (selectedRow) {
+          selectedRow.scrollIntoView({ block: 'center' });
+        }
+      }, 100);
     }
   }
 

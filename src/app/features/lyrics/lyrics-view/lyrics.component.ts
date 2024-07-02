@@ -435,10 +435,10 @@ export class LyricsComponent {
 
   onBackToSong() {
     if(this.lyricId){
-    this.router.navigate(["../../.."], { relativeTo: this.activeRoute });
+    this.router.navigate(["../../.."], { relativeTo: this.activeRoute, queryParams: {songid: this.song?.id} });
     }
     else{
-      this.router.navigate(["../.."], { relativeTo: this.activeRoute });
+      this.router.navigate(["../.."], { relativeTo: this.activeRoute, queryParams: {songid: this.song?.id} });
     }
   }
 }

@@ -151,7 +151,7 @@
           }
         </mat-toolbar>
         <div class="mobile-card-container">
-          <mat-card-content *ngFor="let song of filteredSongs" (click)="onViewLyrics($event, song)">
+          <mat-card-content *ngFor="let song of filteredSongs" (click)="onViewLyrics($event, song)" [id]="song.id">
             <div class="py-12 px-1 b-b-1">
               <div class="flex align-items-center w-100">
                 <div class="w-100">
