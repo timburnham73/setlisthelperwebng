@@ -40,6 +40,7 @@ import { MatDivider } from "@angular/material/divider";
 import { Setlist } from "src/app/core/model/setlist";
 import { SetlistBreak } from "functions/src/model/setlist-break";
 import { SongSelectorComponent } from "../song-selector/song-selector.component";
+import { ExpandIconComponent } from "src/app/shared/icons/expand-icon/expand-icon.component";
 
 @Component({
   selector: "app-setlist-songs-list",
@@ -66,7 +67,8 @@ import { SongSelectorComponent } from "../song-selector/song-selector.component"
     DragDropModule,
     SongEditDialogComponent,
     SongSelectorComponent,
-    FlexModule
+    FlexModule,
+    ExpandIconComponent
   ],
 })
 export class SetlistSongsListComponent {
@@ -96,6 +98,7 @@ export class SetlistSongsListComponent {
   setlistSongCount: number;
 
   showRemove = false;
+  showReorder = false;
 
   displaySequence = 1;
   //Used for numbering the rows to skip the
@@ -167,6 +170,9 @@ export class SetlistSongsListComponent {
     this.filteredSongs = this.allSongs.filter((song) => song.name.toLowerCase().includes(search));
   }
   
+  onOpenMenu(songMenu){
+    console.log(songMenu);
+  }
   //Events ////////////////
   onBackToSetlist() {
     this.router.navigate(["../.."], { relativeTo: this.activeRoute });
@@ -269,6 +275,10 @@ export class SetlistSongsListComponent {
 
   onEnableDeleteMode() {
     this.showRemove = !this.showRemove;
+  }
+
+  onEnableReorderMode() {
+    this.showReorder = !this.showReorder;
   }
 
   onEditSong(row): void {

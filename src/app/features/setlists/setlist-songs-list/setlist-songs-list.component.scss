@@ -56,3 +56,8 @@ th.mat-sort-header-sorted {
 .setbreak{
     background-color: whitesmoke;
 }
+
+.mobile-card-container {
+    height: calc(100vh - 54px);
+    overflow-y: scroll;
+}

@@ -16,3 +16,9 @@
 .spinner-container mat-spinner {
   margin: 130px auto 0 auto;
 }
+
+input[type='text'],
+input[type='number'],
+textarea {
+  font-size: 16px;
+}
