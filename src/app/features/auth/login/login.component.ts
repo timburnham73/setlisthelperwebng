@@ -37,11 +37,15 @@ export class LoginComponent implements OnInit, OnDestroy {
                     EmailAuthProvider.PROVIDER_ID,
                     GoogleAuthProvider.PROVIDER_ID
                 ],
+                popupMode: true,
+                signInFlow: 'popup',
+                signInSuccessUrl: "accounts",
                 callbacks: {
                     signInSuccessWithAuthResult: (authResult: any) => {
                         this.onLoginSuccessful(authResult);
                         return true;
                       },
+                      
                 }
             };
             uiConfig.callbacks.signInSuccessWithAuthResult.bind(this);
@@ -68,7 +72,7 @@ export class LoginComponent implements OnInit, OnDestroy {
             if(!user){
                 this.userService.addUser(authResult.user);
             }
-            this.router.navigateByUrl("/dashboard");
+            this.router.navigateByUrl("/accounts");
         });
     }
 

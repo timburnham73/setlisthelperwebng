@@ -81,7 +81,7 @@ bootstrapApplication(AppComponent, {
       AppRoutingModule,
       AccountStateModule,
       LoggerModule.forRoot({
-        serverLoggingUrl: `http://my-api/logs`,
+        serverLoggingUrl: `https://songsetter.com/logs`,
         level: environment.logLevel,
         serverLogLevel: environment.serverLogLevel,
       }),

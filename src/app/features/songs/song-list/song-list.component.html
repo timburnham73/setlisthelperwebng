@@ -2,8 +2,8 @@
   <div fxFlex="99%">
 
     <mat-card>
-      <mat-card-content class="card-content" fxHide fxShow.gt-sm>
-        <mat-toolbar fxHide fxShow.gt-sm>
+      <mat-card-content class="card-content" fxHide fxShow.gt-md>
+        <mat-toolbar fxHide fxShow.gt-md>
           @if(!showRemove){
           <button mat-button aria-label="Add Song or Break" aria-label="Add Song" (click)="onAddSong()">
             <mat-icon>add</mat-icon>
@@ -114,7 +114,7 @@
           </table>
         </div>
       </mat-card-content>
-      <mat-side-nav fxHide fxShow.lt-md>
+      <mat-side-nav fxHide fxShow.lt-lg>
         <mat-toolbar>
           @if(!showFind && !showRemove){
           <button mat-button aria-label="Add Song" aria-label="Add Song" (click)="onAddSong()">
