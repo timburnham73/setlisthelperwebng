@@ -47,3 +47,23 @@ li.break {
 .toolbar-item{
   padding-right: 10px;
 }
+
+#lyric-section{
+  padding-right: 36px;
+  padding-left: 36px;
+}
+
+.page-left-icon{
+  position: absolute;
+  top: calc(50% - 25px);
+  left: 10px;
+  cursor: pointer;
+  transform: rotateX(0deg) rotate(180deg);
+}
+
+.page-right-icon{
+  position: absolute;
+  top: calc(50% - 25px);
+  right: 10px;
+  cursor: pointer;
+}

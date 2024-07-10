@@ -73,6 +73,7 @@ export class LyricsComponent {
   lyricId?: string;
   setlistId?: string;
   song?: Song;
+  allSongs?: Song[];
   selectedLyric?: Lyric;
   parsedLyric?: string;
   
@@ -180,6 +181,13 @@ export class LyricsComponent {
           this.loading = false;
           this.lyricVersionValue = this.selectedLyric?.id || "add";
         });
+
+        this.songService.getSongs(this.accountId, "name")
+        .pipe(take(1))
+        .subscribe((songs) => {
+          this.allSongs = songs;
+          
+        });
     }
   }
   onAddLyric(event?) {
@@ -217,6 +225,30 @@ export class LyricsComponent {
       }
   }
   
+  onPageLeft(){
+    const currentSongIndex = this.allSongs?.findIndex(song => song.id === this.song?.id);
+    if(currentSongIndex && currentSongIndex > currentSongIndex-1){
+      if(this.allSongs && this.allSongs?.length > currentSongIndex -1){
+        const previousSong = this.allSongs[currentSongIndex - 1];
+        this.router.navigate([`${previousSong.id}`], {
+          relativeTo: this.activeRoute,
+        });
+      }
+    }
+  }
+
+  onPageRight(){
+    const currentSongIndex = this.allSongs ? this.allSongs?.findIndex(song => song.id === this.song?.id) : -1;
+    
+    if(this.allSongs && currentSongIndex+1 < this.allSongs?.length){
+      if(this.allSongs && this.allSongs?.length > currentSongIndex+1){
+        const previousSong = this.allSongs[currentSongIndex + 1];
+        this.router.navigate([`${previousSong.id}`], {
+          relativeTo: this.activeRoute,
+        });
+      }
+    }
+  }
   private getDefaultLyricId(){
     if (this.song?.defaultLyricForUser) {
       return this.song?.defaultLyricForUser.find((userLyric) => userLyric.uid === this.currentUser.uid)?.lyricId;

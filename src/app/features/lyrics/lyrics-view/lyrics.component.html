@@ -170,9 +170,20 @@
           <span *ngIf="!selectedLyric?.lyrics">The lyrics are empty.</span>
           <br>
           <br>
+          
           <span *ngIf="!selectedLyric"> <a href="#" (click)="onAddLyric($event)">Click here to create lyric
               version.</a></span>
-          <div #lyricSection *ngIf="selectedLyric && selectedLyric?.lyrics" [innerHtml]="parsedLyric ?? '' | safeHtml"></div>
+              <div class="page-left-icon rotate">
+              <span class="material-symbols-outlined" (click)="onPageLeft()">
+                expand_circle_right
+                </span>
+              </div>
+              <div class="page-right-icon" (click)="onPageRight()">
+              <span class="material-symbols-outlined">
+                expand_circle_right
+                </span>
+              </div>
+          <div id="lyric-section" #lyricSection *ngIf="selectedLyric && selectedLyric?.lyrics" [innerHtml]="parsedLyric ?? '' | safeHtml"></div>
         </ng-container>
       </mat-card-content>
     </mat-card>
