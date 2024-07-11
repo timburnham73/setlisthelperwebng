@@ -134,22 +134,33 @@ export class LyricsComponent {
       }
     });
 
+    if(this.selectedAccount && this.selectedAccount.id){
+      this.accountId = this.selectedAccount.id;
+      this.songService.getSongs(this.selectedAccount.id, "name")
+        .pipe(take(1))
+        .subscribe((songs) => {
+          this.allSongs = songs;
+          
+        });
+    }
+
     //The version can change on the page. This will subscribe to the page change event
     //Normally navigating to the same component is not supported. 
     //I added the onSameUrlNavigation: 'reload' on the router config.
-    activeRoute.params.subscribe(val => {
-      
+    activeRoute.params.subscribe(params => {
+      this.initLyrics();
     });
+
+    
   }
 
   private initLyrics() {
     this.loading = true;
-    const accountId = this.activeRoute.snapshot.paramMap.get("accountid");
     const songId = this.activeRoute.snapshot.paramMap.get("songid");
     this.lyricId = this.activeRoute.snapshot.paramMap.get("lyricid") || undefined;
     this.setlistId = this.activeRoute.snapshot.paramMap.get("setlistid") || undefined;
-    if (accountId && songId) {
-      this.accountId = accountId;
+    if (this.accountId && songId) {
+      this.accountId = this.accountId;
       this.songId = songId;
       this.songService
         .getSong(this.accountId, this.songId)
@@ -182,12 +193,7 @@ export class LyricsComponent {
           this.lyricVersionValue = this.selectedLyric?.id || "add";
         });
 
-        this.songService.getSongs(this.accountId, "name")
-        .pipe(take(1))
-        .subscribe((songs) => {
-          this.allSongs = songs;
-          
-        });
+        
     }
   }
   onAddLyric(event?) {
@@ -226,13 +232,12 @@ export class LyricsComponent {
   }
   
   onPageLeft(){
-    const currentSongIndex = this.allSongs?.findIndex(song => song.id === this.song?.id);
-    if(currentSongIndex && currentSongIndex > currentSongIndex-1){
-      if(this.allSongs && this.allSongs?.length > currentSongIndex -1){
+    const currentSongIndex = this.allSongs ? this.allSongs?.findIndex(song => song.id === this.song?.id) : -1;
+    
+    if(this.allSongs && currentSongIndex-1 < this.allSongs?.length){
+      if(this.allSongs && this.allSongs?.length > currentSongIndex-1){
         const previousSong = this.allSongs[currentSongIndex - 1];
-        this.router.navigate([`${previousSong.id}`], {
-          relativeTo: this.activeRoute,
-        });
+        this.router.navigate([`../../${previousSong?.id}/lyrics`], { relativeTo: this.activeRoute });
       }
     }
   }
@@ -242,13 +247,12 @@ export class LyricsComponent {
     
     if(this.allSongs && currentSongIndex+1 < this.allSongs?.length){
       if(this.allSongs && this.allSongs?.length > currentSongIndex+1){
-        const previousSong = this.allSongs[currentSongIndex + 1];
-        this.router.navigate([`${previousSong.id}`], {
-          relativeTo: this.activeRoute,
-        });
+        const nextSong = this.allSongs[currentSongIndex + 1];
+        this.router.navigate([`../../${nextSong?.id}/lyrics`], { relativeTo: this.activeRoute });
       }
     }
   }
+
   private getDefaultLyricId(){
     if (this.song?.defaultLyricForUser) {
       return this.song?.defaultLyricForUser.find((userLyric) => userLyric.uid === this.currentUser.uid)?.lyricId;

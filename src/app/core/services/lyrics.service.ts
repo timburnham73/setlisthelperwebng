@@ -129,10 +129,10 @@ export class LyricsService {
       return {formatScope: FormatScope.LYRIC, lyricFormat: lyricFormat};
     }
     //If the user has format settings then the are using the settings for their account only
-    else if(user.formatSettings){
+    else if(user && user.formatSettings){
       return {formatScope: FormatScope.USER, lyricFormat: user.formatSettings};
     }
-    else if(account.formatSettings){
+    else if(account && account.formatSettings){
       return {formatScope: FormatScope.ACCOUNT, lyricFormat: account.formatSettings}
     }
     else {
