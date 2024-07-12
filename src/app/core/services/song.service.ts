@@ -84,7 +84,7 @@ export class SongService {
     );
   }
 
-  setDefaultLyricForUser(accountId: string, songId: string, song: Song, lyricId: string, editingUser: BaseUser): Observable<any> {
+  setDefaultLyricForUser(accountId: string, song: Song, lyricId: string, editingUser: BaseUser): Observable<any> {
     const userLyric = song.defaultLyricForUser?.find((userLyric) => userLyric.uid === editingUser.uid);
     if(userLyric){
       userLyric.lyricId = lyricId;
@@ -101,7 +101,7 @@ export class SongService {
     const dbPath = `/accounts/${accountId}/songs`;
     const songsRef = this.db.collection(dbPath);
     
-    return from(songsRef.doc(songId).update(songForUpdate)).pipe(
+    return from(songsRef.doc(song.id).update(songForUpdate)).pipe(
       switchMap(() => this.setlistSongService.updateSetlistSongsBySongId(song.id!, song, editingUser))
     );
   }

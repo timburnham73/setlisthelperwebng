@@ -1,12 +1,28 @@
 <div fxLayout="row" fxLayoutAlign="center none">
-    <div fxFlex="98%" fxShow fxHide.lt-lg>
-      <mat-card>
-        <mat-card-content class="lyrics-view">
+    <div class="spinner-container" *ngIf="loading">
+      <mat-spinner>
+      </mat-spinner>
+    </div>
+    <ng-container *ngIf="!loading">
+      <div fxFlex="98%" fxShow fxHide.lt-lg>
+        <mat-card>
+          <mat-card-content class="lyrics-view">
+            <div class="lyric-nav-icon page-left-icon">
+              <span class="material-symbols-outlined" (click)="onPageLeft()">
+                expand_circle_right
+                </span>
+              </div>
+              <div class="lyric-nav-icon page-right-icon" (click)="onPageRight()">
+              <span class="material-symbols-outlined">
+                expand_circle_right
+                </span>
+              </div>
+            <app-lyrics [song]="song" [lyrics]="lyrics" [defaultLyricId]="defaultLyricId" [selectedLyric]="selectedLyric" [parsedLyric]="parsedLyric"></app-lyrics>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <div fxFlex="100%" fxShow fxHide.gt-md>
           <app-lyrics></app-lyrics>
-        </mat-card-content>
-      </mat-card>
-    </div>
-    <div fxFlex="100%" fxShow fxHide.gt-md>
-        <app-lyrics></app-lyrics>
-    </div>
+      </div>
+    </ng-container>
   </div>

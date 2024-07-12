@@ -1,0 +1,22 @@
+.lyric-nav-icon{
+    position: absolute;
+    cursor: pointer;
+    z-index: 1;
+    color: lightgrey;
+    .material-symbols-outlined{
+        font-size: 36px;
+    }
+    :hover{
+        color: grey;
+    }
+}
+.page-left-icon{
+    top: calc(50% - 25px);
+    left: 20px;
+    transform: rotateX(0deg) rotate(180deg);
+  }
+  
+  .page-right-icon{
+    top: calc(50% - 25px);
+    right: 20px;
+  }

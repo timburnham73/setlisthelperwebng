@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnInit, Renderer2, ViewChild, ViewEncapsulation } from "@angular/core";
+import { AfterViewInit, Component, ElementRef, Input, OnInit, Renderer2, ViewChild, ViewEncapsulation } from "@angular/core";
 import { MatTableDataSource as MatTableDataSource } from "@angular/material/table";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, NavigationEnd, Router } from "@angular/router";
@@ -67,16 +67,24 @@ export class LyricsComponent {
   @ViewChild('lyricSection') lyricSection;
   @ViewChild('toggleFontStyle') toggleFontStyle;
   
-  accountId?: string;
   selectedAccount: Account;
-  songId?: string;
-  lyricId?: string;
-  setlistId?: string;
+  
+  @Input()
   song?: Song;
-  allSongs?: Song[];
+  
+  @Input()
+  lyrics: Lyric[];
+
+  @Input()
+  defaultLyricId: string | undefined;
+
+  @Input()
   selectedLyric?: Lyric;
+
+  @Input()
   parsedLyric?: string;
   
+
   selectedFontStyle: string[] = [];
   selectedFont: string = "Arial";
   fonts = fonts;
@@ -88,15 +96,17 @@ export class LyricsComponent {
   selectedFontSize: string = "medium";
   fontSizes = fontSizes;
 
-  defaultLyricId: string | undefined;
-  isDefaultLyric = false;
+  
+  get isDefaultLyric(): boolean {
+    return this.defaultLyricId === this.selectedLyric?.id;
+  }
   
   
   lyricVersionValue = "add";
-  lyrics: Lyric[];
+  
   lyricVersions = new FormControl("");
   currentUser: User;
-  loading = true;
+  
 
   isTransposing = false;
   isFormatting = false;
@@ -116,91 +126,20 @@ export class LyricsComponent {
     private store: Store,
     private router: Router,
     public dialog: MatDialog,
-    private authService: AuthenticationService,
+    
     
   ) {
     this.selectedAccount = this.store.selectSnapshot(
       AccountState.selectedAccount
     );
-
-    this.authService.user$.pipe(
-    switchMap((user) =>
-      this.userService.getUserById(user.uid)
-    ))
-    .subscribe((user) => {
-      if (user && user.uid) {
-        this.currentUser = user;
-        this.initLyrics();
-      }
-    });
-
-    if(this.selectedAccount && this.selectedAccount.id){
-      this.accountId = this.selectedAccount.id;
-      this.songService.getSongs(this.selectedAccount.id, "name")
-        .pipe(take(1))
-        .subscribe((songs) => {
-          this.allSongs = songs;
-          
-        });
-    }
-
-    //The version can change on the page. This will subscribe to the page change event
-    //Normally navigating to the same component is not supported. 
-    //I added the onSameUrlNavigation: 'reload' on the router config.
-    activeRoute.params.subscribe(params => {
-      this.initLyrics();
-    });
-
-    
   }
 
-  private initLyrics() {
-    this.loading = true;
-    const songId = this.activeRoute.snapshot.paramMap.get("songid");
-    this.lyricId = this.activeRoute.snapshot.paramMap.get("lyricid") || undefined;
-    this.setlistId = this.activeRoute.snapshot.paramMap.get("setlistid") || undefined;
-    if (this.accountId && songId) {
-      this.accountId = this.accountId;
-      this.songId = songId;
-      this.songService
-        .getSong(this.accountId, this.songId)
-        .pipe(take(1))
-        .subscribe((song) => {
-          this.song = song;
-          this.defaultLyricId = this.getDefaultLyricId(); 
-        });
-
-      this.lyricsService
-        .getSongLyrics(this.accountId, this.songId)
-        .pipe(take(1))
-        .subscribe((lyrics) => {
-          this.lyrics = lyrics;
-          this.isDefaultLyric = this.isDefaultLyricSelected();
-
-          this.selectedLyric = this.getSelectedLyric(lyrics);
-
-          if(this.selectedLyric && this.selectedLyric.lyrics){
-            //Create a function to select 
-            const lyricFormatWithScope = this.lyricsService.getLyricFormat(this.selectedAccount, this.currentUser, this.selectedLyric!.formatSettings);
-            this.formatScope = lyricFormatWithScope.formatScope;
-            this.lyricFormat = lyricFormatWithScope.lyricFormat;
-            this.updateToolbarFromLyricFont();
-            const parser =  new ChordProParser(this.selectedLyric?.lyrics!, this.lyricFormat, this.selectedLyric?.transpose!);
-            this.parsedLyric = parser.parseChordPro();
-          }
-          
-          this.loading = false;
-          this.lyricVersionValue = this.selectedLyric?.id || "add";
-        });
-
-        
-    }
-  }
+  
   onAddLyric(event?) {
     event?.preventDefault();
     const accountLyric = {
-      accountId: this.accountId,
-      songId: this.songId,
+      accountId: this.selectedAccount.id,
+      songId: this.song?.id,
       createdByUserId: this.currentUser.uid,
     };
     const dialogRef = this.dialog.open(LyricAddDialogComponent, {
@@ -219,7 +158,7 @@ export class LyricsComponent {
   }
 
   onEditLyric() {
-    if(this.lyricId){
+    if(this.selectedLyric?.id){
         this.router.navigate([`../${this.selectedLyric?.id}/edit`], {
           relativeTo: this.activeRoute,
         });
@@ -231,58 +170,10 @@ export class LyricsComponent {
       }
   }
   
-  onPageLeft(){
-    const currentSongIndex = this.allSongs ? this.allSongs?.findIndex(song => song.id === this.song?.id) : -1;
-    
-    if(this.allSongs && currentSongIndex-1 < this.allSongs?.length){
-      if(this.allSongs && this.allSongs?.length > currentSongIndex-1){
-        const previousSong = this.allSongs[currentSongIndex - 1];
-        this.router.navigate([`../../${previousSong?.id}/lyrics`], { relativeTo: this.activeRoute });
-      }
-    }
-  }
-
-  onPageRight(){
-    const currentSongIndex = this.allSongs ? this.allSongs?.findIndex(song => song.id === this.song?.id) : -1;
-    
-    if(this.allSongs && currentSongIndex+1 < this.allSongs?.length){
-      if(this.allSongs && this.allSongs?.length > currentSongIndex+1){
-        const nextSong = this.allSongs[currentSongIndex + 1];
-        this.router.navigate([`../../${nextSong?.id}/lyrics`], { relativeTo: this.activeRoute });
-      }
-    }
-  }
-
-  private getDefaultLyricId(){
-    if (this.song?.defaultLyricForUser) {
-      return this.song?.defaultLyricForUser.find((userLyric) => userLyric.uid === this.currentUser.uid)?.lyricId;
-    }
-    return undefined;
-  }
-
-  private isDefaultLyricSelected(){    
-      return this.defaultLyricId === this.selectedLyric?.id;
-  }
   
-  private getSelectedLyric(lyrics: any) {
-    //If the lyric id is NOT passed in on the url 
-    if (!this.lyricId) {
-      if (this.song?.defaultLyricForUser) {
-        const userLyric = this.song?.defaultLyricForUser.find((userLyric) => userLyric.uid === this.currentUser.uid);
-        if (userLyric) {
-          const selecteLyric = lyrics.find((lyric) => lyric.id === userLyric.lyricId);
-          return selecteLyric ? selecteLyric : lyrics[0];
-        }
-      }
-    } else {
-      //If the lyric is not passed in with the URL find the default lyrics or first lyric.
-      const selectedLyric = lyrics.find((lyric) => lyric.id === this.lyricId);
-      return selectedLyric ? selectedLyric : lyrics[0];
-    }
-    return lyrics[0];
-  }
 
   onFormatLyrics(){
+    this.updateToolbarFromLyricFont();
     this.isFormatting = !this.isFormatting;
   }
   
@@ -328,7 +219,7 @@ export class LyricsComponent {
 
       this.selectedLyric!.transpose = transposeNumber;
       this.selectedLyric.formatSettings = this.lyricFormat;
-      this.lyricsService.updateLyric(this.accountId!, this.songId!, this.selectedLyric, this.currentUser);
+      this.lyricsService.updateLyric(this.selectedAccount.id!, this.song?.id!, this.selectedLyric, this.currentUser);
       
       const parser =  new ChordProParser(this.selectedLyric?.lyrics!, this.lyricFormat, transposeNumber);
       this.parsedLyric = parser.parseChordPro();
@@ -337,9 +228,8 @@ export class LyricsComponent {
   }
 
   onSetDefaultUser(event: Event){
-    this.songService.setDefaultLyricForUser(this.accountId!, this.songId!, this.song!, this.selectedLyric?.id!, this.currentUser).subscribe(
+    this.songService.setDefaultLyricForUser(this.selectedAccount.id!, this.song!, this.selectedLyric?.id!, this.currentUser).subscribe(
       () => {
-        this.isDefaultLyric = true;
         this.defaultLyricId = this.selectedLyric?.id;
       }
     );
@@ -391,7 +281,7 @@ export class LyricsComponent {
     if(this.formatScope === FormatScope.LYRIC) {
       if(this.selectedLyric){
         this.selectedLyric.formatSettings = this.lyricFormat;
-        this.lyricsService.updateLyric(this.accountId!, this.songId!, this.selectedLyric!, this.currentUser);
+        this.lyricsService.updateLyric(this.selectedAccount.id!, this.song?.id!, this.selectedLyric!, this.currentUser);
       }
     }
     else if(this.formatScope === FormatScope.USER) {
@@ -413,7 +303,7 @@ export class LyricsComponent {
   private clearLyricFormatSettings(){
     //Remove the lyric formatSettings if it was set previously. 
     if(this.selectedLyric && this.selectedLyric.formatSettings){
-      this.lyricsService.deleteFormatSettingsUser(this.accountId!, this.songId!, this.selectedLyric!.id!);
+      this.lyricsService.deleteFormatSettingsUser(this.selectedAccount.id!, this.song?.id!, this.selectedLyric!.id!);
     }
   }
   private clearUserFormatSettings(){
@@ -455,7 +345,7 @@ export class LyricsComponent {
     } else {
       //Switch to another lyrics. If there is no lyric id the route is different. 
       //You may get here without a lyric id when selecting from the song list.
-      if(this.lyricId){
+      if(this.selectedLyric?.id){
         this.router.navigate([`../${value}`], {
           relativeTo: this.activeRoute,
         });
@@ -470,7 +360,7 @@ export class LyricsComponent {
   }
 
   onBackToSong() {
-    if(this.lyricId){
+    if(this.selectedLyric?.id){
     this.router.navigate(["../../.."], { relativeTo: this.activeRoute, queryParams: {songid: this.song?.id} });
     }
     else{

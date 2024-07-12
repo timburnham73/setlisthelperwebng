@@ -125,7 +125,7 @@
         }
         <ng-container *ngIf="selectedLyric">
           <mat-form-field subscriptSizing="dynamic">
-            <mat-select [(value)]="lyricVersionValue" (selectionChange)="onSelectLyric($event.value)">
+            <mat-select [value]="this.selectedLyric.id || 'add'" (selectionChange)="onSelectLyric($event.value)">
               <mat-option *ngFor="let lyric of lyrics" [value]="lyric?.id">
                 <mat-icon *ngIf="lyric.id === defaultLyricId">star</mat-icon>
                 {{lyric.name}}
@@ -161,28 +161,13 @@
 
     <mat-card>
       <mat-card-content class="lyrics-view">
-        <div class="spinner-container" *ngIf="loading">
-          <mat-spinner>
-
-          </mat-spinner>
-        </div>
-        <ng-container *ngIf="!loading">
+        <ng-container>
           <span *ngIf="!selectedLyric?.lyrics">The lyrics are empty.</span>
           <br>
           <br>
           
           <span *ngIf="!selectedLyric"> <a href="#" (click)="onAddLyric($event)">Click here to create lyric
               version.</a></span>
-              <div class="page-left-icon rotate">
-              <span class="material-symbols-outlined" (click)="onPageLeft()">
-                expand_circle_right
-                </span>
-              </div>
-              <div class="page-right-icon" (click)="onPageRight()">
-              <span class="material-symbols-outlined">
-                expand_circle_right
-                </span>
-              </div>
           <div id="lyric-section" #lyricSection *ngIf="selectedLyric && selectedLyric?.lyrics" [innerHtml]="parsedLyric ?? '' | safeHtml"></div>
         </ng-container>
       </mat-card-content>
