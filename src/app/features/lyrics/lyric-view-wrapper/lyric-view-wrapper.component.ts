@@ -26,7 +26,9 @@ import { UserService } from 'src/app/core/services/user.service';
 import { User } from 'src/app/core/model/user';
 import { LyricsService } from 'src/app/core/services/lyrics.service';
 import { FormatScope, Lyric } from 'src/app/core/model/lyric';
-import { LyricFormat, fonts, lyricParts } from 'src/app/core/model/lyric-format';
+import { LyricFormat, LyricFormatWithScope, fonts, lyricParts } from 'src/app/core/model/lyric-format';
+import { SetlistSongService } from 'src/app/core/services/setlist-songs.service';
+import { SetlistSong } from 'src/app/core/model/setlist-song';
 
 @Component({
   selector: 'app-lyric-view-wrapper',
@@ -58,9 +60,10 @@ export class LyricViewWrapperComponent {
   
   selectedAccount: Account;
 
-  allSongs?: Song[];
+  allSongs?: Song[] | SetlistSong[];
+  currentSongIndex = 0;
 
-  song?: Song;
+  song?: Song | SetlistSong;
   accountId: string;
   songId?: string;
   lyricId?: string;
@@ -72,8 +75,8 @@ export class LyricViewWrapperComponent {
   parsedLyric?: string;
   defaultLyricId: string | undefined;
   isDefaultLyric = false;
-  lyricFormat: LyricFormat;
-  formatScope: FormatScope;
+  lyricFormatWithScope: LyricFormatWithScope;
+  
   
   selectedFontSize: string = "medium";
   selectedFontStyle: string[] = [];
@@ -87,18 +90,30 @@ export class LyricViewWrapperComponent {
     private userService: UserService,
     private authService: AuthenticationService,
     private lyricsService: LyricsService,
-    private songService: SongService){
+    private songService: SongService,
+    private setlistSongService: SetlistSongService
+  ){
       this.selectedAccount = this.store.selectSnapshot(
         AccountState.selectedAccount
       );
 
       if(this.selectedAccount && this.selectedAccount.id){
+        this.setlistId = this.activeRoute.snapshot.paramMap.get("setlistid") || undefined;
         this.accountId = this.selectedAccount.id;
-        this.songService.getSongs(this.selectedAccount.id, "name")
-          .pipe(take(1))
-          .subscribe((songs) => {
-            this.allSongs = songs;
-          });
+        if(this.setlistId){
+          this.setlistSongService
+            .getOrderedSetlistSongs(this.accountId!, this.setlistId)
+            .subscribe((setlistSongs) => {
+              this.allSongs = setlistSongs;
+            });
+        }
+        else{
+          this.songService.getSongs(this.selectedAccount.id, "name")
+            .pipe(take(1))
+            .subscribe((songs) => {
+              this.allSongs = songs;
+            });
+        }
       }
 
       this.authService.user$.pipe(
@@ -109,14 +124,13 @@ export class LyricViewWrapperComponent {
           if (user && user.uid) {
             this.currentUser = user;
             this.initLyrics();
+            //The version can change on the page. This will subscribe to the page change event
+            //Normally navigating to the same component is not supported. 
+            //I added the onSameUrlNavigation: 'reload' on the router config.
+            activeRoute.params.subscribe(params => {
+              this.initLyrics();
+            });
           }
-        });
-    
-        //The version can change on the page. This will subscribe to the page change event
-        //Normally navigating to the same component is not supported. 
-        //I added the onSameUrlNavigation: 'reload' on the router config.
-        activeRoute.params.subscribe(params => {
-          this.initLyrics();
         });
   }
 
@@ -124,7 +138,7 @@ export class LyricViewWrapperComponent {
     this.loading = true;
     const songId = this.activeRoute.snapshot.paramMap.get("songid");
     this.lyricId = this.activeRoute.snapshot.paramMap.get("lyricid") || undefined;
-    this.setlistId = this.activeRoute.snapshot.paramMap.get("setlistid") || undefined;
+    
     if (this.accountId && songId) {
       this.accountId = this.accountId;
       
@@ -134,8 +148,9 @@ export class LyricViewWrapperComponent {
         .subscribe((song) => {
           this.song = song;
           this.defaultLyricId = this.getDefaultLyricId(); 
+          this.currentSongIndex = this.getCurrentSongIndex();
         });
-
+    
       this.lyricsService
         .getSongLyrics(this.accountId, songId)
         .pipe(take(1))
@@ -147,41 +162,60 @@ export class LyricViewWrapperComponent {
 
           if(this.selectedLyric && this.selectedLyric.lyrics){
             //Create a function to select 
-            const lyricFormatWithScope = this.lyricsService.getLyricFormat(this.selectedAccount, this.currentUser, this.selectedLyric!.formatSettings);
-            this.formatScope = lyricFormatWithScope.formatScope;
-            this.lyricFormat = lyricFormatWithScope.lyricFormat;
+            this.lyricFormatWithScope = this.lyricsService.getLyricFormat(this.selectedAccount, this.currentUser, this.selectedLyric!.formatSettings);
             
-            const parser =  new ChordProParser(this.selectedLyric?.lyrics!, this.lyricFormat, this.selectedLyric?.transpose!);
+            const parser =  new ChordProParser(this.selectedLyric?.lyrics!, this.lyricFormatWithScope.lyricFormat, this.selectedLyric?.transpose!);
             this.parsedLyric = parser.parseChordPro();
           }
           
           this.loading = false;
           this.lyricVersionValue = this.selectedLyric?.id || "add";
         });
-
-        
     }
   }
 
   onPageLeft(){
-    const currentSongIndex = this.allSongs ? this.allSongs?.findIndex(song => song.id === this.song?.id) : -1;
+    this.currentSongIndex = this.getCurrentSongIndex();
     
-    if(this.allSongs && currentSongIndex-1 < this.allSongs?.length){
-      if(this.allSongs && this.allSongs?.length > currentSongIndex-1){
-        const previousSong = this.allSongs[currentSongIndex - 1];
-        this.router.navigate([`../../${previousSong?.id}/lyrics`], { relativeTo: this.activeRoute });
+    if(this.allSongs && this.currentSongIndex-1 < this.allSongs?.length){
+      if(this.allSongs && this.allSongs?.length > this.currentSongIndex-1){
+        const previousSong = this.allSongs[this.currentSongIndex - 1];
+        const previousSongId = this.setlistId ? previousSong["songId"] : previousSong.id;
+        if(this.lyricId){
+          this.router.navigate([`../../../${previousSongId}/lyrics`], { relativeTo: this.activeRoute });
+        }
+        else{
+          this.router.navigate([`../../${previousSongId}/lyrics`], { relativeTo: this.activeRoute });
+        }
       }
     }
   }
 
   onPageRight(){
-    const currentSongIndex = this.allSongs ? this.allSongs?.findIndex(song => song.id === this.song?.id) : -1;
+    this.currentSongIndex = this.getCurrentSongIndex();
     
-    if(this.allSongs && currentSongIndex+1 < this.allSongs?.length){
-      if(this.allSongs && this.allSongs?.length > currentSongIndex+1){
-        const nextSong = this.allSongs[currentSongIndex + 1];
-        this.router.navigate([`../../${nextSong?.id}/lyrics`], { relativeTo: this.activeRoute });
+    if(this.allSongs && this.currentSongIndex+1 < this.allSongs?.length){
+      if(this.allSongs && this.allSongs?.length > this.currentSongIndex+1){
+        const nextSong = this.allSongs[this.currentSongIndex + 1];
+        const nextSongId = this.setlistId ? nextSong["songId"] : nextSong.id;
+        if(this.lyricId){
+          this.router.navigate([`../../../${nextSongId}/lyrics`], { relativeTo: this.activeRoute });
+        }
+        else{
+          this.router.navigate([`../../${nextSongId}/lyrics`], { relativeTo: this.activeRoute });
+        }
       }
+    }
+  }
+
+  public shouldShowPageIcon(isNext = true){
+    const songsLength = this.allSongs ? this.allSongs?.length : 0;
+    if(isNext){
+      
+      return songsLength > this.currentSongIndex + 1;
+    }
+    else{
+      return this.currentSongIndex - 1 >= 0;
     }
   }
 
@@ -214,5 +248,17 @@ export class LyricViewWrapperComponent {
     return lyrics[0];
   }
 
+  //Used to get the song ID. If it is a setlist song then use the songId otherwise use id.
+  private getCurrentSongIndex() {
+    const currentSongId = this.song?.id;
+    const currentSongIndex = this.allSongs ? this.allSongs?.findIndex(song => {
+      let songId = song.id;
+      if(this.setlistId && song){
+        songId = song["songId"];
+      }
+      return songId === currentSongId;
+    }) : -1;
+    return currentSongIndex;
+  }
   
 }

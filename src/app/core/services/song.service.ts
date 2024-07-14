@@ -102,8 +102,10 @@ export class SongService {
     const songsRef = this.db.collection(dbPath);
     
     return from(songsRef.doc(song.id).update(songForUpdate)).pipe(
-      switchMap(() => this.setlistSongService.updateSetlistSongsBySongId(song.id!, song, editingUser))
-    );
+      switchMap(() => {
+        return this.setlistSongService.updateSetlistSongsBySongId(song.id!, song, editingUser);
+      }
+    ));
   }
 
   updateSong(accountId: string, songId: string, song: Song, editingUser: BaseUser): Observable<any> {

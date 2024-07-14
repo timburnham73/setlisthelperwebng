@@ -68,12 +68,19 @@ export class LyricsComponent {
   @ViewChild('toggleFontStyle') toggleFontStyle;
   
   selectedAccount: Account;
-  
+  lyricId: string | undefined;
+
+  @Input()
+  currentUser: User;
+
   @Input()
   song?: Song;
   
   @Input()
   lyrics: Lyric[];
+
+  @Input()
+  lyricFormatWithScope: LyricFormatWithScope;
 
   @Input()
   defaultLyricId: string | undefined;
@@ -105,14 +112,14 @@ export class LyricsComponent {
   lyricVersionValue = "add";
   
   lyricVersions = new FormControl("");
-  currentUser: User;
+  
   
 
   isTransposing = false;
   isFormatting = false;
 
-  lyricFormat: LyricFormat;
-  formatScope: FormatScope;
+  
+  
   //Used in the UI so the FormatScope enum can be used
   FormatScopeType = FormatScope;
   
@@ -129,6 +136,7 @@ export class LyricsComponent {
     
     
   ) {
+    this.lyricId = this.activeRoute.snapshot.paramMap.get("lyricid") || undefined;
     this.selectedAccount = this.store.selectSnapshot(
       AccountState.selectedAccount
     );
@@ -158,7 +166,7 @@ export class LyricsComponent {
   }
 
   onEditLyric() {
-    if(this.selectedLyric?.id){
+    if(this.lyricId){
         this.router.navigate([`../${this.selectedLyric?.id}/edit`], {
           relativeTo: this.activeRoute,
         });
@@ -179,8 +187,8 @@ export class LyricsComponent {
   
   onFormatMobileLyrics(){
     const lyricFormats = {
-      formatScope: this.formatScope,
-      lyricFormat: this.lyricFormat
+      formatScope: this.lyricFormatWithScope.formatScope,
+      lyricFormat: this.lyricFormatWithScope.lyricFormat
     } as LyricFormatWithScope;
 
     const dialogRef = this.dialog.open(LyricsFormatDialogComponent, {
@@ -190,11 +198,11 @@ export class LyricsComponent {
 
     dialogRef.afterClosed().subscribe((result: LyricFormatWithScope) => {
       if (result) {
-        this.formatScope = result.formatScope;
-        this.lyricFormat = result.lyricFormat;
+        this.lyricFormatWithScope.formatScope = result.formatScope;
+        this.lyricFormatWithScope.lyricFormat = result.lyricFormat;
         this.saveFormatSettings();
 
-        const parser =  new ChordProParser(this.selectedLyric?.lyrics!, this.lyricFormat, this.selectedLyric!.transpose);
+        const parser =  new ChordProParser(this.selectedLyric?.lyrics!, this.lyricFormatWithScope.lyricFormat, this.selectedLyric!.transpose);
         this.parsedLyric = parser.parseChordPro();
       }
     });
@@ -218,21 +226,18 @@ export class LyricsComponent {
       }
 
       this.selectedLyric!.transpose = transposeNumber;
-      this.selectedLyric.formatSettings = this.lyricFormat;
+      this.selectedLyric.formatSettings = this.lyricFormatWithScope.lyricFormat;
       this.lyricsService.updateLyric(this.selectedAccount.id!, this.song?.id!, this.selectedLyric, this.currentUser);
       
-      const parser =  new ChordProParser(this.selectedLyric?.lyrics!, this.lyricFormat, transposeNumber);
+      const parser =  new ChordProParser(this.selectedLyric?.lyrics!, this.lyricFormatWithScope.lyricFormat, transposeNumber);
       this.parsedLyric = parser.parseChordPro();
       
     }
   }
 
   onSetDefaultUser(event: Event){
-    this.songService.setDefaultLyricForUser(this.selectedAccount.id!, this.song!, this.selectedLyric?.id!, this.currentUser).subscribe(
-      () => {
-        this.defaultLyricId = this.selectedLyric?.id;
-      }
-    );
+    this.defaultLyricId = this.selectedLyric?.id;
+    this.songService.setDefaultLyricForUser(this.selectedAccount.id!, this.song!, this.selectedLyric?.id!, this.currentUser);
   }
 
   onSelectLyricPart(fontname: string) {
@@ -240,62 +245,62 @@ export class LyricsComponent {
   }
 
   onSelectFormatScope(formatScope: FormatScope){
-    this.formatScope = formatScope;
+    this.lyricFormatWithScope.formatScope = formatScope;
     this.saveFormatSettings();
   }
 
   onSelectFont(fontname: string) {
-    this.lyricFormat.font = fontname;
-    const parser =  new ChordProParser(this.selectedLyric?.lyrics!, this.lyricFormat, this.selectedLyric!.transpose);
+    this.lyricFormatWithScope.lyricFormat.font = fontname;
+    const parser =  new ChordProParser(this.selectedLyric?.lyrics!, this.lyricFormatWithScope.lyricFormat, this.selectedLyric!.transpose);
     this.parsedLyric = parser.parseChordPro();
     this.saveFormatSettings();
   }
   
   //Bold, Italic, or Underline
   onFormatToggleStyle(selectedFontStyle){
-    const lyricPart = this.lyricFormat.lyricPartFormat.find(lyricPart => this.selectedLyricPart === lyricPart.lyricPart);
+    const lyricPart = this.lyricFormatWithScope.lyricFormat.lyricPartFormat.find(lyricPart => this.selectedLyricPart === lyricPart.lyricPart);
     if(lyricPart){
       lyricPart.isBold = selectedFontStyle.find(fontStyle => fontStyle === "bold") ? true : false;
       lyricPart.isItalic = selectedFontStyle.find(fontStyle => fontStyle === "italic") ? true : false;
       lyricPart.isUnderlined = selectedFontStyle.find(fontStyle => fontStyle === "underline") ? true : false;
     }
 
-    const parser =  new ChordProParser(this.selectedLyric?.lyrics!, this.lyricFormat, this.selectedLyric!.transpose);
+    const parser =  new ChordProParser(this.selectedLyric?.lyrics!, this.lyricFormatWithScope.lyricFormat, this.selectedLyric!.transpose);
     this.parsedLyric = parser.parseChordPro();
 
     this.saveFormatSettings();
   }
 
   onSelectFontSize(fontSize: string) {
-    const lyricPart = this.lyricFormat.lyricPartFormat.find(lyricPart => this.selectedLyricPart === lyricPart.lyricPart);
+    const lyricPart = this.lyricFormatWithScope.lyricFormat.lyricPartFormat.find(lyricPart => this.selectedLyricPart === lyricPart.lyricPart);
     if(lyricPart){
       lyricPart.fontSize = fontSize;
     }
-    const parser =  new ChordProParser(this.selectedLyric?.lyrics!, this.lyricFormat, this.selectedLyric!.transpose);
+    const parser =  new ChordProParser(this.selectedLyric?.lyrics!, this.lyricFormatWithScope.lyricFormat, this.selectedLyric!.transpose);
     this.parsedLyric = parser.parseChordPro();
 
     this.saveFormatSettings();
   }
 
   private saveFormatSettings() {
-    if(this.formatScope === FormatScope.LYRIC) {
+    if(this.lyricFormatWithScope.formatScope === FormatScope.LYRIC) {
       if(this.selectedLyric){
-        this.selectedLyric.formatSettings = this.lyricFormat;
+        this.selectedLyric.formatSettings = this.lyricFormatWithScope.lyricFormat;
         this.lyricsService.updateLyric(this.selectedAccount.id!, this.song?.id!, this.selectedLyric!, this.currentUser);
       }
     }
-    else if(this.formatScope === FormatScope.USER) {
+    else if(this.lyricFormatWithScope.formatScope === FormatScope.USER) {
       this.clearLyricFormatSettings();
       //set the User formatSettings
-      this.currentUser.formatSettings = this.lyricFormat;
+      this.currentUser.formatSettings = this.lyricFormatWithScope.lyricFormat;
       if (this.currentUser.id) {
         this.userService.updateUser(this.currentUser.id, UserHelper.getForUpdate(this.currentUser));
       }
     }
-    else if(this.formatScope === FormatScope.ACCOUNT){
+    else if(this.lyricFormatWithScope.formatScope === FormatScope.ACCOUNT){
       this.clearLyricFormatSettings();
       this.clearUserFormatSettings();
-      this.selectedAccount.formatSettings = this.lyricFormat;
+      this.selectedAccount.formatSettings = this.lyricFormatWithScope.lyricFormat;
       this.accountService.updateAccount(this.selectedAccount.id!, this.currentUser, this.selectedAccount);
     }
   }
@@ -317,7 +322,7 @@ export class LyricsComponent {
 
   //When the lyric part changes in the dropdown this function will up date the state of the toolbar.
   private updateToolbarFromLyricFont() {
-    const selectedLyricPart = this.lyricFormat.lyricPartFormat.find(lyricPart => lyricPart.lyricPart === this.selectedLyricPart);
+    const selectedLyricPart = this.lyricFormatWithScope.lyricFormat.lyricPartFormat.find(lyricPart => lyricPart.lyricPart === this.selectedLyricPart);
     const newSelectedForntStyle: string[] = [];
     if (selectedLyricPart) {
       if(selectedLyricPart.isBold){
@@ -336,7 +341,7 @@ export class LyricsComponent {
     }
     
     //Global font name
-    this.selectedFont = this.lyricFormat.font;
+    this.selectedFont = this.lyricFormatWithScope.lyricFormat.font;
   }
 
   onSelectLyric(value: string) {
@@ -345,7 +350,7 @@ export class LyricsComponent {
     } else {
       //Switch to another lyrics. If there is no lyric id the route is different. 
       //You may get here without a lyric id when selecting from the song list.
-      if(this.selectedLyric?.id){
+      if(this.lyricId){
         this.router.navigate([`../${value}`], {
           relativeTo: this.activeRoute,
         });
@@ -360,7 +365,7 @@ export class LyricsComponent {
   }
 
   onBackToSong() {
-    if(this.selectedLyric?.id){
+    if(this.lyricId){
     this.router.navigate(["../../.."], { relativeTo: this.activeRoute, queryParams: {songid: this.song?.id} });
     }
     else{
