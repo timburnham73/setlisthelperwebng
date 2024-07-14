@@ -168,7 +168,10 @@
           
           <span *ngIf="!selectedLyric"> <a href="#" (click)="onAddLyric($event)">Click here to create lyric
               version.</a></span>
-          <div id="lyric-section" #lyricSection *ngIf="selectedLyric && selectedLyric?.lyrics" [innerHtml]="parsedLyric ?? '' | safeHtml"></div>
+              <!-- Mobile -->
+              <div id="lyric-section" fxShow fxHide.gt-md  #lyricSection *ngIf="selectedLyric && selectedLyric?.lyrics" [innerHtml]="parsedLyric ?? '' | safeHtml"></div>
+              <!-- Desktop -->
+              <div id="lyric-section" fxShow fxHide.lt-lg class="lyric-section" #lyricSection *ngIf="selectedLyric && selectedLyric?.lyrics" [innerHtml]="parsedLyric ?? '' | safeHtml"></div>
         </ng-container>
       </mat-card-content>
     </mat-card>

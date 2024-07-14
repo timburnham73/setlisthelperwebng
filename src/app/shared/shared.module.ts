@@ -12,6 +12,7 @@ import { YesNoPipe } from './pipes/yes-no.pipe';
 import { LayoutComponent } from './layout/layout.component';
 import { LayoutNoSidebarComponent } from './layout-no-sidebar/layout-no-sidebar.component';
 import { AutoFocusDirective } from './directives/auto-focus/auto-focus.directive';
+import { SwipeDirective } from './directives/swipe/swipe.directive';
 
 @NgModule({
     imports: [
@@ -28,6 +29,7 @@ import { AutoFocusDirective } from './directives/auto-focus/auto-focus.directive
         LayoutComponent,
         LayoutNoSidebarComponent,
         AutoFocusDirective,
+        SwipeDirective
     ],
     exports: [
         FormsModule,
@@ -40,6 +42,7 @@ import { AutoFocusDirective } from './directives/auto-focus/auto-focus.directive
         LocalDatePipe,
         YesNoPipe,
         AutoFocusDirective,
+        SwipeDirective
     ]
 })
 export class SharedModule { }

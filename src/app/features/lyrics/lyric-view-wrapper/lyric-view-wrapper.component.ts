@@ -29,6 +29,7 @@ import { FormatScope, Lyric } from 'src/app/core/model/lyric';
 import { LyricFormat, LyricFormatWithScope, fonts, lyricParts } from 'src/app/core/model/lyric-format';
 import { SetlistSongService } from 'src/app/core/services/setlist-songs.service';
 import { SetlistSong } from 'src/app/core/model/setlist-song';
+import { SwipeDirective } from 'src/app/shared/directives/swipe/swipe.directive';
 
 @Component({
   selector: 'app-lyric-view-wrapper',
@@ -49,6 +50,7 @@ import { SetlistSong } from 'src/app/core/model/setlist-song';
     MatButtonModule,
     MatMenuModule,
     SafeHtml,
+    SwipeDirective,
     FlexModule,
     FlexLayoutModule],
   templateUrl: './lyric-view-wrapper.component.html',
