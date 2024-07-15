@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { from, map, Observable, of, take } from "rxjs";
-import { Timestamp } from "@angular/fire/firestore";
+import { OrderByDirection, Timestamp } from "@angular/fire/firestore";
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
 import { Setlist, SetlistHelper } from '../model/setlist';
 import { Account } from '../model/account';
@@ -31,9 +31,9 @@ export class SetlistService {
     );
   }
 
-  getSetlists(accountId: string): Observable<any> {
+  getSetlists(accountId: string, sortField: string, sortOrder: OrderByDirection = 'asc'): Observable<any> {
     const dbPath = `/accounts/${accountId}/setlists`;
-    const setlistsRef = this.db.collection(dbPath, ref => ref.orderBy("gigDate", 'desc'));
+    const setlistsRef = this.db.collection(dbPath, ref => ref.orderBy(sortField, sortOrder));
     return setlistsRef.snapshotChanges().pipe(
       map(changes =>
         changes.map(c =>

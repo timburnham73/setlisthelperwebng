@@ -3,12 +3,12 @@ import { SetlistEditDialogComponent } from "../setlist-edit-dialog/setlist-edit-
 import { MatTableDataSource as MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { AccountActions, AccountState } from "src/app/core/store/account.state";
 import { MatDialog as MatDialog } from "@angular/material/dialog";
-import { MatSort, MatSortModule } from "@angular/material/sort";
+import { MatSort, MatSortModule, Sort } from "@angular/material/sort";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Select, Store } from "@ngxs/store";
 import { NGXLogger } from "ngx-logger";
-import { Observable, first } from "rxjs";
+import { Observable, finalize, first } from "rxjs";
 import { Account } from "src/app/core/model/account";
 import { SetlistService } from "src/app/core/services/setlist.service";
 import { AccountSetlist } from "src/app/core/model/account-setlist";
@@ -56,9 +56,12 @@ export class SetlistListComponent implements OnInit {
   showRemove = false;
   showFind = false;
   displayedColumns: string[] = ["name", "gigLocation", "gigDate", "setlistedit", "remove"];
-  dataSource = new MatTableDataSource();
+  
+  loading = false;
+
   setlists: Setlist[];
   filteredSetlists: Setlist[];
+
   accountId?: string;
   selectedSetlist?: Setlist;
   setlistSongs: SetlistSong[];
@@ -94,13 +97,16 @@ export class SetlistListComponent implements OnInit {
     const selectedAccount = this.store.selectSnapshot(
       AccountState.selectedAccount
     );
+    
+    this.loading = true;
 
     const id = this.route.snapshot.paramMap.get("accountid");
     if (id) {
       this.accountId = id;
-      this.setlistService.getSetlists(this.accountId).subscribe((setlists) => {
+      this.setlistService.getSetlists(this.accountId, "gigDate").subscribe((setlists) => {
+        this.loading = false;
         this.setlists = this.filteredSetlists = setlists;
-        this.dataSource = new MatTableDataSource(setlists);
+        
         if (setlists && setlists.length && this.selectedSetlist === undefined) {
           this.selectRow(setlists[0]);
         }
@@ -110,8 +116,6 @@ export class SetlistListComponent implements OnInit {
 
   ngOnInit() {
     this.titleService.setTitle("Setlists");
-
-    this.dataSource.sort = this.sort;
   }
 
   onAddSetlist() {
@@ -216,6 +220,16 @@ export class SetlistListComponent implements OnInit {
 
   search(search: string){
     this.filteredSetlists = this.setlists.filter((setlist) => setlist.name.toLowerCase().includes(search));
+  }
+
+  sortChange(sortState: Sort) {
+    this.setlistService.getSetlists(this.accountId!, sortState.active, sortState.direction === "asc" ? "asc" : "desc")
+        .pipe(
+          finalize(() => this.loading = false)
+        )
+        .subscribe((setlists) => {
+          this.setlists = this.filteredSetlists = setlists;
+        });
   }
 
   getSetlistDateInSeconds(setlist: Setlist){

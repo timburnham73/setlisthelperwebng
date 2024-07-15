@@ -94,15 +94,16 @@
           }
           <span class="spacer"></span>
           <form class="search-form">
-            <mat-form-field subscriptSizing="dynamic">
-              <mat-label>Search</mat-label>
-              <input type="text" matInput 
-                     placeholder="Search">
-            </mat-form-field>
+            <form class="search-form">
+              <mat-form-field class="search-field" appearance="outline" subscriptSizing="dynamic">
+                <mat-label>Search</mat-label>
+                <input type="text" matInput (keyup)="search(inputSearch.value)" #inputSearch autofocus placeholder="Search">
+              </mat-form-field>
+            </form>
           </form>
         </mat-toolbar>
         <div class="table-container">
-          <table mat-table [dataSource]="dataSource" matSort class="setlist-table">
+          <table mat-table [dataSource]="filteredSetlists" matSort class="setlist-table" (matSortChange)="sortChange($event)">
             <!-- Name Column -->
             <ng-container matColumnDef="name">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
