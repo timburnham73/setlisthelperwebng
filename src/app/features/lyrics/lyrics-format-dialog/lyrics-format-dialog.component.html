@@ -34,6 +34,16 @@
             </mat-menu>
         </p>
         <p>
+            <mat-form-field class="toolbar-item" appearance="outline" subscriptSizing="dynamic">
+            <mat-label>Song Part</mat-label>
+            <mat-select [(value)]="selectedLyricPart" (selectionChange)="onSelectLyricPart($event.value)">
+                <mat-option *ngFor="let lyricPart of lyricParts" [value]="lyricPart.value">
+                {{lyricPart.name}}
+                </mat-option>
+            </mat-select>
+            </mat-form-field>
+        </p>
+        <p>
             <mat-form-field appearance="outline" subscriptSizing="dynamic">
                 <mat-label>Font</mat-label>
                 <mat-select [(value)]="selectedFont" (selectionChange)="onSelectFont($event.value)">
@@ -77,7 +87,6 @@
         <button mat-button (click)="onNoClick()">Cancel</button>
         <button mat-raised-button class="mat-primary" (click)="onSave()">
             Save
-
         </button>
     </div>
 </form>

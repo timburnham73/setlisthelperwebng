@@ -154,11 +154,11 @@
           <mat-card-content *ngFor="let song of filteredSongs" (click)="onViewLyrics($event, song)" [id]="song.id">
             <div class="py-12 px-1 b-b-1">
               <div class="flex align-items-center w-100">
-                <div class="w-100">
+                <div class="w-85">
                   <p><b>{{song.name}}</b></p>
                   <p>{{songService.getSongDetails(song)}}</p>
                 </div>
-                <div class="w-100">
+                <div class="w-15">
                   <div class="flex justify-content-end mr-1">
                     @if(!showRemove){
                       <button mat-icon-button aria-label="Edit Song" (click)="$event.stopPropagation(); onEditSong(song);">

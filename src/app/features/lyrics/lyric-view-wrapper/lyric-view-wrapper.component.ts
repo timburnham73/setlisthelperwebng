@@ -98,6 +98,8 @@ export class LyricViewWrapperComponent {
       this.selectedAccount = this.store.selectSnapshot(
         AccountState.selectedAccount
       );
+      
+      this.loading = true;
 
       if(this.selectedAccount && this.selectedAccount.id){
         this.setlistId = this.activeRoute.snapshot.paramMap.get("setlistid") || undefined;
