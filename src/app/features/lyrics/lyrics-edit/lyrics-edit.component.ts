@@ -90,10 +90,6 @@ export class LyricsEditComponent implements OnInit {
     }
   }
 
-  ngOnInit(): void {
-
-  }
-
   onSaveSong(){
     this.selectedLyric.lyrics = this.lyrics?.value;
     this.lyricsService.updateLyric(this.accountId!, this.songId!, this.selectedLyric, this.currentUser).subscribe((result) => {

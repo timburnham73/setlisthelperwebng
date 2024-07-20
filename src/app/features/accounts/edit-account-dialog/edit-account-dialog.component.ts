@@ -69,8 +69,4 @@ export class EditAccountDialogComponent implements OnInit {
     this.dialogRef.close(modifiedAccount);
   }
 
-  ngOnInit(): void {
-    
-  }
-
 }

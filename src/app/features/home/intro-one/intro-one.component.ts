@@ -20,8 +20,7 @@ export class IntroOneComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit() {
-  }
+  
   buyAngland() {
     window.open('');
   }

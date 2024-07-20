@@ -25,8 +25,6 @@ export class HeaderComponent implements OnInit {
     @Inject(WINDOW) private window: Window
   ) { }
 
-  ngOnInit() {
-  }
   @HostListener("window:scroll", [])
   onWindowScroll() {
     const offset = this.window.pageYOffset || this.document.documentElement.scrollTop || this.document.body.scrollTop || 0;

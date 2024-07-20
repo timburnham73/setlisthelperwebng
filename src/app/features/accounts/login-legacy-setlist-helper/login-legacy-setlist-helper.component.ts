@@ -90,8 +90,4 @@ export class LoginLegacySetlistHelperComponent implements OnInit{
       })
     ).subscribe();
   }
-
-  ngOnInit(): void {
-    
-  }
 }

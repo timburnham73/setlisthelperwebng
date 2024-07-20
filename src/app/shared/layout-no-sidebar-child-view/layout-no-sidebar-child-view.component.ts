@@ -72,11 +72,7 @@ export class LayoutNoSidebarChildViewComponent
     // tslint:disable-next-line: deprecation
     this.mobileQuery.addListener(this._mobileQueryListener);
   }
-
-  ngOnInit(): void {
-    
-  }
-
+  
   ngOnDestroy(): void {
     // tslint:disable-next-line: deprecation
     this.mobileQuery.removeListener(this._mobileQueryListener);
