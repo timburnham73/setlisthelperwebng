@@ -240,10 +240,10 @@
     vite "5.3.2"
     watchpack "2.4.1"
 
-"@angular/cdk@^17.0.0", "@angular/cdk@^17.0.3", "@angular/cdk@17.3.10":
-  version "17.3.10"
-  resolved "https://registry.npmjs.org/@angular/cdk/-/cdk-17.3.10.tgz"
-  integrity sha512-b1qktT2c1TTTe5nTji/kFAVW92fULK0YhYAvJ+BjZTPKu2FniZNe8o4qqQ0pUuvtMu+ZQxp/QqFYoidIVCjScg==
+"@angular/cdk@^18.0.0", "@angular/cdk@^18.1.1", "@angular/cdk@17.3.10":
+  version "18.1.1"
+  resolved "https://registry.npmjs.org/@angular/cdk/-/cdk-18.1.1.tgz"
+  integrity sha512-IaDjvRUgAoKnEeafrnBX+hjTR+1M3O3fV3AybBCjN4NuiPtuyOJiTMg0cTv6RbluJ/SenbT4MQq3tMpOsa9i4w==
   dependencies:
     tslib "^2.3.0"
   optionalDependencies:
@@ -272,7 +272,7 @@
     symbol-observable "4.0.0"
     yargs "17.7.2"
 
-"@angular/common@^17.0.0 || ^18.0.0", "@angular/common@^17.0.4", "@angular/common@^18.0.0", "@angular/common@^18.1.1", "@angular/common@18.1.1":
+"@angular/common@^17.0.0 || ^18.0.0", "@angular/common@^18.0.0", "@angular/common@^18.0.0 || ^19.0.0", "@angular/common@^18.1.1", "@angular/common@18.1.1":
   version "18.1.1"
   resolved "https://registry.npmjs.org/@angular/common/-/common-18.1.1.tgz"
   integrity sha512-qNfYAapvIi8JyQToSqbg3O5dRXaElv/yNp2evvBGn4UO/liHjdNV/DzgCdyKP7uVbYrR0W3bzj++SxVR3mrATQ==
@@ -300,7 +300,7 @@
   dependencies:
     tslib "^2.3.0"
 
-"@angular/core@^17.0.0 || ^18.0.0", "@angular/core@^17.0.4", "@angular/core@^18.0.0", "@angular/core@^18.1.1", "@angular/core@>=16.0.0 <19.0.0", "@angular/core@18.1.1":
+"@angular/core@^17.0.0 || ^18.0.0", "@angular/core@^18.0.0", "@angular/core@^18.0.0 || ^19.0.0", "@angular/core@^18.1.1", "@angular/core@>=16.0.0 <19.0.0", "@angular/core@18.1.1":
   version "18.1.1"
   resolved "https://registry.npmjs.org/@angular/core/-/core-18.1.1.tgz"
   integrity sha512-/JFQ49fVIthZzdggl7FOCYAjaynbkRcCyiri85kAyTIvJ6aMSIiEKwJCw45WI5ICf2HtC9kz6dr0OKhMR6SeiA==
@@ -404,7 +404,7 @@
   dependencies:
     tslib "^2.3.0"
 
-"@angular/platform-browser@^17.0.0 || ^18.0.0", "@angular/platform-browser@^17.0.4", "@angular/platform-browser@^18.0.0", "@angular/platform-browser@^18.1.1", "@angular/platform-browser@18.1.1":
+"@angular/platform-browser@^17.0.0 || ^18.0.0", "@angular/platform-browser@^18.0.0", "@angular/platform-browser@^18.1.1", "@angular/platform-browser@18.1.1":
   version "18.1.1"
   resolved "https://registry.npmjs.org/@angular/platform-browser/-/platform-browser-18.1.1.tgz"
   integrity sha512-9FG2+NSWJXo+zu/W7VQE0UpaWejbV62AXW7218FBZXOdkdID5oNxHf0QdJ3hCaIJw1dKZEG49BTq005d9yQbew==
@@ -8185,10 +8185,10 @@ netmask@^2.0.2:
   resolved "https://registry.npmjs.org/netmask/-/netmask-2.0.2.tgz"
   integrity sha512-dBpDMdxv9Irdq66304OLfEmQ9tbNRFnFTuZiLo+bD+r332bBmMJ8GBLXklIXXgxd3+v9+KUnZaUR5PJMa75Gsg==
 
-ngx-flexible-layout@^17.0.4:
-  version "17.0.4"
-  resolved "https://registry.npmjs.org/ngx-flexible-layout/-/ngx-flexible-layout-17.0.4.tgz"
-  integrity sha512-yF07mRiP9q3CHa3jAdxU4F2TVnnHjPL9P2VsoVWx4Ykcb3r0hXRXhmQF41Sv+rMvG78trbxJf5JZBl9zAdKFfQ==
+ngx-flexible-layout@^18.0.1:
+  version "18.0.1"
+  resolved "https://registry.npmjs.org/ngx-flexible-layout/-/ngx-flexible-layout-18.0.1.tgz"
+  integrity sha512-kU61N2dPZ2Ph0zzfkn/uBw0bisuI/RJZjt29uYRvtLeufvdpWu38hqxvf0aQroH23J8neSeRYje86hg8ZIr44g==
   dependencies:
     tslib "^2.3.0"
 
