@@ -300,7 +300,7 @@
   dependencies:
     tslib "^2.3.0"
 
-"@angular/core@^14.0.0", "@angular/core@^17.0.0 || ^18.0.0", "@angular/core@^17.0.4", "@angular/core@^18.0.0", "@angular/core@^18.1.1", "@angular/core@>=12.0.0 <18.0.0", "@angular/core@18.1.1":
+"@angular/core@^17.0.0 || ^18.0.0", "@angular/core@^17.0.4", "@angular/core@^18.0.0", "@angular/core@^18.1.1", "@angular/core@>=12.0.0 <18.0.0", "@angular/core@18.1.1":
   version "18.1.1"
   resolved "https://registry.npmjs.org/@angular/core/-/core-18.1.1.tgz"
   integrity sha512-/JFQ49fVIthZzdggl7FOCYAjaynbkRcCyiri85kAyTIvJ6aMSIiEKwJCw45WI5ICf2HtC9kz6dr0OKhMR6SeiA==
@@ -2947,10 +2947,10 @@
     "@emnapi/runtime" "^1.1.0"
     "@tybys/wasm-util" "^0.9.0"
 
-"@ngrx/store@^14.3.3":
-  version "14.3.3"
-  resolved "https://registry.npmjs.org/@ngrx/store/-/store-14.3.3.tgz"
-  integrity sha512-VhPDR2a5OQJfrVRah3vdJgL/F6UC8NU/X7lxKFqBW3NC+pmlIeFO/y8jLrZOKBXwG45tY9wrg15S70nEGoZtHA==
+"@ngrx/store@^18.0.1":
+  version "18.0.1"
+  resolved "https://registry.npmjs.org/@ngrx/store/-/store-18.0.1.tgz"
+  integrity sha512-TxZiQz06fGSxQ0clYfzkH4NCr6tfa8A7zqzkvvOOK1ZezOHHsk0vZJJtgxQcKUqAQxPpbp5+Z7YR8P/Fuid7GQ==
   dependencies:
     tslib "^2.0.0"
 
