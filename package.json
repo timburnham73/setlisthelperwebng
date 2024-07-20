@@ -19,7 +19,7 @@
     "@angular/common": "^18.1.1",
     "@angular/compiler": "^18.1.1",
     "@angular/core": "^18.1.1",
-    "@angular/fire": "^17.0.1",
+    "@angular/fire": "^18.0.1",
     "@angular/forms": "^18.1.1",
     "@angular/material": "^17.0.3",
     "@angular/material-moment-adapter": "^17.0.3",
@@ -40,7 +40,7 @@
     "ngx-flexible-layout": "^17.0.4",
     "ngx-logger": "^5.0.7",
     "primeflex": "^3.3.1",
-    "rxjs": "~7.5.0",
+    "rxjs": "~7.8.1",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.3"
   },
