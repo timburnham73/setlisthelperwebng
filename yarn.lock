@@ -200,7 +200,7 @@
   dependencies:
     "@angular-eslint/bundled-angular-compiler" "18.1.0"
 
-"@angular/animations@^17.0.0 || ^18.0.0", "@angular/animations@^18.1.1", "@angular/animations@18.1.1":
+"@angular/animations@^18.0.0 || ^19.0.0", "@angular/animations@^18.1.1", "@angular/animations@18.1.1":
   version "18.1.1"
   resolved "https://registry.npmjs.org/@angular/animations/-/animations-18.1.1.tgz"
   integrity sha512-3BdB6lB7TT1BQFb8C3XyJ5A9YSrOx951NzcXnzFfTNiq1C+VeR455LtdNiDTPa9Vf5Df1cJb6ReJ1z17ztx+6Q==
@@ -240,7 +240,7 @@
     vite "5.3.2"
     watchpack "2.4.1"
 
-"@angular/cdk@^18.0.0", "@angular/cdk@^18.1.1", "@angular/cdk@17.3.10":
+"@angular/cdk@^18.0.0", "@angular/cdk@^18.1.1", "@angular/cdk@18.1.1":
   version "18.1.1"
   resolved "https://registry.npmjs.org/@angular/cdk/-/cdk-18.1.1.tgz"
   integrity sha512-IaDjvRUgAoKnEeafrnBX+hjTR+1M3O3fV3AybBCjN4NuiPtuyOJiTMg0cTv6RbluJ/SenbT4MQq3tMpOsa9i4w==
@@ -272,7 +272,7 @@
     symbol-observable "4.0.0"
     yargs "17.7.2"
 
-"@angular/common@^17.0.0 || ^18.0.0", "@angular/common@^18.0.0", "@angular/common@^18.0.0 || ^19.0.0", "@angular/common@^18.1.1", "@angular/common@18.1.1":
+"@angular/common@^18.0.0", "@angular/common@^18.0.0 || ^19.0.0", "@angular/common@^18.1.1", "@angular/common@18.1.1":
   version "18.1.1"
   resolved "https://registry.npmjs.org/@angular/common/-/common-18.1.1.tgz"
   integrity sha512-qNfYAapvIi8JyQToSqbg3O5dRXaElv/yNp2evvBGn4UO/liHjdNV/DzgCdyKP7uVbYrR0W3bzj++SxVR3mrATQ==
@@ -300,7 +300,7 @@
   dependencies:
     tslib "^2.3.0"
 
-"@angular/core@^17.0.0 || ^18.0.0", "@angular/core@^18.0.0", "@angular/core@^18.0.0 || ^19.0.0", "@angular/core@^18.1.1", "@angular/core@>=16.0.0 <19.0.0", "@angular/core@18.1.1":
+"@angular/core@^18.0.0", "@angular/core@^18.0.0 || ^19.0.0", "@angular/core@^18.1.1", "@angular/core@>=16.0.0 <19.0.0", "@angular/core@18.1.1":
   version "18.1.1"
   resolved "https://registry.npmjs.org/@angular/core/-/core-18.1.1.tgz"
   integrity sha512-/JFQ49fVIthZzdggl7FOCYAjaynbkRcCyiri85kAyTIvJ6aMSIiEKwJCw45WI5ICf2HtC9kz6dr0OKhMR6SeiA==
@@ -329,24 +329,24 @@
     tslib "^2.3.0"
     winston "^3.0.0"
 
-"@angular/forms@^17.0.0 || ^18.0.0", "@angular/forms@^18.1.1":
+"@angular/forms@^18.0.0 || ^19.0.0", "@angular/forms@^18.1.1":
   version "18.1.1"
   resolved "https://registry.npmjs.org/@angular/forms/-/forms-18.1.1.tgz"
   integrity sha512-CceH57IKeH2Zq8QFFkcJMvBbjxVRCtqzAqSETfShWzrt+ITrz4c6EnUMbj30iz+ntn/R+qGAp3n/t0D7HtTS6Q==
   dependencies:
     tslib "^2.3.0"
 
-"@angular/material-moment-adapter@^17.0.3":
-  version "17.3.10"
-  resolved "https://registry.npmjs.org/@angular/material-moment-adapter/-/material-moment-adapter-17.3.10.tgz"
-  integrity sha512-R68ssdGMSmVIfpOGaB9vjW5lBh6zH9GboBuaIAqizC/ZAzdEgpmT7qdr3PBCmRPTLTx8Yx9K3rhgRekO79ympw==
+"@angular/material-moment-adapter@^18.1.1":
+  version "18.1.1"
+  resolved "https://registry.npmjs.org/@angular/material-moment-adapter/-/material-moment-adapter-18.1.1.tgz"
+  integrity sha512-ic/+fp+meIVqGofYYyZrsJMWI27uUKpSV87JVeBurW2Y2hkZooa79Rk0xCPYNt6JbTAuRLPJOSXT1wrul/pobA==
   dependencies:
     tslib "^2.3.0"
 
-"@angular/material@^17.0.3", "@angular/material@17.3.10":
-  version "17.3.10"
-  resolved "https://registry.npmjs.org/@angular/material/-/material-17.3.10.tgz"
-  integrity sha512-hHMQES0tQPH5JW33W+mpBPuM8ybsloDTqFPuRV8cboDjosAWfJhzAKF3ozICpNlUrs62La/2Wu/756GcQrxebg==
+"@angular/material@^18.1.1", "@angular/material@18.1.1":
+  version "18.1.1"
+  resolved "https://registry.npmjs.org/@angular/material/-/material-18.1.1.tgz"
+  integrity sha512-9JdUEUZheMMk+Tu8oDLRdI2eXOeI9d2BjEZYkoDif4iB7TCldmcKJyTYXs3kSZz6B53vup/vgKJUPBHLkIDD+A==
   dependencies:
     "@material/animation" "15.0.0-canary.7f224ddd4.0"
     "@material/auto-init" "15.0.0-canary.7f224ddd4.0"
@@ -391,6 +391,7 @@
     "@material/tab-scroller" "15.0.0-canary.7f224ddd4.0"
     "@material/textfield" "15.0.0-canary.7f224ddd4.0"
     "@material/theme" "15.0.0-canary.7f224ddd4.0"
+    "@material/tokens" "15.0.0-canary.7f224ddd4.0"
     "@material/tooltip" "15.0.0-canary.7f224ddd4.0"
     "@material/top-app-bar" "15.0.0-canary.7f224ddd4.0"
     "@material/touch-target" "15.0.0-canary.7f224ddd4.0"
@@ -404,7 +405,7 @@
   dependencies:
     tslib "^2.3.0"
 
-"@angular/platform-browser@^17.0.0 || ^18.0.0", "@angular/platform-browser@^18.0.0", "@angular/platform-browser@^18.1.1", "@angular/platform-browser@18.1.1":
+"@angular/platform-browser@^18.0.0", "@angular/platform-browser@^18.0.0 || ^19.0.0", "@angular/platform-browser@^18.1.1", "@angular/platform-browser@18.1.1":
   version "18.1.1"
   resolved "https://registry.npmjs.org/@angular/platform-browser/-/platform-browser-18.1.1.tgz"
   integrity sha512-9FG2+NSWJXo+zu/W7VQE0UpaWejbV62AXW7218FBZXOdkdID5oNxHf0QdJ3hCaIJw1dKZEG49BTq005d9yQbew==
