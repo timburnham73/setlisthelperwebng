@@ -6,6 +6,7 @@
     "outDir": "./dist/out-tsc",
     "strictPropertyInitialization": false,
     "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true,
     "strict": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": false,
@@ -13,7 +14,6 @@
     "noFallthroughCasesInSwitch": true,
     "sourceMap": true,
     "declaration": false,
-    "downlevelIteration": true,
     "experimentalDecorators": true,
     "moduleResolution": "node",
     "importHelpers": true,
@@ -22,7 +22,6 @@
     "useDefineForClassFields": false,
     "skipLibCheck": true ,
     "noImplicitAny": false,
-    "allowSyntheticDefaultImports": true,
     "useUnknownInCatchVariables": false,
     "lib": [
       "ES2022",
