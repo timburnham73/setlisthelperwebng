@@ -59,7 +59,7 @@ import {
 } from "@angular/fire/functions";
 import { connectAuthEmulator, getAuth, provideAuth } from "@angular/fire/auth";
 import { connectFirestoreEmulator } from "@angular/fire/firestore";
-import { NgxMatDatetimePickerModule, NgxMatTimepickerModule } from '@angular-material-components/datetime-picker';
+//import { NgxMatDatetimePickerModule, NgxMatTimepickerModule } from '@angular-material-components/datetime-picker';
 if (environment.production) {
   enableProdMode();
 } else {
@@ -101,8 +101,9 @@ bootstrapApplication(AppComponent, {
       AngularFireAnalyticsModule,
       AngularFireFunctionsModule,
       // provide modular style for AppCheck, see app.browser/server
-      provideFirebaseApp(() => initializeApp(environment.firebase))
+
     ),
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideAnimations(),
     {
       provide: FIRESTORE_SETTINGS,

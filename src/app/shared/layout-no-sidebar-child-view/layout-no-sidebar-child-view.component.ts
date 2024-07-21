@@ -46,8 +46,7 @@ import { FlexLayoutModule, FlexModule } from "ngx-flexible-layout";
         FlexModule
     ],
 })
-export class LayoutNoSidebarChildViewComponent
-  implements OnInit, OnDestroy, AfterViewInit
+export class LayoutNoSidebarChildViewComponent implements OnDestroy
 {
   private _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;
@@ -71,6 +70,9 @@ export class LayoutNoSidebarChildViewComponent
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     // tslint:disable-next-line: deprecation
     this.mobileQuery.addListener(this._mobileQueryListener);
+  }
+  ngOnInit(): void {
+    throw new Error("Method not implemented.");
   }
   
   ngOnDestroy(): void {

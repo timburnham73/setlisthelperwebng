@@ -1,5 +1,5 @@
-import { NgxMatDatetimePickerModule, NgxMatTimepickerModule } from '@angular-material-components/datetime-picker';
-import { NgxMatMomentModule } from '@angular-material-components/moment-adapter';
+//import { NgxMatDatetimePickerModule, NgxMatTimepickerModule } from '@angular-material-components/datetime-picker';
+//import { NgxMatMomentModule } from '@angular-material-components/moment-adapter';
 import { NgFor, NgIf } from '@angular/common';
 import { Component, Inject } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -23,9 +23,6 @@ import { LyricsService } from 'src/app/core/services/lyrics.service';
   standalone: true,
   imports: [
     FormsModule, 
-    NgxMatDatetimePickerModule,
-    NgxMatMomentModule,
-    NgxMatTimepickerModule, 
     ReactiveFormsModule, 
     MatDialogModule, 
     NgIf, 

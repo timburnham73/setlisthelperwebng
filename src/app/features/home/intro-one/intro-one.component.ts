@@ -16,7 +16,7 @@ import { FlexLayoutModule } from 'ngx-flexible-layout';
   templateUrl: './intro-one.component.html',
   styleUrls: ['./intro-one.component.scss']
 })
-export class IntroOneComponent implements OnInit {
+export class IntroOneComponent {
 
   constructor() { }
 

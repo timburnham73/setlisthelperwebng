@@ -21,7 +21,7 @@ import { NgIf } from '@angular/common';
     standalone: true,
     imports: [FormsModule, ReactiveFormsModule, MatDialogModule, NgIf, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule]
 })
-export class EditAccountDialogComponent implements OnInit {
+export class EditAccountDialogComponent {
   saving = false;
   isNew = true;
   currentUser: BaseUser;

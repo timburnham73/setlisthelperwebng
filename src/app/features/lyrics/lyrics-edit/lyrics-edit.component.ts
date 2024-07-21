@@ -28,7 +28,7 @@ import { FlexLayoutModule } from 'ngx-flexible-layout';
     standalone: true,
     imports: [MatCardModule, MatToolbarModule, MatButtonModule, MatIconModule, FormsModule, ReactiveFormsModule, MatProgressSpinnerModule, NgIf, FlexLayoutModule]
 })
-export class LyricsEditComponent implements OnInit {
+export class LyricsEditComponent {
   @ViewChild('lyrics') lyricsInput: ElementRef;
   currentUser: BaseUser;
   accountId?: string;

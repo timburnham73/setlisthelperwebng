@@ -27,7 +27,7 @@ import { environment } from 'src/environments/environment';
   templateUrl: './login-legacy-setlist-helper.component.html',
   styleUrl: './login-legacy-setlist-helper.component.scss'
 })
-export class LoginLegacySetlistHelperComponent implements OnInit{
+export class LoginLegacySetlistHelperComponent {
   saving = false;
   currentUser: BaseUser;
   couldNotLogin: boolean = false;

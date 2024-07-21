@@ -14,28 +14,28 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS, MatFormFieldModule } from '@angular/material/form-field';
 import { NgIf } from '@angular/common';
-import { NgxMatDatetimePickerModule, NgxMatTimepickerModule, NgxMatNativeDateModule } from '@angular-material-components/datetime-picker';
-import { NgxMatMomentModule } from '@angular-material-components/moment-adapter';
+//import { NgxMatDatetimePickerModule, NgxMatTimepickerModule, NgxMatNativeDateModule } from '@angular-material-components/datetime-picker';
+//import { NgxMatMomentModule } from '@angular-material-components/moment-adapter';
 import { MatNativeDateModule, ThemePalette } from '@angular/material/core';
 import * as moment from 'moment';
-import {
-  NgxMatDateFormats,
-  NGX_MAT_DATE_FORMATS
-} from '@angular-material-components/datetime-picker';
+// import {
+//   NgxMatDateFormats,
+//   NGX_MAT_DATE_FORMATS
+// } from '@angular-material-components/datetime-picker';
 
 
 
-export const CUSTOM_DATE_FORMATS: NgxMatDateFormats = {
-  parse: {
-    dateInput: 'l, LT',
-  },
-  display: {
-    dateInput: 'l, LT',
-    monthYearLabel: 'MM yyyy',
-    dateA11yLabel: 'LL',
-    monthYearA11yLabel: 'MMMM YYYY',
-  }
-};
+// export const CUSTOM_DATE_FORMATS: NgxMatDateFormats = {
+//   parse: {
+//     dateInput: 'l, LT',
+//   },
+//   display: {
+//     dateInput: 'l, LT',
+//     monthYearLabel: 'MM yyyy',
+//     dateA11yLabel: 'LL',
+//     monthYearA11yLabel: 'MMMM YYYY',
+//   }
+// };
 @Component({
     selector: 'app-setlist-edit-dialog',
     templateUrl: './setlist-edit-dialog.component.html',
@@ -44,9 +44,9 @@ export const CUSTOM_DATE_FORMATS: NgxMatDateFormats = {
     
     imports: [
       FormsModule, 
-      NgxMatDatetimePickerModule,
-      NgxMatMomentModule,
-      NgxMatTimepickerModule, 
+      // NgxMatDatetimePickerModule,
+      // NgxMatMomentModule,
+      // NgxMatTimepickerModule, 
       ReactiveFormsModule, 
       MatDialogModule, 
       NgIf, 
@@ -56,7 +56,7 @@ export const CUSTOM_DATE_FORMATS: NgxMatDateFormats = {
       MatButtonModule, 
       MatIconModule, 
       MatProgressSpinnerModule],
-      providers: [{ provide: NGX_MAT_DATE_FORMATS, useValue: CUSTOM_DATE_FORMATS }]
+      //providers: [{ provide: NGX_MAT_DATE_FORMATS, useValue: CUSTOM_DATE_FORMATS }]
 })
 export class SetlistEditDialogComponent {
   currentUser: BaseUser;

@@ -18,7 +18,7 @@ import { FlexLayoutModule } from 'ngx-flexible-layout';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent {
   isFixed;
   constructor(
     @Inject(DOCUMENT) private document: Document,
