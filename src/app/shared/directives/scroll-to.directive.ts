@@ -19,7 +19,7 @@ export class ScrollToDirective implements OnInit {
 
   elmYPosition(eID) {
     var elm = document.getElementById(eID);
-    var y = elm.offsetTop;
+    var y = elm?.offsetTop;
     var node: any = elm;
     while (node.offsetParent && node.offsetParent != document.body) {
       node = node.offsetParent;
