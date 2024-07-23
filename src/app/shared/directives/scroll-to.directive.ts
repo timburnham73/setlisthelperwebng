@@ -1,6 +1,9 @@
 import { Directive, ElementRef, Attribute, OnInit, HostListener } from '@angular/core';
 
-@Directive({ selector: '[scrollTo]' })
+@Directive({ 
+  selector: '[scrollTo]',
+  standalone: true, 
+})
 export class ScrollToDirective implements OnInit {
   constructor( @Attribute('scrollTo') public elmID: string, private el: ElementRef) { }
 
@@ -32,8 +35,8 @@ export class ScrollToDirective implements OnInit {
   smoothScroll() {
     if(!this.elmID)
       return;
-    var startY = this.currentYPosition();
-    var stopY = this.elmYPosition(this.elmID);
+    var startY = this.currentYPosition() || 0;
+    var stopY = this.elmYPosition(this.elmID) || 0;
     var distance = stopY > startY ? stopY - startY : startY - stopY;
     if (distance < 100) {
       scrollTo(0, stopY);

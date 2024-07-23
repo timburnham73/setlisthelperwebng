@@ -4,6 +4,7 @@ import { WINDOW_PROVIDERS, WINDOW } from '../../../shared/helpers/window.helper'
 import { MatIcon } from '@angular/material/icon';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { FlexLayoutModule } from 'ngx-flexible-layout';
+import { ScrollToDirective } from 'src/app/shared/directives/scroll-to.directive';
 
 @Component({
   selector: 'app-header',
@@ -13,7 +14,8 @@ import { FlexLayoutModule } from 'ngx-flexible-layout';
     NgClass,
     MatIconButton,
     MatButton,
-    FlexLayoutModule
+    FlexLayoutModule,
+    ScrollToDirective
   ],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
