@@ -3,12 +3,14 @@ import { MatButton, MatButtonModule } from '@angular/material/button';
 import { MatCardImage } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatTabGroup, MatTab } from '@angular/material/tabs';
+import { RouterLink } from '@angular/router';
 import { FlexLayoutModule } from 'ngx-flexible-layout';
 
 @Component({
   selector: 'app-intro',
   standalone: true,
   imports: [
+    RouterLink,
     MatIcon,
     MatButton,
     MatButtonModule,

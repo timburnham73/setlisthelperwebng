@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
+import { AuthenticationService } from './core/services/auth.service';
 
 @Component({
     selector: 'app-root',
@@ -7,4 +8,12 @@ import { RouterOutlet } from '@angular/router';
     standalone: true,
     imports: [RouterOutlet]
 })
-export class AppComponent {}
+export class AppComponent {
+    constructor(authService: AuthenticationService, router: Router) {
+        authService.isLoggedIn$.subscribe((isLoggedIn) => {
+            if(isLoggedIn){
+                router.navigate(['/accounts']);
+            }
+          });
+      }
+}

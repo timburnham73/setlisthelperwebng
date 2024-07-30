@@ -7,9 +7,15 @@ import { NgxsStoragePluginModule } from '@ngxs/storage-plugin';
 
 
 
-@NgModule({ declarations: [], imports: [NgxsModule.forFeature([AccountState]),
-        NgxsStoragePluginModule.forRoot({ keys: '*' })], providers: [
+@NgModule({
+    declarations: [], 
+    imports: [
+        NgxsStoragePluginModule.forRoot({ keys: '*' }),
+        NgxsModule.forFeature([AccountState])
+    ], 
+    providers: [
         AccountService,
         provideHttpClient(withInterceptorsFromDi())
-    ] })
+    ]
+})
 export class AccountStateModule { }
