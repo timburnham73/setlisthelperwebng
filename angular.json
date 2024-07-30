@@ -37,7 +37,9 @@
             "scripts": [],
             "allowedCommonJsDependencies": [
                 "lodash",
+                "lodash.get",
                 "moment",
+                "material-design-lite",
                 "dialog-polyfill"
             ],
             "browser": "src/main.ts"
