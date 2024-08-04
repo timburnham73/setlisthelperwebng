@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { AuthenticationService } from './core/services/auth.service';
 
 @Component({
@@ -10,10 +10,16 @@ import { AuthenticationService } from './core/services/auth.service';
 })
 export class AppComponent {
     constructor(authService: AuthenticationService, router: Router) {
-        authService.isLoggedIn$.subscribe((isLoggedIn) => {
-            if(isLoggedIn){
-                router.navigate(['/accounts']);
+        router.events.subscribe((event:any) => {
+            if(event.type === 1){
+                console.log(event);
+                if (event.url === '/home' || event.url === '/auth/login')
+                    authService.isLoggedIn$.subscribe((isLoggedIn) => {
+                        if(isLoggedIn){
+                            router.navigate(['/accounts']);   
+                        }
+                      });
             }
-          });
-      }
+    });
+  } 
 }
