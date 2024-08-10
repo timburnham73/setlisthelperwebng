@@ -1,0 +1,125 @@
+<div class="container" fxLayoutGap="5px grid" fxLayout="row" fxLayoutAlign="center none">
+    <!-- Mobile Layout container -->
+    <div fxFlex="100%" fxfill fxlayout="column" fxShow fxHide.gt-md>
+      <mat-toolbar>
+      </mat-toolbar>
+      
+    </div>
+
+    <!-- Tags Grid -->
+    <div fxFlex="24%" fxShow fxHide.lt-lg>
+      <mat-card>
+        <mat-card-content class="card-content">
+          <mat-toolbar>
+            <span class="spacer"></span>
+            <form class="search-form">
+              <mat-form-field  appearance="outline"  subscriptSizing="dynamic">
+                <mat-label>Search</mat-label>
+                <input type="text" matInput placeholder="Search" (keyup)="search(input.value)" #input />
+              </mat-form-field>
+            </form>
+          </mat-toolbar>
+          <div class="table-container">
+            <table cdkDropList [cdkDropListData]="filteredSongs" mat-table
+              [dataSource]="filteredSongs" matSort #songList="cdkDropList" (matSortChange)="sortChange($event)">
+              <!-- Name Column -->
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by Name">Name</th>
+                <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+              </ng-container>
+  
+              <!-- Artist Column -->
+              <ng-container matColumnDef="artist">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by Artist">Artist</th>
+                <td mat-cell *matCellDef="let element">
+                  {{ element.artist }}
+                </td>
+              </ng-container>
+  
+              <tr mat-header-row *matHeaderRowDef="displayedSongColumns; sticky: true"></tr>
+              <tr cdkDrag [cdkDragData]="row" mat-row (dblclick)="onAddSongToTag(row)"
+                *matRowDef="let row; columns: displayedSongColumns"></tr>
+            </table>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  
+    <!-- Setlist Songs Grid -->
+    <div fxFlex="74%" fxShow fxHide.lt-lg>
+      <mat-card>
+        <mat-card-content class="card-content" fxHide fxShow.gt-md>
+            <mat-toolbar fxHide fxShow.gt-md>
+              
+              <button mat-button aria-label="Add Song or Break" aria-label="Add Song">
+                <mat-icon>add</mat-icon>
+                <span fxShow fxHide.xs>
+                  Add
+                </span>
+              </button>
+              <span class="spacer"></span>
+              <form class="search-form">
+                <mat-form-field class="search-field" appearance="outline" subscriptSizing="dynamic">
+                  <mat-label>Search</mat-label>
+                  <input type="text" matInput (keyup)="search(input.value)" #input placeholder="Search">
+                </mat-form-field>
+              </form>
+            </mat-toolbar>
+            <div class="spinner-container" *ngIf="songsLoading">
+              <mat-spinner>
+    
+              </mat-spinner>
+            </div>
+            <div class="table-container" *ngIf="!songsLoading">
+              <table mat-table [dataSource]="filteredSongs" matSort class="song-table" (matSortChange)="sortChange($event)">
+                <!-- Name Column -->
+                <ng-container matColumnDef="name">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by Name"> Name </th>
+                  <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+                </ng-container>
+    
+                <!-- Artist Column -->
+                <ng-container matColumnDef="artist">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by Artist"> Artist </th>
+                  <td mat-cell *matCellDef="let element"> {{element.artist}} </td>
+                </ng-container>
+    
+                <!-- Genre Column -->
+                <ng-container matColumnDef="genre">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by Genre"> Genre </th>
+                  <td mat-cell *matCellDef="let element"> {{element.genre}} </td>
+                </ng-container>
+    
+                <!-- Key Column -->
+                <ng-container matColumnDef="key">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by Key"> Key </th>
+                  <td mat-cell *matCellDef="let element"> {{element.key}} </td>
+                </ng-container>
+    
+                <!-- Tempo Column -->
+                <ng-container matColumnDef="tempo">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by Tempo"> Tempo </th>
+                  <td mat-cell *matCellDef="let element"> {{element.tempo}} </td>
+                </ng-container>
+    
+                <!-- Song Length Column -->
+                <ng-container matColumnDef="timeSignature">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by Time Signature"> Time Signature </th>
+                  <td mat-cell *matCellDef="let element"> {{element.beatValue ? element.beatValue + '/' + element.noteValue
+                    : ''}} </td>
+                </ng-container>
+    
+                <!-- Song Length Column -->
+                <ng-container matColumnDef="songLength" sortActionDescription="Sort by Song Length">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header> Song Length </th>
+                  <td mat-cell *matCellDef="let element"> {{ songService.getSongLength(element) }} </td>
+                </ng-container>
+    
+                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                
+              </table>
+            </div>
+          </mat-card-content>
+      </mat-card>
+    </div>
+  </div>

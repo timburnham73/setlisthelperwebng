@@ -2,6 +2,7 @@
   <div fxFlex="99%">
 
     <mat-card>
+      <!-- Desktop View -->
       <mat-card-content class="card-content" fxHide fxShow.gt-md>
         <mat-toolbar fxHide fxShow.gt-md>
           @if(!showRemove){
@@ -114,6 +115,7 @@
           </table>
         </div>
       </mat-card-content>
+      <!-- Mobile View -->
       <mat-side-nav fxHide fxShow.lt-lg>
         <mat-toolbar>
           @if(!showFind && !showRemove){
