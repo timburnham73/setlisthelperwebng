@@ -12,8 +12,7 @@ export class AppComponent {
     constructor(authService: AuthenticationService, router: Router) {
         router.events.subscribe((event:any) => {
             if(event.type === 1){
-                console.log(event);
-                if (event.url === '/home' || event.url === '/auth/login')
+                if (event.url === '/' || event.url === '/home' || event.url === '/auth/login')
                     authService.isLoggedIn$.subscribe((isLoggedIn) => {
                         if(isLoggedIn){
                             router.navigate(['/accounts']);   

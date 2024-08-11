@@ -1,0 +1,126 @@
+table {
+    width: 100%;
+}
+
+th.mat-sort-header-sorted {
+    color: black;
+}
+
+.setlist-row {
+    cursor: pointer;
+}
+
+.spacer {
+    flex: 1 1 auto;
+}
+
+li.break {
+    list-style: none;
+    color: #999;
+}
+
+
+.setlist-songs-static {
+
+    font-size: 19px;
+}
+
+
+.setlist-songs-static li {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.header-container {
+    padding-left: 15px;
+    padding-bottom: 15px;
+    margin-top: 18px;
+}
+
+svg {
+    fill: black;
+}
+  
+@page 
+    {
+        
+        margin-top: 1mm;  /* this affects the margin in the printer settings */
+        margin-bottom: 0mm;
+    }
+.page {
+    width: 21cm;
+    @media screen {
+        min-height: 29.7cm;
+        margin-top: 3cm;
+        padding-top: 3cm;    
+    }
+    @media print {
+        min-height: 32.7cm;
+        margin-top: 0cm;
+        padding-top: 1cm;    
+    }
+    
+    padding-left: 3cm;
+    padding-right: 3cm;
+    padding-bottom: 3cm;
+    margin: 2cm auto;
+
+    @media only screen {
+        border: 1px #D3D3D3 solid;
+        border-radius: 5px;
+        background: white;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+}
+
+h2, h4 {
+    text-align: center;
+}
+
+h2 {
+    margin-top: 0;
+}
+
+ol.one-column {
+    p {
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+}
+ol.two-columns {
+    height: 282mm;
+    width: 210mm;
+    margin-left: auto;
+    margin-right: auto;
+    -moz-column-count: 2;
+    -moz-column-gap: 1px;
+    -webkit-column-count: 2;
+    -webkit-column-gap: 1px;
+    column-count: 2;
+    column-gap: 1px;
+    column-fill: auto;
+
+    p {
+        break-inside: avoid;
+        margin: 0px;
+    }
+}
+
+ol.three-columns {
+    height: 282mm;
+    width: 210mm;
+    margin-left: auto;
+    margin-right: auto;
+    -moz-column-count: 3;
+    -moz-column-gap: 1px;
+    -webkit-column-count: 3;
+    -webkit-column-gap: 1px;
+    column-count: 3;
+    column-gap: 1px;
+    column-fill: auto;
+
+    p {
+        break-inside: avoid;
+        margin: 0px;
+    }
+}

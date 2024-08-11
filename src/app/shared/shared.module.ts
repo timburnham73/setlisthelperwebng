@@ -14,6 +14,7 @@ import { LayoutNoSidebarComponent } from './layout-no-sidebar/layout-no-sidebar.
 import { AutoFocusDirective } from './directives/auto-focus/auto-focus.directive';
 import { SwipeDirective } from './directives/swipe/swipe.directive';
 import { WINDOW_PROVIDERS } from './helpers/window.helper';
+import { DATE_PIPE_DEFAULT_OPTIONS } from '@angular/common';
 
 @NgModule({
     imports: [
@@ -45,6 +46,9 @@ import { WINDOW_PROVIDERS } from './helpers/window.helper';
         AutoFocusDirective,
         SwipeDirective
     ],
-    providers: [WINDOW_PROVIDERS]
+    providers: [
+        WINDOW_PROVIDERS,
+        {provide: DATE_PIPE_DEFAULT_OPTIONS, useValue: {dateFormat: 'mediumDate'}}
+    ]
 })
 export class SharedModule { }

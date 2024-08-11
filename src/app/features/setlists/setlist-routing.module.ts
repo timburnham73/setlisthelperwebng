@@ -9,6 +9,7 @@ import {
   redirectUnauthorizedTo,
 } from "@angular/fire/compat/auth-guard";
 import { LayoutNoSidebarChildViewComponent } from "src/app/shared/layout-no-sidebar-child-view/layout-no-sidebar-child-view.component";
+import { SetlistPrintComponent } from "./setlist-print/setlist-print.component";
 
 const routes: Routes = [
   {
@@ -23,6 +24,13 @@ const routes: Routes = [
     component: LayoutNoSidebarChildViewComponent,
     children: [
       { path: "", component: SetlistSongsListComponent },
+    ],
+  },
+  {
+    path: ":setlistid/print",
+    component: LayoutNoSidebarChildViewComponent,
+    children: [
+      { path: "", component: SetlistPrintComponent },
     ],
   },
   {

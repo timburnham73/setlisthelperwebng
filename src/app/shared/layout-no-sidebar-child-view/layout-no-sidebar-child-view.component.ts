@@ -71,9 +71,7 @@ export class LayoutNoSidebarChildViewComponent implements OnDestroy
     // tslint:disable-next-line: deprecation
     this.mobileQuery.addListener(this._mobileQueryListener);
   }
-  ngOnInit(): void {
-    throw new Error("Method not implemented.");
-  }
+
   
   ngOnDestroy(): void {
     // tslint:disable-next-line: deprecation
