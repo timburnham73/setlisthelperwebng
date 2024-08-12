@@ -120,6 +120,8 @@ export class SetlistSongsListComponent {
     private router: Router,
     public dialog: MatDialog
   ) {
+    titleService.setTitle('Setlist Songs');
+    
     this.authService.user$.subscribe((user) => {
       if (user && user.uid) {
         this.currentUser = UserHelper.getForUpdate(user);
