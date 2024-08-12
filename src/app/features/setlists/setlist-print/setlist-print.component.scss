@@ -51,7 +51,6 @@ svg {
     width: 21cm;
     @media screen {
         min-height: 29.7cm;
-        margin-top: 3cm;
         padding-top: 3cm;    
     }
     @media print {
@@ -63,7 +62,7 @@ svg {
     padding-left: 3cm;
     padding-right: 3cm;
     padding-bottom: 3cm;
-    margin: 2cm auto;
+    margin: 1cm auto;
 
     @media only screen {
         border: 1px #D3D3D3 solid;
@@ -75,10 +74,8 @@ svg {
 
 h2, h4 {
     text-align: center;
-}
-
-h2 {
-    margin-top: 0;
+    margin-top: 0px;
+    margin-bottom: 5px;
 }
 
 ol.one-column {
@@ -88,7 +85,7 @@ ol.one-column {
     }
 }
 ol.two-columns {
-    height: 282mm;
+    height: 300mm;
     width: 210mm;
     margin-left: auto;
     margin-right: auto;
@@ -107,7 +104,7 @@ ol.two-columns {
 }
 
 ol.three-columns {
-    height: 282mm;
+    height: 300mm;
     width: 210mm;
     margin-left: auto;
     margin-right: auto;

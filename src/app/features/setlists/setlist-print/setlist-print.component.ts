@@ -1,6 +1,7 @@
 import { DatePipe, NgFor } from '@angular/common';
 import { Component, LOCALE_ID } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
+import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatToolbar } from '@angular/material/toolbar';
@@ -29,6 +30,8 @@ export enum PrintColumns {
     MatToolbar,
     MatIcon,
     MatIconButton,
+    MatButtonToggle,
+    MatButtonToggleGroup,
     MatCard,
     MatCardContent,
     FlexLayoutModule,
@@ -44,7 +47,9 @@ export class SetlistPrintComponent {
   setlist?: Setlist;
   setlistSongs: SetlistSong[];
   loading: boolean;
-  columns: PrintColumns = PrintColumns.three;
+  columns: PrintColumns = PrintColumns.two;
+  hide
+
   public get PrintColumns(): typeof PrintColumns {
     return PrintColumns; 
   }
