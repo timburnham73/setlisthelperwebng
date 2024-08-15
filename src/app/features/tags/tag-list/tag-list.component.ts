@@ -66,6 +66,7 @@ export class TagListComponent {
   @Select(AccountState.selectedAccount)
   selectedAccount$!: Observable<Account>;
   currentUser: BaseUser;
+  displayedSongColumns: string[] = ["name", "artist"];
   displayedColumns: string[] = [
     "sequence",
     "name",
@@ -90,8 +91,6 @@ export class TagListComponent {
     private logger: NGXLogger,
     private route: ActivatedRoute,
     private titleService: Title,
-    private setlistSongsService: SetlistSongService,
-    private setlistService: SetlistService,
     public songService: SongService,
     private store: Store,
     private authService: AuthenticationService,
@@ -110,28 +109,13 @@ export class TagListComponent {
     );
 
     const accountId = this.route.snapshot.paramMap.get("accountid");
-    const setlistId = this.route.snapshot.paramMap.get("setlistid");
-    if (accountId && setlistId) {
+    if (accountId) {
       this.accountId = accountId;
 
       //Get the songs for the song picker
       this.songService.getSongs(this.accountId, "name").subscribe((songs) => {
         this.allSongs = this.filteredSongs = songs;
       });
-
-      //Get the setlist songs
-      if (setlistId) {
-        this.setlistService
-          .getSetlist(this.accountId, setlistId)
-          .subscribe((setlist) => this.setlist = setlist);
-
-        this.setlistSongsService
-          .getOrderedSetlistSongs(this.accountId, setlistId)
-          .subscribe((setlistSongs) => {
-            this.dsSetlistSongs = new MatTableDataSource(setlistSongs);
-            this.setlistSongCount = this.dsSetlistSongs.filteredData.length;
-          });
-      }
     }
   }
 
@@ -147,5 +131,9 @@ export class TagListComponent {
 
   search(search: string){
     this.filteredSongs = this.allSongs.filter((song) => song.name.toLowerCase().includes(search));
+  }
+
+  onAddSongToTag(row){
+    
   }
 }
