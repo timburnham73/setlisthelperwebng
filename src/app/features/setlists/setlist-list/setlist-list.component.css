@@ -18,13 +18,17 @@ th.mat-sort-header-sorted {
     color: #999;
 }
 
-.setlist-songs-static{
-    height: calc(100vh - 180px);
-    overflow-y: scroll;
-    
-    font-size: 19px;
+@media screen {  
+    .setlist-songs h2 {
+        display: none;
+    }
+    .setlist-songs-static{
+        height: calc(100vh - 180px);
+        overflow-y: scroll;
+        
+        font-size: 19px;
+    }
 }
-
 .setlist-songs-static li{
     padding-top: 10px;
     padding-bottom: 10px;
@@ -43,4 +47,18 @@ th.mat-sort-header-sorted {
 .table-container {
     max-height: calc(100vh - 180px);
     overflow: auto;
+}
+
+
+@media print {
+
+
+    ol.two-columns {
+        -moz-column-count: 2;
+        -moz-column-gap: 20px;
+        -webkit-column-count: 2;
+        -webkit-column-gap: 20px;
+        column-count: 2;
+        column-gap: 20px;
+    }
 }

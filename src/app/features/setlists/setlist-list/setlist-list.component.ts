@@ -46,7 +46,7 @@ import { CONFIRM_DIALOG_RESULT, ConfirmDialogComponent } from "src/app/shared/co
         NgIf,
         NgClass,
         NgFor,
-        DatePipe,
+        DatePipe
     ],
 })
 export class SetlistListComponent implements OnInit {
@@ -145,7 +145,19 @@ export class SetlistListComponent implements OnInit {
   }
 
   onPrintSetlist(){
-    console.log('Not implmented');
+
+    this.router.navigate([this.selectedSetlist?.id + '/print'], { relativeTo: this.route } );
+    // let printContents = document?.getElementById("setlist-songs")?.innerHTML;
+    //  let originalContents = document.body.innerHTML;
+
+    //  if(document && document.body && document.body.innerHTML && printContents){
+    //     document.body.innerHTML = printContents;
+    //     window.print();
+
+    //     document.body.innerHTML = originalContents;
+    //  }
+
+     
   }
 
   onRemoveSetlist(event, setlistToDelete: Setlist) {

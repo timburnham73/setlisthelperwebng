@@ -68,7 +68,7 @@ export class AccountHomeComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.titleService.setTitle("Edit Account");
+    this.titleService.setTitle("Bands");
   }
 
   onSelectAccount(selectAccount: Account) {

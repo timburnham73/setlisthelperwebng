@@ -191,9 +191,9 @@
       </button>
     </mat-toolbar>
     
-    <mat-card>
+    <mat-card id="setlist-songs">
       <mat-card-content class="setlist-songs-static">
-        <ol>
+        <ol class="two-columns">
           <li *ngFor="let song of setlistSongs; index as i;" [ngClass]="{'break': song.isBreak === true}" [value]="song.sequenceNumber">
             <div>
             {{song.name}}
