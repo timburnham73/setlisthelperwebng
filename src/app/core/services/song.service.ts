@@ -33,6 +33,23 @@ export class SongService {
     );
   }
 
+  
+  getSongsByTags(accountId: string, sortField: string, tagName: string[], sortOrder: OrderByDirection = 'asc'): Observable<Song[]> {
+    const dbPath = `/accounts/${accountId}/songs`;
+    
+    const songsRef = this.db.collection(dbPath, ref => ref.orderBy("deactivated").where("deactivated", "!=", true).where("deleted", "==", false).where("tags", "array-contains-any", tagName).orderBy(sortField, sortOrder));
+    
+    return songsRef.snapshotChanges().pipe(
+      map((changes) =>
+      changes.map((c) => {
+        const song = c.payload.doc.data() as Song;
+        song.id = c.payload.doc.id;
+        return song;
+      })
+    )
+    );
+  }
+
   getSongs(accountId: string, sortField: string, sortOrder: OrderByDirection = 'asc'): Observable<Song[]> {
     const dbPath = `/accounts/${accountId}/songs`;
     

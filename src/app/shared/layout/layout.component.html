@@ -63,7 +63,7 @@
           <mat-icon mat-list-icon>
             people
           </mat-icon>
-          <span mat-line>Accounts</span>
+          <span mat-line>Bands</span>
         </a>
         <mat-divider></mat-divider>
         <a mat-list-item [routerLink]="['/accounts/' + selectedAccount.id  + '/songs/']" routerLinkActive="active">
@@ -77,6 +77,12 @@
             library_music
           </mat-icon>
           Setlists
+        </a>
+        <a mat-list-item [routerLink]="['/accounts/' + selectedAccount.id + '/tags/']" routerLinkActive="active">
+          <mat-icon mat-list-icon>
+            sell
+          </mat-icon>
+          Tags
         </a>
 
       </mat-nav-list>
