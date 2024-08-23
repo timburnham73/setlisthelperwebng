@@ -30,6 +30,13 @@ const routes: Routes = [
     data: { authGuardPipe: redirectUnauthorizedTo },
   },
   {
+    path: ":accountid/tags",
+    loadChildren: () =>
+      import("../tags/tags.module").then((m) => m.TagsModule),
+    canActivate: [AngularFireAuthGuard],
+    data: { authGuardPipe: redirectUnauthorizedTo },
+  },
+  {
     path: ":accountid/import",
     loadChildren: () =>
       import("../import/import.module").then((m) => m.ImportModule),

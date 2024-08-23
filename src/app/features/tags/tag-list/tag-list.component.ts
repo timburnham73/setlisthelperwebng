@@ -24,13 +24,15 @@ import { BaseUser, UserHelper } from 'functions/src/model/user';
 import { NGXLogger } from 'ngx-logger';
 import { finalize, Observable } from 'rxjs';
 import { AuthenticationService } from 'src/app/core/services/auth.service';
-import { SetlistSongService } from 'src/app/core/services/setlist-songs.service';
-import { SetlistService } from 'src/app/core/services/setlist.service';
 import { SongService } from 'src/app/core/services/song.service';
 import { AccountState } from 'src/app/core/store/account.state';
 import { Account } from 'functions/src/model/account';
 import { Song } from 'src/app/core/model/song';
 import { MatSpinner } from '@angular/material/progress-spinner';
+import { SetlistRef } from 'functions/src/model/setlist';
+import { TagService } from 'src/app/core/services/tag.service';
+import { Tag } from 'src/app/core/model/tag';
+import { MatListOption, MatSelectionList } from '@angular/material/list';
 
 @Component({
   selector: 'app-tag-list',
@@ -57,7 +59,10 @@ import { MatSpinner } from '@angular/material/progress-spinner';
     SongSelectorComponent,
     FlexModule,
     ExpandIconComponent,
-    MatSpinner
+    MatSpinner,
+    MatSelectionList,
+    MatListOption
+
   ],
   templateUrl: './tag-list.component.html',
   styleUrl: './tag-list.component.scss'
@@ -66,22 +71,14 @@ export class TagListComponent {
   @Select(AccountState.selectedAccount)
   selectedAccount$!: Observable<Account>;
   currentUser: BaseUser;
-  displayedSongColumns: string[] = ["name", "artist"];
-  displayedColumns: string[] = [
-    "sequence",
-    "name",
-    "artist",
-    "genre",
-    "key",
-    "tempo",
-    "timeSignature",
-    "songLength",
-    "lyrics",
-    "remove"
-  ];
-  
+  displayedSongColumns: string[] = ["name"];
+  displayedColumns: string[] = [ 'name', 'artist', 'genre', 'key', 'tempo', 'timeSignature', 'songLength', 'lyrics', 'setlists', 'remove'];
+  selectedRows = new Set<string>();
+  showRemove = false;
   filteredSongs: Song[];
   allSongs: Song[];
+  allTags: Tag[];
+  selectedTag: Tag;
   songsLoading: Boolean = false;
   @ViewChild(MatSort, { static: true }) sort: MatSort = new MatSort;
   accountId?: string;
@@ -92,6 +89,7 @@ export class TagListComponent {
     private route: ActivatedRoute,
     private titleService: Title,
     public songService: SongService,
+    public tagService: TagService,
     private store: Store,
     private authService: AuthenticationService,
     private router: Router,
@@ -112,10 +110,20 @@ export class TagListComponent {
     if (accountId) {
       this.accountId = accountId;
 
-      //Get the songs for the song picker
-      this.songService.getSongs(this.accountId, "name").subscribe((songs) => {
-        this.allSongs = this.filteredSongs = songs;
-      });
+      this.tagService.getTags(this.accountId!, 'name')
+        .pipe(
+          finalize(() => this.songsLoading = false)
+        )
+        .subscribe((tags) => {
+          this.allTags = tags;
+          if(this.allTags.length > 0){
+            this.selectedTag = this.allTags[0];
+          }
+        });
+
+        this.songService.getSongs(this.accountId, "name").subscribe((songs) => {
+          this.allSongs = this.filteredSongs = songs;
+        });
     }
   }
 
@@ -129,11 +137,59 @@ export class TagListComponent {
         });
   }
 
+  getSetlistNames(song){
+    if(song && song.setlists && song.setlists.length > 0){
+      return song.setlists.map((setlist: SetlistRef) => setlist.name).join(', ');
+    }
+    return 0;
+  }
+  
   search(search: string){
     this.filteredSongs = this.allSongs.filter((song) => song.name.toLowerCase().includes(search));
   }
 
+  onViewLyrics(event, row: any){
+    event.preventDefault();
+    this.router.navigate([row.id + `/lyrics`], { relativeTo: this.route });
+  }
+
+  onViewSetlists(event, row: any){
+    event.preventDefault();
+    this.router.navigate([`setlists`], { relativeTo: this.route });
+  }
+
+  getSetlistCount(song){
+    if(song && song.setlists && song.setlists.length > 0){
+      return song.setlists.length;
+    }
+    return 0;
+  }
+
+  onSelectTag(row: Tag){
+    
+    if(this.selectedRows.has(row.name)) {
+      this.selectedRows.delete(row.name);
+    }
+    else{
+      this.selectedRows.add(row.name);
+    }
+    if(this.accountId){
+      const tags = [...this.selectedRows];
+      this.songService.getSongsByTags(this.accountId, "name", tags).subscribe((songs) => {
+        this.allSongs = this.filteredSongs = songs;
+      });
+    }
+
+  }
   onAddSongToTag(row){
     
+  }
+
+  onEditSong(song){
+
+  }
+
+  onRemoveSong(sevent, song){
+
   }
 }
