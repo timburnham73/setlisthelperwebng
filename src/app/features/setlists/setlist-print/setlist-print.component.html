@@ -45,21 +45,35 @@
 
           
           <div class="vl"></div>
-
-          {{columns}}
+          <button
+          mat-icon-button
+          aria-label="Hide or Show Setlist elements"
+          title="Hide or Show Setlist elements"
+          (click)="onSetVisibleElements()"
+        >
+          <mat-icon>visibility</mat-icon>
+        </button>
+          
         </mat-toolbar>
         
         <div id="setlist-songs">
           <div class="setlist-songs-static page">
             <div>
               <h2>{{setlist?.name}}</h2>
-              <h4>{{setlist?.gigLocation}} {{setlist?.gigDate?.toDate() | date: 'medium'}}</h4>
+              <h4>{{setlist?.gigDate?.toDate() | date: 'medium'}}</h4>
+              <h5>{{setlist?.gigLocation}}</h5>
               <ol [ngClass]="{ 'one-column': columns === PrintColumns.one, 'two-columns': columns === PrintColumns.two, 'three-columns': columns === PrintColumns.three}">
                 <li *ngFor="let song of setlistSongs; index as i;" [ngClass]="{'break': song.isBreak === true}" [value]="song.sequenceNumber">
                   <p>
-                    <span>{{song.name}}</span>
+                    <span><b>{{song.name}}</b></span>
                     <br>
-                    <span>{{song.artist}}</span>
+                    @if(song.isBreak === true){
+                      <span *ngIf="song.notes">{{song.notes}}</span>
+                    }
+                    @else {
+                      <span>{{song.artist}}</span>
+                    }
+                    
                   </p>
                 </li>
               </ol>  

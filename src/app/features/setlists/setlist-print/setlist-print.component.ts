@@ -1,4 +1,4 @@
-import { DatePipe, NgFor } from '@angular/common';
+import { DatePipe, NgFor, NgIf } from '@angular/common';
 import { Component, LOCALE_ID } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
@@ -35,7 +35,8 @@ export enum PrintColumns {
     MatCard,
     MatCardContent,
     FlexLayoutModule,
-    DatePipe
+    DatePipe,
+    NgIf
   ],
   templateUrl: './setlist-print.component.html',
   styleUrl: './setlist-print.component.scss'
@@ -47,7 +48,7 @@ export class SetlistPrintComponent {
   setlist?: Setlist;
   setlistSongs: SetlistSong[];
   loading: boolean;
-  columns: PrintColumns = PrintColumns.two;
+  columns: PrintColumns = PrintColumns.one;
   hide
 
   public get PrintColumns(): typeof PrintColumns {
@@ -123,8 +124,10 @@ export class SetlistPrintComponent {
   onChangePrintColumn(columns: PrintColumns){
     this.columns = columns;
   }
-}
-function Inject(LOCALE_ID: any): (target: typeof SetlistPrintComponent, propertyKey: undefined, parameterIndex: 0) => void {
-  throw new Error('Function not implemented.');
+
+  onSetVisibleElements(){
+
+  }
+
 }
 
