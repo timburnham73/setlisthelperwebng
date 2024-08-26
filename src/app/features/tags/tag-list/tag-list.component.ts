@@ -33,6 +33,8 @@ import { SetlistRef } from 'functions/src/model/setlist';
 import { TagService } from 'src/app/core/services/tag.service';
 import { Tag } from 'src/app/core/model/tag';
 import { MatListOption, MatSelectionList } from '@angular/material/list';
+import { TagEditDialogComponent } from '../tag-edit-dialog/tag-edit-dialog.component';
+import { CONFIRM_DIALOG_RESULT } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-tag-list',
@@ -181,8 +183,31 @@ export class TagListComponent {
     }
 
   }
-  onAddSongToTag(row){
+
+  onAddTag(){
+    const dialogRef = this.dialog.open(TagEditDialogComponent, {
+      data: {accountId: this.accountId, tag: null},
+      panelClass: "dialog-responsive",
+    });
+
+    dialogRef.afterClosed().subscribe((data) => {
+      
+    }); 
+  }
+
+  onAddFromCatalog() {
     
+    if( this.accountId){
+      const dialogRef = this.dialog.open(SongSelectorComponent, {
+        data: { accountId: this.accountId, setlistId: null, setlistsongIdToinsertAfter: 0 },
+        panelClass: "dialog-responsive",
+      });
+
+      dialogRef.afterClosed().subscribe((songs) => {
+        console.log(songs);
+      }); 
+
+    }
   }
 
   onEditSong(song){

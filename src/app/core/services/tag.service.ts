@@ -17,18 +17,15 @@ import { convertSnaps } from "./db-utils";
   providedIn: "root",
 })
 export class TagService {
-  private collection = "tags";
-
-  private dbPath = "/tags";
-
+  collectionName = "tags";
   tagsRef: AngularFirestoreCollection<Tag>;
 
   constructor(private db: AngularFirestore) {
-    this.tagsRef = db.collection(this.dbPath);
+    
   }
 
   getTag(accountId: string, tagId: string): Observable<any> {
-    const dbPath = `/accounts/${accountId}/tags`;
+    const dbPath = `/accounts/${accountId}/${this.collectionName}`;
     const tagRef = this.db.collection(dbPath).doc(tagId);
     return tagRef.snapshotChanges().pipe(
       map((resultTag) =>
@@ -42,7 +39,7 @@ export class TagService {
   }
 
   getTags(accountId: string, sortField: string, sortOrder: OrderByDirection = 'asc'): Observable<Tag[]> {
-    const dbPath = `/accounts/${accountId}/tags`;
+    const dbPath = `/accounts/${accountId}/${this.collectionName}`;
     
     const tagsRef = this.db.collection(dbPath, ref => ref.orderBy(sortField, sortOrder));
     
@@ -57,12 +54,15 @@ export class TagService {
     );
   }
 
-  addTag(tag: Tag, userAddingTheTag: BaseUser): Observable<Tag> {
+  addTag(accountId: string, tag: Tag, userAddingTheTag: BaseUser): Observable<Tag> {
     const tagToAdd = TagHelper.getForAdd(userAddingTheTag, tag);
     tagToAdd.dateCreated = Timestamp.fromDate(new Date());
 
+    const dbPath = `/accounts/${accountId}/${this.collectionName}`;
+    const tagsRef = this.db.collection(dbPath);
+
     let save$: Observable<any>;
-    save$ = from(this.tagsRef.add(tagToAdd));
+    save$ = from(tagsRef.add(tagToAdd));
     
     return save$.pipe(
       map((res) => {

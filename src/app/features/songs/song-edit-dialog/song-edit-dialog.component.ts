@@ -66,11 +66,7 @@ export class SongEditDialogComponent {
           this.setlist = setlist;
         }
       });
-
-      
     }
-
-    this.setlistService
 
     this.authService.user$.subscribe((user) => {
       if (user && user.uid) {
