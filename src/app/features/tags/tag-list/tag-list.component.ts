@@ -1,6 +1,6 @@
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { DatePipe, NgIf, NgClass, NgFor } from '@angular/common';
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -22,7 +22,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { BaseUser, UserHelper } from 'functions/src/model/user';
 import { NGXLogger } from 'ngx-logger';
-import { finalize, Observable } from 'rxjs';
+import { finalize, Observable, take } from 'rxjs';
 import { AuthenticationService } from 'src/app/core/services/auth.service';
 import { SongService } from 'src/app/core/services/song.service';
 import { AccountState } from 'src/app/core/store/account.state';
@@ -35,6 +35,7 @@ import { Tag } from 'src/app/core/model/tag';
 import { MatListOption, MatSelectionList } from '@angular/material/list';
 import { TagEditDialogComponent } from '../tag-edit-dialog/tag-edit-dialog.component';
 import { CONFIRM_DIALOG_RESULT } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { user } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-tag-list',
@@ -69,13 +70,13 @@ import { CONFIRM_DIALOG_RESULT } from 'src/app/shared/confirm-dialog/confirm-dia
   templateUrl: './tag-list.component.html',
   styleUrl: './tag-list.component.scss'
 })
-export class TagListComponent {
+export class TagListComponent implements OnInit {
   @Select(AccountState.selectedAccount)
   selectedAccount$!: Observable<Account>;
   currentUser: BaseUser;
   displayedSongColumns: string[] = ["name"];
   displayedColumns: string[] = [ 'name', 'artist', 'genre', 'key', 'tempo', 'timeSignature', 'songLength', 'lyrics', 'setlists', 'remove'];
-  selectedRows = new Set<string>();
+  selectedRows: Tag[] = [];
   showRemove = false;
   filteredSongs: Song[];
   allSongs: Song[];
@@ -111,21 +112,30 @@ export class TagListComponent {
     const accountId = this.route.snapshot.paramMap.get("accountid");
     if (accountId) {
       this.accountId = accountId;
-
+    }
+  }
+  ngOnInit(): void {
+    if (this.accountId) {
+      //Initiallize the tags and close the subscription with take(1)
       this.tagService.getTags(this.accountId!, 'name')
         .pipe(
-          finalize(() => this.songsLoading = false)
+          take(1),
+          finalize(() => {
+            this.songsLoading = false;
+            if(this.allTags && this.allTags.length > 0){
+              this.onSelectTag(this.allTags[0]);
+            }
+          })
         )
         .subscribe((tags) => {
           this.allTags = tags;
-          if(this.allTags.length > 0){
-            this.selectedTag = this.allTags[0];
-          }
         });
 
-        this.songService.getSongs(this.accountId, "name").subscribe((songs) => {
-          this.allSongs = this.filteredSongs = songs;
-        });
+        //Keep the subscription open for new tags
+        this.tagService.getTags(this.accountId!, 'name')
+          .subscribe((tags) => {
+            this.allTags = tags;
+          });
     }
   }
 
@@ -150,6 +160,10 @@ export class TagListComponent {
     this.filteredSongs = this.allSongs.filter((song) => song.name.toLowerCase().includes(search));
   }
 
+  onEnableDeleteMode() {
+    this.showRemove = !this.showRemove;
+  }
+
   onViewLyrics(event, row: any){
     event.preventDefault();
     this.router.navigate([row.id + `/lyrics`], { relativeTo: this.route });
@@ -167,19 +181,24 @@ export class TagListComponent {
     return 0;
   }
 
-  onSelectTag(row: Tag){
-    
-    if(this.selectedRows.has(row.name)) {
-      this.selectedRows.delete(row.name);
+  onSelectTag(selectedTag: Tag){
+    const tagIndex = this.selectedRows.findIndex(tag => tag.name === selectedTag.name);
+    if(tagIndex > -1) {
+      this.selectedRows.splice(tagIndex, 1);
     }
     else{
-      this.selectedRows.add(row.name);
+      this.selectedRows.push(selectedTag);
     }
     if(this.accountId){
-      const tags = [...this.selectedRows];
-      this.songService.getSongsByTags(this.accountId, "name", tags).subscribe((songs) => {
-        this.allSongs = this.filteredSongs = songs;
-      });
+      const tags = this.selectedRows.map(tag => tag.name);
+      if (tags && tags.length > 0) {
+        this.songService.getSongsByTags(this.accountId, "name", tags).subscribe((songs) => {
+          this.allSongs = this.filteredSongs = songs;
+        });
+      }
+      else {
+        this.allSongs = this.filteredSongs = [];
+      }
     }
 
   }
@@ -204,7 +223,11 @@ export class TagListComponent {
       });
 
       dialogRef.afterClosed().subscribe((songs) => {
-        console.log(songs);
+        
+        this.tagService.addTagsToSongs(songs, this.accountId!, this.selectedRows.map(tag => tag.name), this.currentUser).subscribe((songs) => {
+          console.log('Add tags to song');
+        });
+        
       }); 
 
     }
@@ -214,7 +237,15 @@ export class TagListComponent {
 
   }
 
-  onRemoveSong(sevent, song){
+  onRemoveTagFromSong($event, song){
+    $event.preventDefault();
+    this.tagService.removeTagsToSongs([song], this.accountId!, this.selectedRows.map(tag => tag.name), this.currentUser).subscribe((songs) => {
+      console.log('Removed song');
+    });
+  }
 
+  isRowSelected(row) {
+    const selectedRowIndex = this.selectedRows?.findIndex(tag => tag.name === row.name);
+    return selectedRowIndex > -1; 
   }
 }

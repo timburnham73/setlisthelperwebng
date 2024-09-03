@@ -6,7 +6,7 @@ import { Title } from '@angular/platform-browser';
 import { NotificationService } from 'src/app/core/services/notification.service';
 import { SongService } from 'src/app/core/services/song.service';
 import { SAMPLE_SONGS } from 'src/app/core/model/sampleSongs';
-import { Observable, finalize, first } from 'rxjs';
+import { Observable, finalize, first, take } from 'rxjs';
 import { Song } from 'src/app/core/model/song';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SongEditDialogComponent } from '../song-edit-dialog/song-edit-dialog.component';
@@ -97,11 +97,12 @@ export class SongListComponent implements OnInit {
     
     const id = this.route.snapshot.paramMap.get('accountid');
     if(id){
-      this.loading = false;
+      this.loading = true;
       this.accountId = id;
       const songId = this.route.snapshot.queryParamMap.get('songid');
       this.songService.getSongs(this.accountId, "name")
         .pipe(
+          take(1),
           finalize(() => this.loading = false)
         )
         .subscribe((songs) => {

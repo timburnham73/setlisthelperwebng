@@ -1,5 +1,5 @@
 import { inject, Injectable } from "@angular/core";
-import { from, map, Observable, of, pipe } from "rxjs";
+import { concatMap, first, from, map, Observable, of, pipe, tap } from "rxjs";
 import { Tag, TagHelper } from "../model/tag";
 import { OrderByDirection, Timestamp } from "@angular/fire/firestore";
 
@@ -11,6 +11,9 @@ import { BaseUser, User, UserHelper } from "../model/user";
 import { ADMIN } from "../model/roles";
 import { convertSnaps } from "./db-utils";
 
+import { SongService } from "./song.service";
+import { Song, SongHelper } from "../model/song";
+
 //import OrderByDirection = firebase.firestore.OrderByDirection;
 
 @Injectable({
@@ -20,7 +23,9 @@ export class TagService {
   collectionName = "tags";
   tagsRef: AngularFirestoreCollection<Tag>;
 
-  constructor(private db: AngularFirestore) {
+  constructor(
+    private db: AngularFirestore, 
+    private songService: SongService) {
     
   }
 
@@ -81,10 +86,72 @@ export class TagService {
     return from(this.tagsRef.doc(id).update(tagForUpdate));
   }
 
-  addTagsToTag(tag: Tag) {
-    const tagTagsRef = this.tagsRef
-      .doc(tag.id)
-      .collection("/tags");
-    
+  addTagsToSongs(songs: Song[], accountId: string, tags: string[], editingUser: BaseUser) {
+    const songIds = songs.map(song => song.id);
+    return this.songService.getSongs(accountId, 'name').pipe(
+      first(),
+      concatMap((results: Song[]) => {
+        const songs = results;
+        const batch = this.db.firestore.batch();
+        songs.forEach((song, index) => {
+          if(song.id){
+            if(songIds.includes(song.id)){
+              const dbPath = `/accounts/${accountId}/songs`;
+              const songsRef = this.db.collection(dbPath);
+              const songToUpdate = SongHelper.getForUpdate(song, editingUser);
+              tags.forEach((tag) => {
+                const tagIndex = songToUpdate.tags.findIndex((tagInSong) => tagInSong === tag);
+                const canAdd = songToUpdate.tags.length === 0 ||  tagIndex === -1;
+                if(canAdd){
+                  songToUpdate.tags.push(tag);
+                }
+              });
+              batch.update(songsRef.doc(song.id).ref, songToUpdate);
+            }
+          }
+        });
+
+        //Batch commit incrementing the setlist song sequence number.
+        return from(batch.commit()).pipe(
+          tap(
+            //TODO: Update the tag statisitcs 
+          )
+        );
+      })
+    );
+  }
+
+  removeTagsToSongs(songs: Song[], accountId: string, tags: string[], editingUser: BaseUser) {
+    const songIdsToRemoveTags = songs.map(song => song.id);
+    return this.songService.getSongs(accountId, 'name').pipe(
+      first(),
+      concatMap((results: Song[]) => {
+        const songs = results;
+        const batch = this.db.firestore.batch();
+        songs.forEach((song, index) => {
+          if(song.id){
+            if(songIdsToRemoveTags.includes(song.id)){
+              const dbPath = `/accounts/${accountId}/songs`;
+              const songsRef = this.db.collection(dbPath);
+              const songToUpdate = SongHelper.getForUpdate(song, editingUser);
+              tags.forEach((tag) => {
+                const tagIndex = songToUpdate.tags.findIndex((tagInSong) => tagInSong === tag);
+                if(songToUpdate.tags.length !== 0 || tagIndex > -1){
+                  songToUpdate.tags.splice(tagIndex, 1);
+                }
+              });
+              batch.update(songsRef.doc(song.id).ref, songToUpdate);
+            }
+          }
+        });
+
+        //Batch commit incrementing the setlist song sequence number.
+        return from(batch.commit()).pipe(
+          tap(
+            //TODO: Update the tag statisitcs 
+          )
+        );
+      })
+    );
   }
 }
