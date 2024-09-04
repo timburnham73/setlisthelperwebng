@@ -8,7 +8,7 @@ import { MatDivider } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatMenuModule } from '@angular/material/menu';
+import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -21,8 +21,7 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { BaseUser, UserHelper } from 'functions/src/model/user';
-import { NGXLogger } from 'ngx-logger';
-import { finalize, Observable, take } from 'rxjs';
+import { finalize, Observable, Subscription, take } from 'rxjs';
 import { AuthenticationService } from 'src/app/core/services/auth.service';
 import { SongService } from 'src/app/core/services/song.service';
 import { AccountState } from 'src/app/core/store/account.state';
@@ -72,12 +71,14 @@ import { user } from '@angular/fire/auth';
 })
 export class TagListComponent implements OnInit {
   @Select(AccountState.selectedAccount)
+  @ViewChild('menuTrigger') menuTrigger: MatMenuTrigger;  
   selectedAccount$!: Observable<Account>;
   currentUser: BaseUser;
-  displayedSongColumns: string[] = ["name"];
+  displayedSongColumns: string[] = ["name", "more"];
   displayedColumns: string[] = [ 'name', 'artist', 'genre', 'key', 'tempo', 'timeSignature', 'songLength', 'lyrics', 'setlists', 'remove'];
   selectedRows: Tag[] = [];
   showRemove = false;
+  subscription: Subscription;
   filteredSongs: Song[];
   allSongs: Song[];
   allTags: Tag[];
@@ -88,7 +89,6 @@ export class TagListComponent implements OnInit {
   
   constructor(
     private activeRoute: ActivatedRoute,
-    private logger: NGXLogger,
     private route: ActivatedRoute,
     private titleService: Title,
     public songService: SongService,
@@ -123,7 +123,7 @@ export class TagListComponent implements OnInit {
           finalize(() => {
             this.songsLoading = false;
             if(this.allTags && this.allTags.length > 0){
-              this.onSelectTag(this.allTags[0]);
+              this.onSelectTag(null, this.allTags[0]);
             }
           })
         )
@@ -137,6 +137,11 @@ export class TagListComponent implements OnInit {
             this.allTags = tags;
           });
     }
+  }
+
+  openMenu($event){
+    $event.preventDefault();
+    this.menuTrigger?.openMenu();
   }
 
   sortChange(sortState: Sort) {
@@ -181,7 +186,8 @@ export class TagListComponent implements OnInit {
     return 0;
   }
 
-  onSelectTag(selectedTag: Tag){
+  onSelectTag($event, selectedTag: Tag){
+    $event.preventDefault();
     const tagIndex = this.selectedRows.findIndex(tag => tag.name === selectedTag.name);
     if(tagIndex > -1) {
       this.selectedRows.splice(tagIndex, 1);
@@ -192,20 +198,45 @@ export class TagListComponent implements OnInit {
     if(this.accountId){
       const tags = this.selectedRows.map(tag => tag.name);
       if (tags && tags.length > 0) {
-        this.songService.getSongsByTags(this.accountId, "name", tags).subscribe((songs) => {
-          this.allSongs = this.filteredSongs = songs;
+        if(this.subscription){
+          this.subscription.unsubscribe();
+        }
+        this.subscription = this.songService.getSongsByTags(this.accountId, "name", tags)
+                                .subscribe((songs) => {
+            this.allSongs = this.filteredSongs = songs;
         });
       }
       else {
         this.allSongs = this.filteredSongs = [];
       }
     }
-
   }
 
   onAddTag(){
     const dialogRef = this.dialog.open(TagEditDialogComponent, {
       data: {accountId: this.accountId, tag: null},
+      panelClass: "dialog-responsive",
+    });
+
+    dialogRef.afterClosed().subscribe((data) => {
+      
+    }); 
+  }
+
+  onDeleteTag(tag){
+    const dialogRef = this.dialog.open(TagEditDialogComponent, {
+      data: {accountId: this.accountId, tag: null},
+      panelClass: "dialog-responsive",
+    });
+
+    dialogRef.afterClosed().subscribe((data) => {
+      
+    }); 
+  }
+
+  onEditTag(tag){
+    const dialogRef = this.dialog.open(TagEditDialogComponent, {
+      data: {accountId: this.accountId, tag: tag},
       panelClass: "dialog-responsive",
     });
 
@@ -225,7 +256,7 @@ export class TagListComponent implements OnInit {
       dialogRef.afterClosed().subscribe((songs) => {
         
         this.tagService.addTagsToSongs(songs, this.accountId!, this.selectedRows.map(tag => tag.name), this.currentUser).subscribe((songs) => {
-          console.log('Add tags to song');
+          
         });
         
       }); 
@@ -234,7 +265,12 @@ export class TagListComponent implements OnInit {
   }
 
   onEditSong(song){
-
+    const dialogRef = this.dialog.open(SongEditDialogComponent, {
+      data: { accountId: this.accountId, song: song},
+      panelClass: "dialog-responsive",
+    })
+    .afterClosed().subscribe((data) => {
+    });
   }
 
   onRemoveTagFromSong($event, song){

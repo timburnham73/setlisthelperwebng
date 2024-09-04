@@ -44,3 +44,17 @@ th.mat-sort-header-sorted {
     height: calc(100vh - 54px);
     overflow-y: scroll;
 }
+
+.empty-grid-text{
+    text-align: center;
+    padding: 20px;
+    font-size: 20px;
+}
+
+.more-column {
+    width: 10% !important;
+}
+
+.menu-trigger {
+    display: none;
+}

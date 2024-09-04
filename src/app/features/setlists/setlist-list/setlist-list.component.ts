@@ -7,7 +7,6 @@ import { MatSort, MatSortModule, Sort } from "@angular/material/sort";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Select, Store } from "@ngxs/store";
-import { NGXLogger } from "ngx-logger";
 import { Observable, finalize, first } from "rxjs";
 import { Account } from "src/app/core/model/account";
 import { SetlistService } from "src/app/core/services/setlist.service";
@@ -77,7 +76,6 @@ export class SetlistListComponent implements OnInit {
   sort: MatSort = new MatSort();
 
   constructor(
-    private logger: NGXLogger,
     private route: ActivatedRoute,
     private titleService: Title,
     private setlistService: SetlistService,

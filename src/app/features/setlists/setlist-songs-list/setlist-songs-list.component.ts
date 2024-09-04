@@ -8,7 +8,6 @@ import {
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Select, Store } from "@ngxs/store";
-import { NGXLogger } from "ngx-logger";
 import { Observable, concat, finalize, first } from "rxjs";
 import { Account } from "src/app/core/model/account";
 import { SetlistSong } from "src/app/core/model/setlist-song";
@@ -109,7 +108,6 @@ export class SetlistSongsListComponent {
 
   constructor(
     private activeRoute: ActivatedRoute,
-    private logger: NGXLogger,
     private route: ActivatedRoute,
     private titleService: Title,
     private setlistSongsService: SetlistSongService,

@@ -32,11 +32,30 @@
                 <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by Name">Name</th>
                 <td mat-cell *matCellDef="let element">{{ element.name }}</td>
               </ng-container>
-  
+              <ng-container matColumnDef="more">
+                <th mat-header-cell *matHeaderCellDef aria-label="Details"></th>
+                <td class="more-column" mat-cell *matCellDef="let element">
+                  <div #menuTrigger [matMenuTriggerFor]="moreMenu" class="menu-trigger">I will be hidden</div>
+                  <button mat-icon-button (click)="openMenu($event)" aria-label="Show More" title="Show More">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #moreMenu="matMenu">
+                    <button mat-menu-item aria-label="Edit Tag" (click)="onEditTag(element)">
+                      <mat-icon>edit</mat-icon>
+                      <span>Edit</span>
+                    </button>
+                    <button mat-menu-item aria-label="Delete Tag" (click)="onDeleteTag(element)">
+                      <mat-icon>delete</mat-icon>
+                      <span>Delete</span>
+                    </button>
+                    
+                  </mat-menu>
+                </td>
+              </ng-container>
               <tr mat-header-row *matHeaderRowDef="displayedSongColumns; sticky: true"></tr>
               <tr  mat-row 
                   [class.selected-row]="isRowSelected(row)"
-                  (click)="onSelectTag(row)"
+                  (click)="onSelectTag($event, row)"
                 *matRowDef="let row; columns: displayedSongColumns"></tr>
             </table>
           </div>
@@ -149,12 +168,12 @@
     
                 <tr class="mat-row" *matNoDataRow>
                   @if (filteredSongs.length === 0 && selectedRows.length === 0){
-                  <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+                  <td class="mat-cell empty-grid-text" [attr.colspan]="displayedColumns.length">
                       Select a tag to view the songs. 
                   </td>
                   }
                   @if (filteredSongs.length === 0 && selectedRows.length > 0){
-                    <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+                    <td class="mat-cell empty-grid-text" [attr.colspan]="displayedColumns.length">
                         Add Songs to the selected tag by clicking the Add button. 
                     </td>
                     }
