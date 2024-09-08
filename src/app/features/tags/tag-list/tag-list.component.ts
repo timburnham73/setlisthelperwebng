@@ -21,7 +21,7 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { BaseUser, UserHelper } from 'functions/src/model/user';
-import { finalize, Observable, Subscription, take } from 'rxjs';
+import { finalize, first, Observable, Subscription, take } from 'rxjs';
 import { AuthenticationService } from 'src/app/core/services/auth.service';
 import { SongService } from 'src/app/core/services/song.service';
 import { AccountState } from 'src/app/core/store/account.state';
@@ -33,7 +33,7 @@ import { TagService } from 'src/app/core/services/tag.service';
 import { Tag } from 'src/app/core/model/tag';
 import { MatListOption, MatSelectionList } from '@angular/material/list';
 import { TagEditDialogComponent } from '../tag-edit-dialog/tag-edit-dialog.component';
-import { CONFIRM_DIALOG_RESULT } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { CONFIRM_DIALOG_RESULT, ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { user } from '@angular/fire/auth';
 
 @Component({
@@ -71,7 +71,7 @@ import { user } from '@angular/fire/auth';
 })
 export class TagListComponent implements OnInit {
   @Select(AccountState.selectedAccount)
-  @ViewChild('menuTrigger') menuTrigger: MatMenuTrigger;  
+  
   selectedAccount$!: Observable<Account>;
   currentUser: BaseUser;
   displayedSongColumns: string[] = ["name", "more"];
@@ -114,6 +114,7 @@ export class TagListComponent implements OnInit {
       this.accountId = accountId;
     }
   }
+  
   ngOnInit(): void {
     if (this.accountId) {
       //Initiallize the tags and close the subscription with take(1)
@@ -137,11 +138,6 @@ export class TagListComponent implements OnInit {
             this.allTags = tags;
           });
     }
-  }
-
-  openMenu($event){
-    $event.preventDefault();
-    this.menuTrigger?.openMenu();
   }
 
   sortChange(sortState: Sort) {
@@ -188,6 +184,9 @@ export class TagListComponent implements OnInit {
 
   onSelectTag($event, selectedTag: Tag){
     $event.preventDefault();
+    if($event.target.innerText === "more_vert"){
+      return;
+    }
     const tagIndex = this.selectedRows.findIndex(tag => tag.name === selectedTag.name);
     if(tagIndex > -1) {
       this.selectedRows.splice(tagIndex, 1);
@@ -223,14 +222,26 @@ export class TagListComponent implements OnInit {
     }); 
   }
 
-  onDeleteTag(tag){
-    const dialogRef = this.dialog.open(TagEditDialogComponent, {
-      data: {accountId: this.accountId, tag: null},
+  onDeleteTag(tagToDelete){
+    let message = "Are you sure you want to delete this Tag?";
+    let message2 = "";
+    
+    this.dialog.open(ConfirmDialogComponent, {
+      data: { title: "Delete", message: message, message2, okButtonText: "Yes", cancelButtonText: "Cancel"},
       panelClass: "dialog-responsive",
-    });
-
-    dialogRef.afterClosed().subscribe((data) => {
+      width: '300px',
+      enterAnimationDuration: '200ms', 
+      exitAnimationDuration: '200ms',
       
+    })
+    .afterClosed().subscribe((data) => {
+      if(data && data.result === CONFIRM_DIALOG_RESULT.OK){
+        
+          this.tagService
+              .removeTag(tagToDelete, this.accountId!, this.currentUser)
+              .pipe(first())
+              .subscribe(); 
+      }
     }); 
   }
 

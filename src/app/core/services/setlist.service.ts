@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { from, map, Observable, of, take } from "rxjs";
+import { from, map, Observable, of, switchMap, take, tap } from "rxjs";
 import { OrderByDirection, Timestamp } from "@angular/fire/firestore";
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
 import { Setlist, SetlistHelper } from '../model/setlist';
@@ -89,22 +89,21 @@ export class SetlistService {
     accountId: string,
     editingUser: BaseUser
   ): any {
+    const accountRef = this.db.doc(`/accounts/${accountId}`);
     const dbPath = `/accounts/${accountId}/setlists`;
     const songsCollection = this.db.collection(dbPath);
     return from(songsCollection.doc(setlistToDelete.id).delete()).pipe(
-      map((result) => {
-        const accountRef = this.db.doc(`/accounts/${accountId}`);
-        accountRef
+      switchMap((result) => {
+        return accountRef
         .valueChanges()
-          .pipe(take(1))
-          .subscribe((result) => {
-            const account = result as Account;
+          .pipe(take(1));
+      }),
+      tap((result) => {
+        const account = result as Account;
             accountRef.update({
               countOfSetlists: account.countOfSetlists ? account.countOfSetlists - 1 : 0,
             });
-          });
       })
     );
-    
   }
 }

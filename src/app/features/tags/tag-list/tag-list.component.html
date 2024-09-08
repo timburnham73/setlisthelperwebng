@@ -35,8 +35,7 @@
               <ng-container matColumnDef="more">
                 <th mat-header-cell *matHeaderCellDef aria-label="Details"></th>
                 <td class="more-column" mat-cell *matCellDef="let element">
-                  <div #menuTrigger [matMenuTriggerFor]="moreMenu" class="menu-trigger">I will be hidden</div>
-                  <button mat-icon-button (click)="openMenu($event)" aria-label="Show More" title="Show More">
+                  <button mat-icon-button [matMenuTriggerFor]="moreMenu" aria-label="Show More" title="Show More">
                     <mat-icon>more_vert</mat-icon>
                   </button>
                   <mat-menu #moreMenu="matMenu">

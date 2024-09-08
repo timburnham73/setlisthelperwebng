@@ -11,6 +11,7 @@ export interface Account extends Base{
     importToken: string; 
     countOfSetlists: number;
     countOfSongs: number;
+    countOfTags: number;
     formatSettings: LyricFormat;
 }
 
@@ -36,6 +37,7 @@ export class AccountHelper{
           lastUpdatedByUser: user,
           importToken: data.importToken ?? "",
           countOfSetlists: data.countOfSetlists ?? 0,
+          countOfTags: data.countOfTags ?? 0,
           countOfSongs: data.countOfSongs ?? 0,
           formatSettings: data.formatSettings ?? 0
         };

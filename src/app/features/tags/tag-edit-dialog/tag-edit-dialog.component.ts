@@ -36,13 +36,10 @@ export class TagEditDialogComponent {
   saving: boolean = false;
   isNew: boolean;
   tag: Tag | undefined;
+  oldTagName: string | undefined;
   accountId: string | undefined;
   currentUser: BaseUser;
-
-  tagForm = new FormGroup({
-    name: new FormControl('', Validators.required),
-  });
-
+  tagForm: FormGroup;
   constructor(
     public dialogRef: MatDialogRef<TagEditDialogComponent>,
     private tagService: TagService,
@@ -51,6 +48,7 @@ export class TagEditDialogComponent {
   ) {
     if(this.data.tag && Object.keys(this.data.tag).length){
       this.tag = this.data.tag;
+      this.oldTagName = this.data.tag.name;
       this.isNew = false;
     }
     this.accountId = this.data.accountId;
@@ -61,12 +59,21 @@ export class TagEditDialogComponent {
       }
     });
 
+    this.tagForm = new FormGroup({
+      name: new FormControl(this.tag?.name || '', Validators.required),
+    });
   }
 
   onSave(){
     this.saving = true;
     if (this.tag?.id) {
-    
+      const modifiedTag = this.tagForm.value as Tag;
+      modifiedTag.id = this.tag.id;
+      this.tagService.renameTag(this.accountId!, this.oldTagName!, modifiedTag, this.currentUser).pipe(
+        first(),
+        tap((result) => this.dialogRef.close(result))
+      )
+      .subscribe();
     }
     else{
       this.addTag()
