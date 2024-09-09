@@ -149,13 +149,6 @@ export class TagListComponent implements OnInit {
           this.allSongs = this.filteredSongs = songs;
         });
   }
-
-  getSetlistNames(song){
-    if(song && song.setlists && song.setlists.length > 0){
-      return song.setlists.map((setlist: SetlistRef) => setlist.name).join(', ');
-    }
-    return 0;
-  }
   
   search(search: string){
     this.filteredSongs = this.allSongs.filter((song) => song.name.toLowerCase().includes(search));
