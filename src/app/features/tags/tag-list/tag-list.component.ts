@@ -76,7 +76,7 @@ export class TagListComponent implements OnInit {
   currentUser: BaseUser;
   displayedSongColumns: string[] = ["name", "more"];
   displayedColumns: string[] = [ 'name', 'artist', 'genre', 'key', 'tempo', 'timeSignature', 'songLength', 'lyrics', 'setlists', 'remove'];
-  selectedRows: Tag[] = [];
+  selectedTags: Tag[] = [];
   showRemove = false;
   subscription: Subscription;
   filteredSongs: Song[];
@@ -183,19 +183,19 @@ export class TagListComponent implements OnInit {
   }
 
   onSelectTag($event, selectedTag: Tag){
-    $event.preventDefault();
-    if($event.target.innerText === "more_vert"){
+    $event?.preventDefault();
+    if($event?.target.innerText === "more_vert"){
       return;
     }
-    const tagIndex = this.selectedRows.findIndex(tag => tag.name === selectedTag.name);
+    const tagIndex = this.selectedTags.findIndex(tag => tag.name === selectedTag.name);
     if(tagIndex > -1) {
-      this.selectedRows.splice(tagIndex, 1);
+      this.selectedTags.splice(tagIndex, 1);
     }
     else{
-      this.selectedRows.push(selectedTag);
+      this.selectedTags.push(selectedTag);
     }
     if(this.accountId){
-      const tags = this.selectedRows.map(tag => tag.name);
+      const tags = this.selectedTags.map(tag => tag.name);
       if (tags && tags.length > 0) {
         if(this.subscription){
           this.subscription.unsubscribe();
@@ -266,7 +266,7 @@ export class TagListComponent implements OnInit {
 
       dialogRef.afterClosed().subscribe((songs) => {
         
-        this.tagService.addTagsToSongs(songs, this.accountId!, this.selectedRows.map(tag => tag.name), this.currentUser).subscribe((songs) => {
+        this.tagService.addTagsToSongs(songs, this.accountId!, this.selectedTags.map(tag => tag.name), this.currentUser).subscribe((songs) => {
           
         });
         
@@ -286,13 +286,13 @@ export class TagListComponent implements OnInit {
 
   onRemoveTagFromSong($event, song){
     $event.preventDefault();
-    this.tagService.removeTagsToSongs([song], this.accountId!, this.selectedRows.map(tag => tag.name), this.currentUser).subscribe((songs) => {
+    this.tagService.removeTagsToSongs([song], this.accountId!, this.selectedTags.map(tag => tag.name), this.currentUser).subscribe((songs) => {
       console.log('Removed song');
     });
   }
 
   isRowSelected(row) {
-    const selectedRowIndex = this.selectedRows?.findIndex(tag => tag.name === row.name);
+    const selectedRowIndex = this.selectedTags?.findIndex(tag => tag.name === row.name);
     return selectedRowIndex > -1; 
   }
 }
