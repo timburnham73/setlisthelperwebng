@@ -28,13 +28,13 @@ import { AccountState } from 'src/app/core/store/account.state';
 import { Account } from 'functions/src/model/account';
 import { Song } from 'src/app/core/model/song';
 import { MatSpinner } from '@angular/material/progress-spinner';
-import { SetlistRef } from 'functions/src/model/setlist';
 import { TagService } from 'src/app/core/services/tag.service';
 import { Tag } from 'src/app/core/model/tag';
 import { MatListOption, MatSelectionList } from '@angular/material/list';
 import { TagEditDialogComponent } from '../tag-edit-dialog/tag-edit-dialog.component';
 import { CONFIRM_DIALOG_RESULT, ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { user } from '@angular/fire/auth';
+import { Setlist } from 'src/app/core/model/setlist';
 
 @Component({
   selector: 'app-tag-list',
@@ -148,6 +148,13 @@ export class TagListComponent implements OnInit {
         .subscribe((songs) => {
           this.allSongs = this.filteredSongs = songs;
         });
+  }
+
+  getSetlistNames(song){
+    if(song && song.setlists && song.setlists.length > 0){
+      return song.setlists.map((setlist: Setlist) => setlist.name).join(', ');
+    }
+    return 0;
   }
   
   search(search: string){

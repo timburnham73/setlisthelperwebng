@@ -103,12 +103,7 @@
                   </ng-container>
       
                   <tr class="mat-row" *matNoDataRow>
-                    @if (filteredSongs.length === 0 && selectedTags.length === 0){
-                    <td class="mat-cell empty-grid-text" [attr.colspan]="displayedColumns.length">
-                        Select a tag to view the songs. 
-                    </td>
-                    }
-                    @if (filteredSongs.length === 0 && selectedTags.length > 0){
+                    @if (filteredSongs.length === 0){
                       <td class="mat-cell empty-grid-text" [attr.colspan]="displayedColumns.length">
                           Add Songs to the selected tag by clicking the Add button. 
                       </td>

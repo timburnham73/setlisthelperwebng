@@ -18,10 +18,7 @@ import { FlexLayoutModule, FlexModule } from 'ngx-flexible-layout';
 import { ExpandIconComponent } from 'src/app/shared/icons/expand-icon/expand-icon.component';
 import { SongSelectorComponent } from '../../setlists/song-selector/song-selector.component';
 import { SongEditDialogComponent } from '../../songs/song-edit-dialog/song-edit-dialog.component';
-import { Tag, Song } from 'chordsheetjs';
-import { Account } from 'functions/src/model/account';
-import { BaseUser, UserHelper } from 'functions/src/model/user';
-import { finalize, Observable, Subscription, switchMap, take } from 'rxjs';
+import { concatMap, finalize, Observable, Subscription, switchMap, take } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -30,6 +27,11 @@ import { AuthenticationService } from 'src/app/core/services/auth.service';
 import { SongService } from 'src/app/core/services/song.service';
 import { TagService } from 'src/app/core/services/tag.service';
 import { AccountState } from 'src/app/core/store/account.state';
+import { BaseUser, UserHelper } from 'src/app/core/model/user';
+import { Account } from 'src/app/core/model/account';
+import { Song } from 'src/app/core/model/song';
+import { Tag } from 'src/app/core/model/tag';
+import { Setlist } from 'src/app/core/model/setlist';
 
 @Component({
   selector: 'app-tag-songs',
@@ -111,13 +113,28 @@ export class TagSongsComponent {
       this.tagService.getTag(this.accountId!, this.tagId)
         .pipe(
           take(1),
-          switchMap(result => this.songService.getSongsByTags(this.accountId!, 'name', [result.name]))
+          switchMap((result: Tag) => {
+            this.selectedTag = result;
+            return this.songService.getSongsByTags(this.accountId!, 'name', [result.name])
+          })
         )
-        
-        .subscribe((songs: Song[]) => {
-          this.allSongs = this.filteredSongs = songs;
+        .subscribe((songs) => {
+          console.log(songs);
         });
     }
+  }
+
+  search(search: string){
+    this.filteredSongs = this.allSongs.filter((song) => song.name.toLowerCase().includes(search));
+  }
+
+  onEnableDeleteMode() {
+    this.showRemove = !this.showRemove;
+  }
+
+  onViewLyrics(event, row: any){
+    event.preventDefault();
+    this.router.navigate([row.id + `/lyrics`], { relativeTo: this.route });
   }
 
   sortChange(sortState: Sort) {
@@ -126,7 +143,60 @@ export class TagSongsComponent {
           finalize(() => this.songsLoading = false)
         )
         .subscribe((songs) => {
-          //this.allSongs = this.filteredSongs = songs;
+          this.allSongs = this.filteredSongs = songs;
         });
+  }
+
+  onAddFromCatalog() {
+    
+    if( this.accountId){
+      const dialogRef = this.dialog.open(SongSelectorComponent, {
+        data: { accountId: this.accountId, setlistId: null, setlistsongIdToinsertAfter: 0 },
+        panelClass: "dialog-responsive",
+      });
+
+      dialogRef.afterClosed().subscribe((songs) => {
+        
+        this.tagService.addTagsToSongs(songs, this.accountId!, [this.selectedTag.name], this.currentUser).subscribe((songs) => {
+          
+        });
+        
+      }); 
+    }
+  }
+
+  onEditSong(song){
+    const dialogRef = this.dialog.open(SongEditDialogComponent, {
+      data: { accountId: this.accountId, song: song},
+      panelClass: "dialog-responsive",
+    })
+    .afterClosed().subscribe((data) => {
+    });
+  }
+
+  getSetlistNames(song){
+    if(song && song.setlists && song.setlists.length > 0){
+      return song.setlists.map((setlist: Setlist) => setlist.name).join(', ');
+    }
+    return 0;
+  }
+
+  getSetlistCount(song){
+    if(song && song.setlists && song.setlists.length > 0){
+      return song.setlists.length;
+    }
+    return 0;
+  }
+  
+  onViewSetlists(event, row: any){
+    event.preventDefault();
+    this.router.navigate([`setlists`], { relativeTo: this.route });
+  }
+
+  onRemoveTagFromSong($event, song){
+    $event.preventDefault();
+    // this.tagService.removeTagsToSongs([song], this.accountId!, this.selectedTags.map(tag => tag.name), this.currentUser).subscribe((songs) => {
+    //   console.log('Removed song');
+    // });
   }
 }

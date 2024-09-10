@@ -5,6 +5,7 @@ import { LayoutComponent } from 'src/app/shared/layout/layout.component';
 import { AngularFireAuthGuard, redirectUnauthorizedTo } from '@angular/fire/compat/auth-guard';
 
 import { TagListComponent } from './tag-list/tag-list.component';
+import { TagSongsComponent } from './tag-songs/tag-songs.component';
 
 const routes: Routes = [
   {
@@ -12,6 +13,13 @@ const routes: Routes = [
     component: LayoutComponent,
     children: [
       { path: '', component: TagListComponent, canActivate: [AngularFireAuthGuard], },
+    ]
+  },
+  {
+    path: ':tagid',
+    component: LayoutComponent,
+    children: [
+      { path: '', component: TagSongsComponent, canActivate: [AngularFireAuthGuard], },
     ]
   },
   {
