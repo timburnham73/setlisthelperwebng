@@ -14,8 +14,7 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { BaseUser } from 'functions/src/model/user';
-import { NGXLogger } from 'ngx-logger';
-import { finalize, flatMap, mergeMap, pipe, switchMap, tap } from 'rxjs';
+import { switchMap } from 'rxjs';
 import { AccountImport } from 'src/app/core/model/account-import';
 import { AccountImportEvent } from 'src/app/core/model/account-import-event';
 import { AccountImportService } from 'src/app/core/services/account-import.service';
@@ -42,7 +41,7 @@ export class AccountImportEventsComponent {
   loading = false;
 
   constructor(
-    private logger: NGXLogger,
+    //private logger: NGXLogger,
     private route: ActivatedRoute,
     private titleService: Title,
     private accountImportService: AccountImportService,

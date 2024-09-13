@@ -1,10 +1,17 @@
 import { Injectable } from '@angular/core';
-import { from, map, Observable, of, take } from "rxjs";
+import { from, map, Observable, of, take, tap } from "rxjs";
 import { OrderByDirection, Timestamp } from "@angular/fire/firestore";
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
 import { Setlist, SetlistHelper } from '../model/setlist';
 import { Account } from '../model/account';
 import { BaseUser } from '../model/user';
+import { SetlistPrintSettings } from '../model/setlist-print-settings';
+
+export enum PrintColumns {
+  one,
+  two,
+  three
+}
 
 @Injectable({
   providedIn: 'root'
@@ -105,6 +112,58 @@ export class SetlistService {
           });
       })
     );
+  }
+
+  
+  addSetlistPrintSettings(accountId: string, setlistId: string,  setlistPrintSettings: SetlistPrintSettings){
+    const dbPath = `/accounts/${accountId}/setlists/${setlistId}/printsettings`;
     
+    const setlistsPringSettingsRef = this.db.collection(dbPath);
+    return from(setlistsPringSettingsRef.add(setlistPrintSettings)).pipe(
+      map((result) => {
+        const rtnSettings = {
+          ...setlistPrintSettings,
+          id: result.id,
+        };
+        return rtnSettings;
+      })
+    );
+  }
+
+  updateSetlistPrintSettings(accountId: string, setlistId: string,  setlistPrintSettings: SetlistPrintSettings): Observable<SetlistPrintSettings>{
+    const dbPath = `/accounts/${accountId}/setlists/${setlistId}/printsettings`;
+    
+    const setlistsPringSettingsRef = this.db.collection(dbPath);
+    return from(setlistsPringSettingsRef.doc(setlistPrintSettings.id).update(setlistPrintSettings)).pipe(
+      map(() => {
+        return setlistPrintSettings;
+      }
+    ));
+  }
+
+  setPrintSettings(accountId: string, setlistId: string,  setlistPrintSettings: SetlistPrintSettings) {
+    if(setlistPrintSettings && setlistPrintSettings.id){
+      return this.updateSetlistPrintSettings(accountId, setlistId,  setlistPrintSettings);
+    }
+    else{
+      return this.addSetlistPrintSettings(accountId, setlistId,  setlistPrintSettings);
+    }
+  }
+
+
+  getSetlistPrintSettings(accountId: string, setlistId: string): Observable<SetlistPrintSettings[] | undefined>{
+    const dbPath = `/accounts/${accountId}/setlists/${setlistId}/printsettings`;
+    const setlistPrintSettingsRef = this.db.collection(dbPath);
+    return setlistPrintSettingsRef.snapshotChanges().pipe(
+      map(changes =>
+        changes.map(c =>
+          {
+            const setlistPrintSettings = c.payload.doc.data() as SetlistPrintSettings;
+            setlistPrintSettings.id = c.payload.doc.id;
+            return setlistPrintSettings;
+          }
+        )
+      )
+    );
   }
 }

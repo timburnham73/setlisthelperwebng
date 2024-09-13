@@ -37,7 +37,7 @@ import {
 import { AngularFireAuthGuardModule } from "@angular/fire/compat/auth-guard";
 
 import { NgxsModule } from "@ngxs/store";
-import { LoggerModule } from "ngx-logger";
+//import { LoggerModule } from "ngx-logger";
 import { AccountStateModule } from "./app/core/store/account-state.module";
 import { AppRoutingModule } from "./app/app-routing.module";
 import { CustomMaterialModule } from "./app/custom-material/custom-material.module";
@@ -80,11 +80,11 @@ bootstrapApplication(AppComponent, {
       CustomMaterialModule.forRoot(),
       AppRoutingModule,
       AccountStateModule,
-      LoggerModule.forRoot({
-        serverLoggingUrl: `https://songsetter.com/logs`,
-        level: environment.logLevel,
-        serverLogLevel: environment.serverLogLevel,
-      }),
+      // LoggerModule.forRoot({
+      //   serverLoggingUrl: `https://www.songsetter.com/logs`,
+      //   level: environment.logLevel,
+      //   serverLogLevel: environment.serverLogLevel,
+      // }),
       NgxsModule.forRoot([], {
         selectorOptions: {
           injectContainerState: false,

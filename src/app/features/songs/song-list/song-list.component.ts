@@ -1,7 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
 import { MatTableDataSource as MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { NGXLogger } from 'ngx-logger';
 import { Title } from '@angular/platform-browser';
 import { NotificationService } from 'src/app/core/services/notification.service';
 import { SongService } from 'src/app/core/services/song.service';
@@ -79,7 +78,6 @@ export class SongListComponent implements OnInit {
   lastPageLoaded = 0;
 
   constructor(
-    private logger: NGXLogger,
     private route: ActivatedRoute,
     private titleService: Title,
     public songService: SongService,

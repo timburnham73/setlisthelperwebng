@@ -13,14 +13,13 @@ import { SetlistSong } from 'src/app/core/model/setlist-song';
 import { User } from 'src/app/core/model/user';
 import { AuthenticationService } from 'src/app/core/services/auth.service';
 import { SetlistSongService } from 'src/app/core/services/setlist-songs.service';
-import { SetlistService } from 'src/app/core/services/setlist.service';
+import { PrintColumns, SetlistService } from 'src/app/core/services/setlist.service';
 import { AccountState } from 'src/app/core/store/account.state';
-
-export enum PrintColumns {
-  one,
-  two,
-  three
-}
+import { SetlistPrintShowDialogComponent } from './setlist-print-show-dialog/setlist-print-show-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
+import { defaultPrintSettings, SetlistPrintSettings } from 'src/app/core/model/setlist-print-settings';
+import { take } from 'rxjs';
+import { FormControl, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-setlist-print',
@@ -47,10 +46,10 @@ export class SetlistPrintComponent {
   setlistId: string;
   setlist?: Setlist;
   setlistSongs: SetlistSong[];
+  setlistPrintSettings: SetlistPrintSettings | undefined;
+  columns = PrintColumns.one;
   loading: boolean;
-  columns: PrintColumns = PrintColumns.one;
-  hide
-
+ 
   public get PrintColumns(): typeof PrintColumns {
     return PrintColumns; 
   }
@@ -61,6 +60,7 @@ export class SetlistPrintComponent {
     private authService: AuthenticationService,
     private store: Store,
     private activeRoute: ActivatedRoute,
+    public dialog: MatDialog,
     private router: Router,
   ){
     
@@ -81,9 +81,23 @@ export class SetlistPrintComponent {
     if (accountId && setlistId) {
       this.accountId = accountId;
       this.setlistId = setlistId;
-      this.setlistService.getSetlist(this.accountId, this.setlistId).subscribe((setlist) => {
+      this.setlistService.getSetlist(this.accountId, this.setlistId)
+                          .subscribe((setlist) => {
         this.loading = false;
         this.setlist = setlist;
+      });
+
+      this.setlistService
+        .getSetlistPrintSettings(accountId, setlistId)
+        .pipe(take(1))
+        .subscribe((printsettings) => {
+          if(printsettings && printsettings.length > 0){
+            this.setlistPrintSettings = printsettings[0]; 
+          }
+          else {
+            this.setlistPrintSettings = defaultPrintSettings;
+          }
+          this.columns = this.setlistPrintSettings.columns;
       });
 
       this.setlistSongsService
@@ -99,7 +113,6 @@ export class SetlistPrintComponent {
             return {...song, sequenceNumber : sequenceNumber + .01};
           
           });
-          console.log(this.setlistSongs);
         });
     }
   }
@@ -122,11 +135,27 @@ export class SetlistPrintComponent {
   }
 
   onChangePrintColumn(columns: PrintColumns){
-    this.columns = columns;
+    if(this.setlistPrintSettings){
+    this.setlistPrintSettings.columns = columns;
+    
+    this.setlistService.setPrintSettings(this.accountId, this.setlistId, this.setlistPrintSettings)
+      .subscribe((result)=> {
+        this.setlistPrintSettings = result;
+      });
+    }
   }
 
   onSetVisibleElements(){
+    const dialogRef = this.dialog.open(SetlistPrintShowDialogComponent, {
+      data: { accountId: this.accountId, setlist: this.setlist, printSettings: this.setlistPrintSettings},
+      panelClass: "dialog-responsive",
+    });
 
+    dialogRef.afterClosed().subscribe((printSettings) => {
+      if(printSettings){
+        this.setlistPrintSettings = printSettings;
+      }
+    });
   }
 
 }

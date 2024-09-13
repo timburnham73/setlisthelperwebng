@@ -2,7 +2,7 @@ import { NgModule, Optional, SkipSelf, ErrorHandler } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { MediaMatcher } from '@angular/cdk/layout';
-import { NGXLogger } from 'ngx-logger';
+//import { NGXLogger } from 'ngx-logger';
 
 
 import { SpinnerInterceptor } from './interceptors/spinner.interceptor';
@@ -17,11 +17,11 @@ import { GlobalErrorHandler } from './services/globar-error.handler';
             useClass: SpinnerInterceptor,
             multi: true
         },
-        {
-            provide: ErrorHandler,
-            useClass: GlobalErrorHandler
-        },
-        { provide: NGXLogger, useClass: NGXLogger },
+        // {
+        //     provide: ErrorHandler,
+        //     useClass: GlobalErrorHandler
+        // },
+        //{ provide: NGXLogger, useClass: NGXLogger },
         { provide: 'LOCALSTORAGE', useValue: window.localStorage },
         provideHttpClient(withInterceptorsFromDi())
     ] })

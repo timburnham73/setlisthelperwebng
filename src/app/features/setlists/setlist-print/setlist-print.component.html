@@ -16,7 +16,7 @@
 
           <mat-button-toggle-group 
             name="fontStyle" 
-            [(value)]="columns"
+            [(value)]="this.columns"
             [hideSingleSelectionIndicator]="true"
             aria-label="Print Columns"
             #toggleFontStyle="matButtonToggleGroup">
@@ -24,6 +24,7 @@
               [value]="PrintColumns.one"  
               aria-label="One Column"
               title="One Column"  
+              (change)="onChangePrintColumn(PrintColumns.one)"
               >
               <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Zm-20 200h80v-400H380v80h80v320Z"/></svg>
             </mat-button-toggle>
@@ -31,6 +32,7 @@
               [value]="PrintColumns.two"
               aria-label="Two Columns"
               title="Two Columns"
+              (change)="onChangePrintColumn(PrintColumns.two)"
               >
               <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320ZM360-280h240v-80H440v-80h80q33 0 56.5-23.5T600-520v-80q0-33-23.5-56.5T520-680H360v80h160v80h-80q-33 0-56.5 23.5T360-440v160Z"/></svg>
             </mat-button-toggle>
@@ -38,6 +40,7 @@
               [value]="PrintColumns.three" 
               aria-label="Three Columns"
               title="Three Columns"
+              (change)="onChangePrintColumn(PrintColumns.three)"
               >
               <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320ZM360-280h160q33 0 56.5-23.5T600-360v-60q0-26-17-43t-43-17q26 0 43-17t17-43v-60q0-33-23.5-56.5T520-680H360v80h160v80h-80v80h80v80H360v80Z"/></svg>
             </mat-button-toggle>
@@ -59,10 +62,10 @@
         <div id="setlist-songs">
           <div class="setlist-songs-static page">
             <div>
-              <h2>{{setlist?.name}}</h2>
-              <h4>{{setlist?.gigDate?.toDate() | date: 'medium'}}</h4>
-              <h5>{{setlist?.gigLocation}}</h5>
-              <ol [ngClass]="{ 'one-column': columns === PrintColumns.one, 'two-columns': columns === PrintColumns.two, 'three-columns': columns === PrintColumns.three}">
+              <h2 *ngIf="setlistPrintSettings?.setlistName?.show">{{setlist?.name}}</h2>
+              <h4 *ngIf="setlistPrintSettings?.gigDateTime?.show">{{setlist?.gigDate?.toDate() | date: 'medium'}}</h4>
+              <h5 *ngIf="setlistPrintSettings?.gigLocation?.show">{{setlist?.gigLocation}}</h5>
+              <ol [ngClass]="{ 'one-column': setlistPrintSettings?.columns === PrintColumns.one, 'two-columns': setlistPrintSettings?.columns === PrintColumns.two, 'three-columns': setlistPrintSettings?.columns === PrintColumns.three}">
                 <li *ngFor="let song of setlistSongs; index as i;" [ngClass]="{'break': song.isBreak === true}" [value]="song.sequenceNumber">
                   <p>
                     <span><b>{{song.name}}</b></span>
@@ -71,7 +74,21 @@
                       <span *ngIf="song.notes">{{song.notes}}</span>
                     }
                     @else {
-                      <span>{{song.artist}}</span>
+                      <span class="second-line" *ngIf="setlistPrintSettings?.artist?.show">{{song.artist}}</span>
+                      <span class="second-line" *ngIf="setlistPrintSettings?.genre?.show">{{song.genre}}</span>
+                      <span class="second-line" *ngIf="setlistPrintSettings?.songKey?.show">{{song.key}}</span>
+                      <span class="second-line" *ngIf="setlistPrintSettings?.songLength?.show">
+                        {{
+                        song.lengthMin 
+                        ? song.lengthMin +
+                        ":" +
+                        song?.lengthSec?.toString()?.padStart(2, "0")
+                        : ""
+                        }}
+                      </span>
+                      <span class="second-line" *ngIf="setlistPrintSettings?.tempo?.show">{{song.tempo}}</span>
+                      <span class="second-line" *ngIf="setlistPrintSettings?.timeSignature?.show">{{song.noteValue}}/{{song.beatValue}}</span>
+                      
                     }
                     
                   </p>

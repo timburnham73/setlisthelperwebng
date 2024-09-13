@@ -1,7 +1,6 @@
 import { Component, OnInit, inject } from "@angular/core";
 import { NotificationService } from "src/app/core/services/notification.service";
 import { Title } from "@angular/platform-browser";
-import { NGXLogger } from "ngx-logger";
 import { AuthenticationService } from "src/app/core/services/auth.service";
 import { AccountService } from "src/app/core/services/account.service";
 import { Observable, catchError, from, throwError } from "rxjs";
@@ -51,7 +50,6 @@ export class AccountHomeComponent implements OnInit {
     private titleService: Title,
     private store:Store,
     private router: Router,
-    private logger: NGXLogger,
     private accountService: AccountService,
     public dialog: MatDialog,
     private userService: UserService,

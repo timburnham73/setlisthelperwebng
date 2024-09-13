@@ -17,8 +17,8 @@ th.mat-sort-header-sorted {
 li.break {
     list-style: none;
     color: #999;
-    padding-top:2px;
-    padding-bottom:2px;
+    padding-top:10px !important;
+    padding-bottom:10px !important;
     border-top: 1px dashed #999;
     border-bottom: 1px solid #999;
 }
@@ -128,4 +128,8 @@ ol.three-columns {
         break-inside: avoid;
         margin: 0px;
     }
+}
+
+.second-line {
+    padding-right: 15px;
 }

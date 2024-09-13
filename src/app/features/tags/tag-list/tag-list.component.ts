@@ -21,7 +21,6 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { BaseUser, UserHelper } from 'functions/src/model/user';
-import { NGXLogger } from 'ngx-logger';
 import { finalize, Observable } from 'rxjs';
 import { AuthenticationService } from 'src/app/core/services/auth.service';
 import { SongService } from 'src/app/core/services/song.service';
@@ -85,7 +84,6 @@ export class TagListComponent {
   
   constructor(
     private activeRoute: ActivatedRoute,
-    private logger: NGXLogger,
     private route: ActivatedRoute,
     private titleService: Title,
     public songService: SongService,
