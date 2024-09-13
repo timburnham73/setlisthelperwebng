@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-
-import { NotificationService } from 'src/app/core/services/notification.service';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 
@@ -15,7 +13,6 @@ import { MatCardModule } from '@angular/material/card';
 export class UserListComponent implements OnInit {
 
   constructor(
-    private notificationService: NotificationService,
     private titleService: Title
   ) { }
 

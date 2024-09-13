@@ -19,6 +19,7 @@ export interface Song extends Base {
   lengthMin: number;
   lengthSec: number;
   countOfLyrics: number;
+  tags: string[];
 }
 
 // public static getSongLengthMinSec(SongLength: number) {
@@ -58,6 +59,7 @@ export class SongHelper {
       lengthMin: data.lengthMin ?? 3,
       countOfLyrics: data.countOfLyrics ?? 0,
       lengthSec: data.lengthSec ?? 0,
+      tags: data.tags || []
     };
   }
 }

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { LyricsComponent } from '../lyrics-view/lyrics.component';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { NgIf, NgFor } from '@angular/common';
+import { NgIf, NgFor, CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatOptionModule } from '@angular/material/core';
@@ -42,10 +42,9 @@ import { SwipeDirective } from 'src/app/shared/directives/swipe/swipe.directive'
     MatButtonModule,
     MatButtonToggleModule,
     MatIconModule,
-    NgIf,
     MatFormFieldModule,
     MatSelectModule,
-    NgFor,
+    CommonModule,
     MatOptionModule,
     MatButtonModule,
     MatMenuModule,
@@ -99,7 +98,7 @@ export class LyricViewWrapperComponent {
         AccountState.selectedAccount
       );
       
-      this.loading = true;
+      this.loading = false;
 
       if(this.selectedAccount && this.selectedAccount.id){
         this.setlistId = this.activeRoute.snapshot.paramMap.get("setlistid") || undefined;
@@ -139,7 +138,7 @@ export class LyricViewWrapperComponent {
   }
 
   private initLyrics() {
-    this.loading = true;
+    this.loading = false;
     const songId = this.activeRoute.snapshot.paramMap.get("songid");
     this.lyricId = this.activeRoute.snapshot.paramMap.get("lyricid") || undefined;
     

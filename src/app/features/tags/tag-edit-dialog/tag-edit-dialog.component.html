@@ -1,0 +1,26 @@
+<form class="dialog-form" [formGroup]="tagForm">
+    <div mat-dialog-content>
+      <p *ngIf="!isNew">Edit Tag</p>
+      <p *ngIf="isNew">Add Tag</p>
+      <p>
+        <mat-form-field appearance="outline" class="dialog-input-full-width">
+          <mat-label>Tag Name</mat-label>
+          <input matInput formControlName="name" />
+        </mat-form-field>
+      </p>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-button (click)="onNoClick()">Cancel</button>
+      <button
+        mat-raised-button
+        class="mat-primary"
+        (click)="onSave()"
+        [disabled]="!tagForm.valid || !tagForm.dirty"
+      >
+        Save
+        <mat-icon *ngIf="saving"
+          ><mat-spinner color="accent" diameter="20"> </mat-spinner
+        ></mat-icon>
+      </button>
+    </div>
+  </form>
