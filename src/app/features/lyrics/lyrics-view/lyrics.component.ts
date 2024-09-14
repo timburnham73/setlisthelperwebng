@@ -151,8 +151,9 @@ export class LyricsComponent {
       songId: this.song?.id,
       createdByUserId: this.currentUser.uid,
     };
+    const lyricCount = this.lyrics ? this.lyrics.length : 0;
     const dialogRef = this.dialog.open(LyricAddDialogComponent, {
-      data: { accountLyric: accountLyric, countOfLyrics: this.lyrics.length },
+      data: { accountLyric: accountLyric, countOfLyrics: lyricCount },
       panelClass: "dialog-responsive",
     });
 

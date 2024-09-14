@@ -143,19 +143,7 @@ export class SetlistListComponent implements OnInit {
   }
 
   onPrintSetlist(){
-
-    this.router.navigate([this.selectedSetlist?.id + '/print'], { relativeTo: this.route } );
-    // let printContents = document?.getElementById("setlist-songs")?.innerHTML;
-    //  let originalContents = document.body.innerHTML;
-
-    //  if(document && document.body && document.body.innerHTML && printContents){
-    //     document.body.innerHTML = printContents;
-    //     window.print();
-
-    //     document.body.innerHTML = originalContents;
-    //  }
-
-     
+    this.router.navigate([this.selectedSetlist?.id + '/print'], { relativeTo: this.route } ); 
   }
 
   onRemoveSetlist(event, setlistToDelete: Setlist) {

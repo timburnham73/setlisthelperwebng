@@ -1,5 +1,4 @@
-import { DragDropModule } from '@angular/cdk/drag-drop';
-import { DatePipe, NgIf, NgClass, NgFor, CommonModule } from '@angular/common';
+import { DatePipe, CommonModule } from '@angular/common';
 import { Component, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -51,7 +50,6 @@ import { Setlist } from 'src/app/core/model/setlist';
     MatIconModule,
     DatePipe,
     CommonModule,
-    DragDropModule,
     SongEditDialogComponent,
     SongSelectorComponent,
     FlexModule,
@@ -68,6 +66,7 @@ export class TagSongsComponent {
   currentUser: BaseUser;
   displayedColumns: string[] = [ 'name', 'artist', 'genre', 'key', 'tempo', 'timeSignature', 'songLength', 'lyrics', 'setlists', 'remove'];
   showRemove = false;
+  showFind = false;
   subscription: Subscription;
   filteredSongs: Song[];
   allSongs: Song[];
@@ -119,7 +118,7 @@ export class TagSongsComponent {
           })
         )
         .subscribe((songs) => {
-          console.log(songs);
+          this.allSongs = this.filteredSongs = songs;
         });
     }
   }
@@ -147,8 +146,11 @@ export class TagSongsComponent {
         });
   }
 
+  onBackButtonPressed() {
+    this.router.navigate([".."], { relativeTo: this.activeRoute });
+  }
+
   onAddFromCatalog() {
-    
     if( this.accountId){
       const dialogRef = this.dialog.open(SongSelectorComponent, {
         data: { accountId: this.accountId, setlistId: null, setlistsongIdToinsertAfter: 0 },
@@ -163,6 +165,10 @@ export class TagSongsComponent {
         
       }); 
     }
+  }
+
+  onShowFind(){
+    this.showFind = !this.showFind;
   }
 
   onEditSong(song){
@@ -187,7 +193,7 @@ export class TagSongsComponent {
     }
     return 0;
   }
-  
+
   onViewSetlists(event, row: any){
     event.preventDefault();
     this.router.navigate([`setlists`], { relativeTo: this.route });

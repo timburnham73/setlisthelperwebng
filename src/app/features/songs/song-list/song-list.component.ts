@@ -45,7 +45,8 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
     templateUrl: './song-list.component.html',
     styleUrls: ['./song-list.component.css'],
     standalone: true,
-    imports: [MatCardModule, 
+    imports: [
+      MatCardModule, 
       MatToolbarModule, 
       MatButtonModule, 
       MatIconModule, 

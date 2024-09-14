@@ -284,6 +284,10 @@ export class TagListComponent implements OnInit {
     });
   }
 
+  onViewTag(tag){
+    this.router.navigate([tag.id], { relativeTo: this.route } );
+  }
+
   onRemoveTagFromSong($event, song){
     $event.preventDefault();
     this.tagService.removeTagsToSongs([song], this.accountId!, this.selectedTags.map(tag => tag.name), this.currentUser).subscribe((songs) => {
