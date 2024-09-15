@@ -270,7 +270,7 @@ export class SetlistSongsListComponent {
   }
 
   onPrintSetlist() {
-
+    this.router.navigate(['../print'], { relativeTo: this.route } ); 
   }
 
   onEnableDeleteMode() {

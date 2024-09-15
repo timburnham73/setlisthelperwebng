@@ -131,7 +131,7 @@ export class SetlistPrintComponent {
   }
 
   onBackToSetlist(){
-    this.router.navigate(["../.."], { relativeTo: this.activeRoute });   
+    this.router.navigate(["../songs"], { relativeTo: this.activeRoute });   
   }
 
   onChangePrintColumn(columns: PrintColumns){

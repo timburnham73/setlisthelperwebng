@@ -147,7 +147,7 @@ export class TagSongsComponent {
   }
 
   onBackButtonPressed() {
-    this.router.navigate([".."], { relativeTo: this.activeRoute });
+    this.router.navigate(["../.."], { relativeTo: this.activeRoute });
   }
 
   onAddFromCatalog() {
@@ -201,8 +201,8 @@ export class TagSongsComponent {
 
   onRemoveTagFromSong($event, song){
     $event.preventDefault();
-    // this.tagService.removeTagsToSongs([song], this.accountId!, this.selectedTags.map(tag => tag.name), this.currentUser).subscribe((songs) => {
-    //   console.log('Removed song');
-    // });
+    this.tagService.removeTagsToSongs([song], this.accountId!, [this.selectedTag.name], this.currentUser).subscribe((songs) => {
+      
+    });
   }
 }

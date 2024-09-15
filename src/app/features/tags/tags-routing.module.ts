@@ -17,14 +17,14 @@ const routes: Routes = [
     ]
   },
   {
-    path: ':tagid',
+    path: ':tagid/songs',
     component: LayoutNoSidebarChildViewComponent,
     children: [
       { path: '', component: TagSongsComponent, canActivate: [AngularFireAuthGuard], },
     ]
   },
   {
-    path: ":songid/lyrics",
+    path: ":tagid/songs/:songid/lyrics",
     loadChildren: () =>
       import("../lyrics/lyrics.module").then((m) => m.LyricsModule),
     canActivate: [AngularFireAuthGuard],

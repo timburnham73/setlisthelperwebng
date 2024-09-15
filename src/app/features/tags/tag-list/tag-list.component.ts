@@ -285,7 +285,7 @@ export class TagListComponent implements OnInit {
   }
 
   onViewTag(tag){
-    this.router.navigate([tag.id], { relativeTo: this.route } );
+    this.router.navigate([tag.id + '/songs'], { relativeTo: this.route } );
   }
 
   onRemoveTagFromSong($event, song){
