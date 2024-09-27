@@ -14,18 +14,18 @@ export interface Setlist extends Base {
 }
 
 export class SetlistHelper {
-  static getForAdd(data: Setlist, editingUser: BaseUser): Setlist {
+  static getForAdd(data: Partial<Setlist>, editingUser: BaseUser): Setlist {
     return {
       ...SetlistHelper.getForUpdate(data, editingUser),
       createdByUser: editingUser,
       dateCreated: Timestamp.fromDate(new Date()),
     };
   }
-  static getForUpdate(data: Setlist, editingUser: BaseUser): Setlist {
+  static getForUpdate(data: Partial<Setlist>, editingUser: BaseUser): Setlist {
     return {
       name: data.name ?? "",
-      gigLocation: data.gigLocation ?? Timestamp.fromDate(new Date()),
-      gigDate: data.gigDate ?? "",
+      gigLocation: data.gigLocation ?? '',
+      gigDate: data.gigDate ?? Timestamp.fromDate(new Date()),
       createdByUser: data.createdByUser ?? editingUser,
       dateCreated: data.dateCreated ?? Timestamp.fromDate(new Date()),
       lastEdit: Timestamp.fromDate(new Date()),

@@ -54,7 +54,7 @@ export class SetlistService {
     );
   }
 
-  addSetlist(accountId: string, setlist: Setlist, editingUser: BaseUser): any {
+  addSetlist(accountId: string, setlist: Partial<Setlist>, editingUser: BaseUser): any {
     const setlistForUpdate = SetlistHelper.getForAdd(setlist, editingUser);
     
     const dbPath = `/accounts/${accountId}/setlists`;
@@ -82,7 +82,7 @@ export class SetlistService {
     );
   }
 
-  updateSetlist(accountId: string, setlistId: string, setlist: Setlist, editingUser: BaseUser): Observable<void> {
+  updateSetlist(accountId: string, setlistId: string, setlist: Partial<Setlist>, editingUser: BaseUser): Observable<void> {
     const setlistForUpdate = SetlistHelper.getForUpdate(setlist, editingUser);
     
     const dbPath = `/accounts/${accountId}/setlists`;

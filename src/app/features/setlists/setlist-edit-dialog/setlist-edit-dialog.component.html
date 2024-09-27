@@ -14,19 +14,19 @@
         <input matInput formControlName="gigLocation" />
       </mat-form-field>
     </p>
+    <mat-form-field appearance="outline">
+      <mat-label>Gig Date</mat-label>
+      <input matInput formControlName="gigDate" [matDatepicker]="picker">
+      <mat-hint>MM/DD/YYYY</mat-hint>
+      <mat-datepicker-toggle matSuffix [for]="picker">
+        </mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
     <p>
       <mat-form-field appearance="outline">
-      <!--  <mat-label>Gig Date</mat-label>
-        <input matInput [ngxMatDatetimePicker]="picker" formControlName="gigDatePicker"
-              [min]="minDate">
-         <mat-datepicker-toggle matSuffix [for]="$any(picker)">
-          <mat-icon ngxMatDatepickerToggleIcon>keyboard_arrow_down</mat-icon>
-        </mat-datepicker-toggle>
-        <ngx-mat-datetime-picker #picker [showSpinners]="true" [showSeconds]="false" [stepHour]="1"
-          [stepMinute]="1" [stepSecond]="1" [touchUi]="false" [color]="'primary'"
-          [enableMeridian]="false">
-        </ngx-mat-datetime-picker> -->
-      </mat-form-field>
+        <mat-label>Gig Date</mat-label>
+        <input type="time" formControlName="gigTime" matInput name="gig-date">
+     </mat-form-field>
     </p>
   </div>
   <div mat-dialog-actions>

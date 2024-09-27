@@ -10,10 +10,7 @@ import {
 } from "@angular/fire/compat/firestore";
 import { BaseUser, User, UserHelper } from "../model/user";
 import { AccountUser, AccountUserHelper } from "../model/AccountUser";
-import { ADMIN } from "../model/roles";
-import { convertSnaps } from "./db-utils";
-
-//import OrderByDirection = firebase.firestore.OrderByDirection;
+import { convertSnaps } from "../util/db-utils";
 
 @Injectable({
   providedIn: "root",

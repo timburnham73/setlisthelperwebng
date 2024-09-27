@@ -17,7 +17,7 @@ import { LyricsModule } from '../lyrics/lyrics.module';
         SharedModule,
         SetlistListComponent,
         SetlistEditDialogComponent,
-        SetlistSongsListComponent
+        SetlistSongsListComponent,
     ]
 })
 export class SetlistModule { }

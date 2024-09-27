@@ -20,9 +20,19 @@
                     Add
                 </span>
             </button>
-            <button mat-icon-button aria-label="Find Song" aria-label="Find Song" (click)="onShowFind()">
-                <mat-icon>search</mat-icon>
-            </button>
+            <button mat-icon-button [matMenuTriggerFor]="moreMenu" aria-label="Show More" title="Show More">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              <mat-menu #moreMenu="matMenu">
+                <button mat-icon-button aria-label="Find Song" aria-label="Find Song" (click)="onShowFind()">
+                    <mat-icon>search</mat-icon>
+                    <span>Find</span>
+                </button>
+                  <button mat-menu-item aria-label="Remove Song" (click)="onEnableDeleteMode()">
+                    <mat-icon>delete</mat-icon>
+                    <span>Delete</span>
+                  </button>
+              </mat-menu>
             }
             @if(showFind){
             <button mat-icon-button aria-label="Stop Find Song" (click)="onShowFind()">

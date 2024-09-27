@@ -67,7 +67,6 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
 
     onLoginSuccessful(authResult: any) {
-        console.log('Firebase UI result:', authResult);
         this.userService.getUserById(authResult.user.uid).subscribe((user) => {
             if(!user){
                 this.userService.addUser(authResult.user);
