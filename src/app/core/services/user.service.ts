@@ -3,11 +3,11 @@ import { Observable, from, throwError } from "rxjs";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { catchError, map } from "rxjs/operators";
 import { Router } from "@angular/router";
-import { UserRoles } from "../model/user-roles";
 import { AngularFirestore, AngularFirestoreCollection } from "@angular/fire/compat/firestore";
 import { User, UserHelper } from "../model/user";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { JwtToken } from "../model/JwtToken";
+import { Timestamp } from "@angular/fire/firestore";
 
 @Injectable({
   providedIn: "root",
@@ -25,9 +25,15 @@ export class UserService {
     
   }
 
-  addUser(authUser: any): any {
-    const userToAdd : User = {uid: authUser.uid, displayName: authUser.displayName ?? '', photoUrl: authUser.photoUrl ?? '', email: authUser.email ?? '' }
-    return this.userRef.add(userToAdd);
+  setUser(authUser: any): any {
+    const userToAdd : User = {
+      uid: authUser.uid, 
+      displayName: authUser.displayName ?? '', 
+      photoUrl: authUser.photoUrl ?? '', 
+      email: authUser.email ?? '',
+      lastLoginDate: Timestamp.now()
+    }
+    return this.db.collection(this.dbPath).doc(authUser.uid).set(userToAdd, {merge : true});
   }
 
   deleteFormatSettingsUser(id: string): any {
@@ -39,19 +45,20 @@ export class UserService {
     return from(this.userRef.doc(id).update(userToUpdate));
   }
 
-  getUserById(uid: string): Observable<User>{
+  getUserById(uid: string): Observable<User | undefined>{
     return this.db
-      .collection(this.dbPath, (ref) =>
-        ref.where("uid", "==", uid)
-      )
-      .get()
+      .collection(this.dbPath).doc(uid)
+      .snapshotChanges()
       .pipe(
-        map((results) =>
-          results.docs.map((snap) => {
-            return { id: snap.id, ...(<any>snap.data()) };
-          })[0]
-        )
-      );
+        map((resultUser) => {
+          const user = resultUser.payload.data() as User;
+          if(user){
+            user.id = uid;
+            return user;
+          }
+          return undefined;
+        }
+      ));
   }
 
   getUserByEmail(emailAddress: string): Observable<User>{

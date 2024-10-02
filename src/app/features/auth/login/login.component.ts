@@ -67,12 +67,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
 
     onLoginSuccessful(authResult: any) {
-        this.userService.getUserById(authResult.user.uid).subscribe((user) => {
-            if(!user){
-                this.userService.addUser(authResult.user);
-            }
-            this.router.navigateByUrl("/accounts");
-        });
+        this.userService.setUser(authResult.user).subscribe();
+        this.router.navigateByUrl("/accounts");
     }
 
     resetPassword() {

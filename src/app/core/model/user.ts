@@ -1,3 +1,4 @@
+import { Timestamp } from "@angular/fire/firestore";
 import { LyricFormat } from "./lyric-format";
 
 export interface BaseUser {
@@ -6,6 +7,7 @@ export interface BaseUser {
   email: string;
   photoUrl?: string;
   formatSettings?: LyricFormat;
+  lastLoginDate?: Timestamp;
 }
 
 export interface  User extends BaseUser {
@@ -19,7 +21,8 @@ export class UserHelper {
       displayName: data.displayName ?? "", 
       email: data.email ?? "",
       photoUrl: data.photoUrl ?? undefined,
-      formatSettings: data.formatSettings ?? undefined
+      formatSettings: data.formatSettings ?? undefined,
+      lastLoginDate: data.lastLoginDate ?? undefined
     };
     if(baseUser.photoUrl === undefined){
       delete baseUser.photoUrl;
