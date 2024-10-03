@@ -227,7 +227,7 @@ export class SongListComponent implements OnInit {
 
   onViewSetlists(event, row: any){
     event.preventDefault();
-    this.router.navigate([`setlists`], { relativeTo: this.route });
+    this.router.navigate([`../setlists`], { relativeTo: this.route });
   }
 
   onAddLyric(event, row: Song){

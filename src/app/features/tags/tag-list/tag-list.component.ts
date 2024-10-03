@@ -172,7 +172,7 @@ export class TagListComponent implements OnInit {
 
   onViewSetlists(event, row: any){
     event.preventDefault();
-    this.router.navigate([`setlists`], { relativeTo: this.route });
+    this.router.navigate([`../setlists`], { relativeTo: this.route });
   }
 
   getSetlistCount(song){

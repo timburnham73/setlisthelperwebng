@@ -24,7 +24,7 @@ const routes: Routes = [
     ]
   },
   {
-    path: ":tagid/songs/:songid/lyrics",
+    path: ":songid/lyrics",
     loadChildren: () =>
       import("../lyrics/lyrics.module").then((m) => m.LyricsModule),
     canActivate: [AngularFireAuthGuard],
