@@ -16,7 +16,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatMenuModule } from '@angular/material/menu';
-import { ActivatedRoute, PRIMARY_OUTLET, Router, RouterLink, RouterLinkActive, RouterOutlet, UrlSegment } from '@angular/router';
+import { ActivatedRoute, PRIMARY_OUTLET, Router, RouteReuseStrategy, RouterLink, RouterLinkActive, RouterOutlet, UrlSegment } from '@angular/router';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -47,7 +47,6 @@ import { FlexLayoutModule, FlexModule } from 'ngx-flexible-layout';
         NgFor, 
         AsyncPipe,
         FlexLayoutModule,
-
     ]
 })
 export class LayoutComponent implements OnInit, OnDestroy, AfterViewInit {
@@ -77,7 +76,6 @@ export class LayoutComponent implements OnInit, OnDestroy, AfterViewInit {
         this._mobileQueryListener = () => changeDetectorRef.detectChanges();
         // tslint:disable-next-line: deprecation
         this.mobileQuery.addListener(this._mobileQueryListener);
-
     }
 
     ngOnInit(): void {
@@ -105,9 +103,7 @@ export class LayoutComponent implements OnInit, OnDestroy, AfterViewInit {
         const currentAccountId = this.selectedAccount.id;
         if (currentAccountId && selectedAccount.id) {
             const newUrl = this.router.url.toString().replace(currentAccountId, selectedAccount.id);
-            this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-                this.router.navigate([newUrl]);
-            });
+            this.router.navigate([newUrl]);
         }
 
 

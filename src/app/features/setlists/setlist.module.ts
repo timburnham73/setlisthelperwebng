@@ -6,6 +6,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { SetlistEditDialogComponent } from './setlist-edit-dialog/setlist-edit-dialog.component';
 import { SetlistSongsListComponent } from './setlist-songs-list/setlist-songs-list.component';
 import { LyricsModule } from '../lyrics/lyrics.module';
+import { RouteReuseStrategy } from '@angular/router';
+import { CustomRouteReuseStrategy } from 'src/app/core/route-reuse-strategy/custom-route-reuse-strategy';
 
 
 
@@ -18,6 +20,9 @@ import { LyricsModule } from '../lyrics/lyrics.module';
         SetlistListComponent,
         SetlistEditDialogComponent,
         SetlistSongsListComponent,
-    ]
+    ],
+    providers: [
+        { provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy },
+      ]
 })
 export class SetlistModule { }

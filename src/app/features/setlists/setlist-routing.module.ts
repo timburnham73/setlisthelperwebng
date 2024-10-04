@@ -16,7 +16,7 @@ const routes: Routes = [
     path: "",
     component: LayoutComponent,
     children: [
-      { path: "", component: SetlistListComponent },
+      { path: "", component: SetlistListComponent, data: { shouldReuse: true } },
     ],
   },
   {

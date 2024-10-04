@@ -13,7 +13,7 @@ const routes: Routes = [
     path: '',
     component: LayoutComponent,
     children: [
-      { path: '', component: SongListComponent, canActivate: [AngularFireAuthGuard], },
+      { path: '', component: SongListComponent, data: { shouldReuse: true }, canActivate: [AngularFireAuthGuard], },
     ]
   },
   {

@@ -8,11 +8,13 @@ import {
   provideRouter,
   withDebugTracing,
   withViewTransitions,
+  RouteReuseStrategy,
 } from "@angular/router";
 import {
   AngularFireAuthGuard,
   redirectUnauthorizedTo,
 } from "@angular/fire/compat/auth-guard";
+import { CustomRouteReuseStrategy } from "./core/route-reuse-strategy/custom-route-reuse-strategy";
 
 const redirectUnauthorizedToLogin = () =>
   redirectUnauthorizedTo(["auth/login"]);
@@ -35,7 +37,7 @@ const appRoutes: Routes = [
         (m) => m.AccountsModule
       ),
     canActivate: [AngularFireAuthGuard],
-    data: { authGuardPipe: redirectUnauthorizedToLogin },
+    data: { authGuardPipe: redirectUnauthorizedToLogin, shouldReuse: true },
   },
   {
     path: "users",
@@ -66,6 +68,6 @@ export const routingConfiguration: ExtraOptions = {
 @NgModule({
   imports: [RouterModule.forRoot(appRoutes, routingConfiguration)],
   exports: [RouterModule],
-  providers: [ provideRouter(appRoutes, withViewTransitions())],
+  providers: [ provideRouter(appRoutes, withViewTransitions()), { provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy }],
 })
 export class AppRoutingModule {}

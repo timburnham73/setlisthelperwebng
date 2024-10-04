@@ -13,7 +13,7 @@ const routes: Routes = [
     path: '',
     component: LayoutComponent,
     children: [
-      { path: '', component: TagListComponent, canActivate: [AngularFireAuthGuard], },
+      { path: '', component: TagListComponent, data: {shouldReuse: true}, canActivate: [AngularFireAuthGuard], },
     ]
   },
   {
