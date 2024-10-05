@@ -9,7 +9,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Store } from '@ngxs/store';
 import { catchError, map, throwError } from 'rxjs';
 import { Account } from 'src/app/core/model/account';
 import { AccountImport, AccountImportHelper } from 'src/app/core/model/account-import';
@@ -18,6 +19,7 @@ import { AccountImportService } from 'src/app/core/services/account-import.servi
 import { AccountService } from 'src/app/core/services/account.service';
 import { AuthenticationService } from 'src/app/core/services/auth.service';
 import { UserService } from 'src/app/core/services/user.service';
+import { AccountActions } from 'src/app/core/store/account.state';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -43,10 +45,12 @@ export class LoginLegacySetlistHelperComponent {
     public dialogRef: MatDialogRef<LoginLegacySetlistHelperComponent>,
     private authService: AuthenticationService,
     private afs: AngularFirestore,
+    private store:Store,
     private accountService: AccountService,
     private accountImportService: AccountImportService,
     private userService: UserService,
     private router: Router,
+    private route: ActivatedRoute,
     @Inject(MAT_DIALOG_DATA) public accountId: string,
   ) {
     
@@ -78,6 +82,7 @@ export class LoginLegacySetlistHelperComponent {
       map((token) => {
         const modifiedAccount = {...this.account, importToken: token.access_token} as Account;
         if(this.account && this.account.id){
+          this.store.dispatch(new AccountActions.selectAccount(this.account));
           this.accountService.updateAccount(this.account.id, this.currentUser, modifiedAccount);
           const accountImport = AccountImportHelper.getForAdd(this.currentUser, {username: username, jwtToken:token.access_token} as AccountImport)
           this.accountImportService.addImport(this.account.id, accountImport, this.currentUser)

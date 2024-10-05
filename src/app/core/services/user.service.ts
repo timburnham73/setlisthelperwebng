@@ -85,7 +85,7 @@ export class UserService {
     };
     const body = 'username=' + username + '&password=' + password + '&grant_type=password';
 
-    return this.httpClient.post<JwtToken>('https://setlisthelper.azurewebsites.net/token', body, httpOptions )
+    return this.httpClient.post<JwtToken>('https://www.setlisthelper.com/token', body, httpOptions )
     .pipe(
       catchError((err) => {
         return throwError(() => new Error(err));

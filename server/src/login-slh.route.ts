@@ -27,7 +27,7 @@ export async function getToken(req: Request, res: Response) {
   }
   const formBodyForPost = formBody.join("&");
 
-  const request: RequestInfo = new Request('https://setlisthelper.azurewebsites.net/token', {
+  const request: RequestInfo = new Request('https://www.setlisthelper.com/token', {
     // We need to set the `method` to `POST` and assign the headers
     method: 'POST',
     headers: headers,
