@@ -1,5 +1,5 @@
 import { DatePipe, NgIf } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -14,7 +14,7 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { BaseUser } from 'functions/src/model/user';
-import { switchMap } from 'rxjs';
+import { Subscription, switchMap } from 'rxjs';
 import { AccountImport } from 'src/app/core/model/account-import';
 import { AccountImportEvent } from 'src/app/core/model/account-import-event';
 import { AccountImportService } from 'src/app/core/services/account-import.service';
@@ -29,7 +29,7 @@ import { LOCALE_ID, Inject } from '@angular/core';
   templateUrl: './account-import-events.component.html',
   styleUrl: './account-import-events.component.scss'
 })
-export class AccountImportEventsComponent {
+export class AccountImportEventsComponent implements OnInit {
   currentUser: BaseUser;
   displayedColumns: string[] = ['eventType', 'message'];
   dataSource: AccountImportEvent[];
@@ -39,6 +39,9 @@ export class AccountImportEventsComponent {
   accountId: string;
   importId: string;
   loading = false;
+
+  routeSubscription: Subscription;
+  eventSubscription: Subscription;
 
   constructor(
     //private logger: NGXLogger,
@@ -57,34 +60,59 @@ export class AccountImportEventsComponent {
         this.currentUser = user;
       }
     });
-    const selectedAccount = this.store.selectSnapshot(AccountState.selectedAccount);
-    const id = this.route.snapshot.paramMap.get('accountid');
-    const importId = this.route.snapshot.paramMap.get('importid');
-    if (id && importId) {
-      this.loading = false;
-      this.accountId = id;
-      this.importId = importId;
 
-      const accountEvents$ = this.accountImportService.getImports(this.accountId).pipe(
-        switchMap((data) => {
-          this.accountImports = data;
-          this.currentAccountImport = data.find((accountImport) => accountImport.id === this.importId);
-          if(this.currentAccountImport && this.currentAccountImport.lastEdit && this.currentAccountImport.lastEdit.seconds){
-            const pipe = new DatePipe(this.locale);
-            this.currentAccountImportDate = pipe.transform(this.currentAccountImport.lastEdit.toDate(), 'short');
-          }
-          return this.accountImportService.getImportEvents(this.accountId, this.importId);
-        })
-      );
+    this.routeSubscription = this.route.url.subscribe(() => {
+      const selectedAccount = this.store.selectSnapshot(AccountState.selectedAccount);
+      const id = this.route.snapshot.paramMap.get('accountid');
+      const importId = this.route.snapshot.paramMap.get('importid');
+      
+      if (id && importId) {
+        this.loading = false;
+        this.accountId = id;
+        this.importId = importId;
 
+        const accountEvents$ = this.accountImportService.getImports(this.accountId).pipe(
+          switchMap((data) => {
+            this.accountImports = data;
+            this.currentAccountImport = data.find((accountImport) => accountImport.id === this.importId);
+            if(this.currentAccountImport && this.currentAccountImport.lastEdit && this.currentAccountImport.lastEdit.seconds){
+              const pipe = new DatePipe(this.locale);
+              this.currentAccountImportDate = pipe.transform(this.currentAccountImport.lastEdit.toDate(), 'short');
+            }
+            return this.accountImportService.getImportEvents(this.accountId, this.importId);
+          })
+        );
 
-      accountEvents$.subscribe(accountEvents => {
-        return this.dataSource = accountEvents;
-      });
-    }
+        
+        if(this.eventSubscription){
+          this.eventSubscription.unsubscribe();
+        }
+        
+        this.eventSubscription = accountEvents$.subscribe(accountEvents => {
+          return this.dataSource = accountEvents;
+        });
+      }
+    });
+  }
+  ngOnInit(): void {
+    console.log('on init');
+  }
+  
+  ngOnDestroy(): void {
+    this.unsubscribe();
   }
 
+
   onBackToAccounts() {
+    if(this.eventSubscription){
+      this.eventSubscription.unsubscribe();
+    }
     this.router.navigate([`/accounts`], {});
+  }
+
+  unsubscribe(){
+    if(this.routeSubscription){
+      this.routeSubscription.unsubscribe();
+    }
   }
 }
