@@ -71,6 +71,10 @@ export class AccountImportEventsComponent implements OnInit {
         this.accountId = id;
         this.importId = importId;
 
+        if(this.eventSubscription){
+          this.eventSubscription.unsubscribe();
+        }
+        
         const accountEvents$ = this.accountImportService.getImports(this.accountId).pipe(
           switchMap((data) => {
             this.accountImports = data;
@@ -83,10 +87,6 @@ export class AccountImportEventsComponent implements OnInit {
           })
         );
 
-        
-        if(this.eventSubscription){
-          this.eventSubscription.unsubscribe();
-        }
         
         this.eventSubscription = accountEvents$.subscribe(accountEvents => {
           return this.dataSource = accountEvents;
