@@ -1,5 +1,5 @@
 import { RouteReuseStrategy, ActivatedRouteSnapshot, DetachedRouteHandle } from "@angular/router";
-
+//https://stackoverflow.com/questions/49155895/how-to-activate-routereusestrategy-only-for-specific-routes
 export class CustomRouteReuseStrategy implements RouteReuseStrategy {
 
   handlers: { [key: string]: DetachedRouteHandle } = {};
