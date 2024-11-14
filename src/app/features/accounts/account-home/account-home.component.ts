@@ -26,7 +26,7 @@ import { LoginLegacySetlistHelperComponent } from "../login-legacy-setlist-helpe
 @Component({
     selector: "app-account-home",
     templateUrl: "./account-home.component.html",
-    styleUrls: ["./account-home.component.css"],
+    styleUrls: ["./account-home.component.scss"],
     standalone: true,
     imports: [
         MatButtonModule,
