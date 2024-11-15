@@ -83,7 +83,7 @@ export class UserService {
         'Content-Type':  'application/x-www-form-urlencoded',
       })
     };
-    const body = 'username=' + username + '&password=' + password + '&grant_type=password';
+    const body = 'username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password) + '&grant_type=password';
 
     return this.httpClient.post<JwtToken>('https://www.setlisthelper.com/token', body, httpOptions )
     .pipe(
