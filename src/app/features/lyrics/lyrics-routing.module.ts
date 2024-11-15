@@ -5,6 +5,7 @@ import { LyricsComponent } from './lyrics-view/lyrics.component';
 import { LyricsEditComponent } from './lyrics-edit/lyrics-edit.component';
 import { LayoutNoSidebarChildViewComponent } from 'src/app/shared/layout-no-sidebar-child-view/layout-no-sidebar-child-view.component';
 import { LyricViewWrapperComponent } from './lyric-view-wrapper/lyric-view-wrapper.component';
+import { LyricsPrintComponent } from './lyrics-print/lyrics-print.component';
 
 
 const routes: Routes = [
@@ -16,7 +17,7 @@ const routes: Routes = [
     ]
   },
   {
-    path: ':lyricid',
+    path: ':lyricsid',
     component: LayoutNoSidebarChildViewComponent,
     children: [
       { path: '', component: LyricViewWrapperComponent },

@@ -131,7 +131,7 @@ export class LyricsComponent {
     
     
   ) {
-    this.lyricId = this.activeRoute.snapshot.paramMap.get("lyricid") || undefined;
+    this.lyricId = this.activeRoute.snapshot.paramMap.get("lyricsid") || undefined;
     this.selectedAccount = this.store.selectSnapshot(
       AccountState.selectedAccount
     );
@@ -175,6 +175,11 @@ export class LyricsComponent {
   }
   
   
+  onPrintLyric(){
+    this.router.navigate([`${this.selectedLyric?.id}/print`], {
+      relativeTo: this.activeRoute,
+    });
+  }
 
   onFormatLyrics(){
     this.updateToolbarFromLyricFont();

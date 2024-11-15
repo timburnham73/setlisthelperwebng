@@ -66,7 +66,7 @@ export class LyricsEditComponent {
       this.loading = true;
       const accountId = this.activeRoute.snapshot.paramMap.get("accountid");
       const songId = this.activeRoute.snapshot.paramMap.get("songid");
-      const lyricId = this.activeRoute.snapshot.paramMap.get("lyricid");
+      const lyricId = this.activeRoute.snapshot.paramMap.get("lyricsid");
       if (accountId && songId && lyricId) {
         this.accountId = accountId;
         this.songId = songId;

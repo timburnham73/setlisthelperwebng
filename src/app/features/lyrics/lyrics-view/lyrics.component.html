@@ -47,7 +47,6 @@
           <button mat-menu-item (click)="onSelectFormatScope(FormatScopeType.LYRIC)">
             <mat-icon>article</mat-icon>
             <span>Save for this lyric <mat-icon *ngIf="lyricFormatWithScope.formatScope === FormatScopeType.LYRIC">check</mat-icon></span>
-
           </button>
           <button mat-menu-item (click)="onSelectFormatScope(FormatScopeType.USER)">
             <mat-icon>person</mat-icon>
@@ -58,7 +57,6 @@
             <span>Save for Account <mat-icon *ngIf="lyricFormatWithScope.formatScope === FormatScopeType.ACCOUNT">check</mat-icon></span>
           </button>
         </mat-menu>
-
       </ng-container>
       }
       @if(isTransposing){
@@ -140,6 +138,11 @@
         <mat-icon>more_vert</mat-icon>
       </button>
       <mat-menu #moreMenu="matMenu">
+        <button
+          mat-menu-item aria-label="Print Lyrics" (click)="onPrintLyric()">
+          <mat-icon>print</mat-icon>
+          <span>Print</span>
+        </button>
         <button mat-menu-item aria-label="transpose" (click)="onTranspose()">
           <mat-icon>swap_vert</mat-icon>
           <span>Transpose</span>

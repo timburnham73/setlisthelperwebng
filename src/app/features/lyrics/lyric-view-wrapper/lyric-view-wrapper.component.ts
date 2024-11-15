@@ -140,7 +140,7 @@ export class LyricViewWrapperComponent {
   private initLyrics() {
     this.loading = false;
     const songId = this.activeRoute.snapshot.paramMap.get("songid");
-    this.lyricId = this.activeRoute.snapshot.paramMap.get("lyricid") || undefined;
+    this.lyricId = this.activeRoute.snapshot.paramMap.get("lyricsid") || undefined;
     
     if (this.accountId && songId) {
       this.accountId = this.accountId;
