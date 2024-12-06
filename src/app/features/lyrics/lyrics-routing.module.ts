@@ -22,6 +22,7 @@ const routes: Routes = [
     children: [
       { path: '', component: LyricViewWrapperComponent },
       { path: 'edit', component: LyricsEditComponent },
+      { path: 'print', component: LyricsPrintComponent },
     ]
   }
 ];

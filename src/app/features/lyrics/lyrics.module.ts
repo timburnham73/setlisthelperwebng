@@ -6,6 +6,7 @@ import { LyricsComponent } from './lyrics-view/lyrics.component';
 import { LyricsEditComponent } from './lyrics-edit/lyrics-edit.component';
 import { LyricAddDialogComponent } from './lyric-add-dialog/lyric-add-dialog.component';
 import { SafeHtml } from 'src/app/shared/pipes/safe-html.pipe';
+import { LyricsPrintComponent } from './lyrics-print/lyrics-print.component';
 
 @NgModule({
     imports: [
@@ -15,6 +16,7 @@ import { SafeHtml } from 'src/app/shared/pipes/safe-html.pipe';
         LyricsComponent,
         LyricsEditComponent,
         LyricAddDialogComponent,
+        LyricsPrintComponent,
         SafeHtml
     ]
 })

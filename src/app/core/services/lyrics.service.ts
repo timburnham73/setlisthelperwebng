@@ -18,6 +18,11 @@ import { BaseUser, User } from "../model/user";
 import { Account } from "../model/account";
 import { LyricFormat, LyricFormatHelper, LyricFormatWithScope } from "../model/lyric-format";
 
+export enum PrintColumns {
+  one,
+  two
+}
+
 @Injectable({
   providedIn: "root",
 })
