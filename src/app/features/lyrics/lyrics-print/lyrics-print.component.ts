@@ -5,7 +5,7 @@ import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatToolbar } from '@angular/material/toolbar';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, ChildActivationEnd, ChildActivationStart, NavigationCancel, NavigationEnd, NavigationError, NavigationStart, RouteConfigLoadEnd, RouteConfigLoadStart, Router, RoutesRecognized } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { FlexLayoutModule } from 'ngx-flexible-layout';
 import { Lyric } from 'src/app/core/model/lyric';
@@ -15,9 +15,8 @@ import { LyricsService, PrintColumns } from 'src/app/core/services/lyrics.servic
 import { AccountState } from 'src/app/core/store/account.state';
 import { ChordProParser } from "src/app/core/services/ChordProParser";
 import { SafeHtml } from 'src/app/shared/pipes/safe-html.pipe';
-import { SetlistPrintShowDialogComponent } from './lyrics-print-show-dialog/lyrics-print-show-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
-import { take } from 'rxjs';
+import { Subject, take, takeUntil } from 'rxjs';
 import { LyricFormatWithScope } from 'src/app/core/model/lyric-format';
 import { Account } from 'src/app/core/model/account';
 
@@ -44,15 +43,14 @@ export class LyricsPrintComponent {
   songId: string;
   lyrics?: Lyric;
   selectedAccount: Account;
-  //lyricsPrintSettings: SetlistPrintSettings | undefined;
   columns = PrintColumns.one;
   loading: boolean;
   @Input()
   parsedLyric?: string;
-  lyricFormatWithScope: LyricFormatWithScope;
-  
+  lyricsPrintSettings: LyricFormatWithScope;
+  private destroy$ = new Subject<void>();
   public get PrintColumns(): typeof PrintColumns {
-    return PrintColumns; 
+    return PrintColumns;
   }
 
   constructor(
@@ -62,10 +60,10 @@ export class LyricsPrintComponent {
     private activeRoute: ActivatedRoute,
     public dialog: MatDialog,
     private router: Router,
-  ){
-    
+  ) {
+
     this.authService.user$.subscribe((user) => {
-      if(user && user.uid){
+      if (user && user.uid) {
         this.currentUser = user;
       }
     });
@@ -73,9 +71,22 @@ export class LyricsPrintComponent {
     this.selectedAccount = this.store.selectSnapshot(
       AccountState.selectedAccount
     );
-    
+
     this.loading = true;
 
+    activeRoute.paramMap
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(params => {
+        this.initLyrics();
+      });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private initLyrics() {
     const accountId = this.activeRoute.snapshot.paramMap.get("accountid");
     const lyricsId = this.activeRoute.snapshot.paramMap.get("lyricsid");
     const songId = this.activeRoute.snapshot.paramMap.get("songid");
@@ -84,55 +95,37 @@ export class LyricsPrintComponent {
       this.lyricsId = lyricsId;
       this.songId = songId;
       this.lyricsService.getSongLyric(this.accountId, this.songId, this.lyricsId)
-                          .subscribe((lyrics: Lyric) => {
-        this.loading = false;
-        this.lyrics = lyrics;
-        this.lyricFormatWithScope = this.lyricsService.getLyricFormat(this.selectedAccount, this.currentUser, lyrics!.formatSettings);
-        const parser =  new ChordProParser(lyrics.lyrics!, this.lyricFormatWithScope.lyricFormat, lyrics!.transpose);
-        this.parsedLyric = parser.parseChordPro();
-      });
+        .subscribe((lyrics: Lyric) => {
+          this.loading = false;
+          this.lyrics = lyrics;
+          this.lyricsPrintSettings = this.lyricsService.getLyricFormat(this.selectedAccount, this.currentUser, lyrics!.formatSettings);
+          const parser = new ChordProParser(lyrics.lyrics!, this.lyricsPrintSettings.lyricFormat, lyrics!.transpose);
+          this.parsedLyric = parser.parseChordPro();
+        });
     }
   }
 
-  onPrintSetlist(){
+  onPrintSetlist() {
     let printContents = document?.getElementById("lyrics")?.innerHTML;
-     let originalContents = document.body.innerHTML;
+    let originalContents = document.body.innerHTML;
 
-     if(document && document.body && document.body.innerHTML && printContents){
-        document.body.innerHTML = printContents;
-        window.print();
+    if (document && document.body && document.body.innerHTML && printContents) {
+      document.body.innerHTML = printContents;
+      window.print();
 
-        document.body.innerHTML = originalContents;
-        window.location.reload();
-     }
+      document.body.innerHTML = originalContents;
+      window.location.reload();
+    }
   }
 
-  onBackToSetlist(){
-    this.router.navigate(["../.."], { relativeTo: this.activeRoute });   
+  onBackToLyrics() {
+    this.router.navigate(["../.."], { relativeTo: this.activeRoute });
   }
 
-  onChangePrintColumn(columns: PrintColumns){
-    /*if(this.lyricsPrintSettings){
-    this.lyricsPrintSettings.columns = columns;
-    
-    this.lyricsService.getSongLyric(this.accountId, this.lyricsId, this.lyricsPrintSettings)
-      .subscribe((result)=> {
-        this.lyricsPrintSettings = result;
-      });
-    }*/
-  }
-
-  onSetVisibleElements(){
-    /*const dialogRef = this.dialog.open(SetlistPrintShowDialogComponent, {
-      data: { accountId: this.accountId, lyrics: this.lyrics, printSettings: this.lyricsPrintSettings},
-      panelClass: "dialog-responsive",
-    });
-
-    dialogRef.afterClosed().subscribe((printSettings) => {
-      if(printSettings){
-        this.lyricsPrintSettings = printSettings;
-      }
-    });*/
+  onChangePrintColumn(columns: PrintColumns) {
+    if (this.lyricsPrintSettings) {
+      this.lyricsPrintSettings.columns = columns;
+    }
   }
 
 }

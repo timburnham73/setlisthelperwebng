@@ -83,14 +83,20 @@
           <mat-icon>arrow_back_ios</mat-icon>
         </button>
         <h4 fxShow fxHide.lt-lg>{{ song?.name }}</h4>
-
+        <div class="vl"></div>
         <button mat-button aria-label="Edit Lyrics" title="Edit" (click)="onEditLyric()" *ngIf="selectedLyric">
           <mat-icon>edit</mat-icon>
           <span fxShow fxHide.lt-md>
             Edit
           </span>
         </button>
-
+        <button mat-button aria-label="Print Lyrics" title="Print" (click)="onPrintLyric()" *ngIf="selectedLyric">
+          <mat-icon>print</mat-icon>
+          <span fxShow fxHide.lt-md>
+            Print
+          </span>
+        </button>
+        <div class="vl"></div>
         <button mat-button fxShow fxHide.lt-md aria-label="Toggle Transpose" title="Toggle Transpose" *ngIf="selectedLyric"
           (click)="onTranspose()">
           <mat-icon>swap_vert</mat-icon>

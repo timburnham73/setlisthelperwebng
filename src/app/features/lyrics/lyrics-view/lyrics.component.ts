@@ -163,22 +163,29 @@ export class LyricsComponent {
 
   onEditLyric() {
     if(this.lyricId){
-        this.router.navigate([`../${this.selectedLyric?.id}/edit`], {
-          relativeTo: this.activeRoute,
-        });
-      }
-      else{
-        this.router.navigate([`${this.selectedLyric?.id}/edit`], {
-          relativeTo: this.activeRoute,
-        });
-      }
+      this.router.navigate([`../${this.selectedLyric?.id}/edit`], {
+        relativeTo: this.activeRoute,
+      });
+    }
+    else{
+      this.router.navigate([`${this.selectedLyric?.id}/edit`], {
+        relativeTo: this.activeRoute,
+      });
+    }
   }
   
   
   onPrintLyric(){
-    this.router.navigate([`${this.selectedLyric?.id}/print`], {
-      relativeTo: this.activeRoute,
-    });
+    if(this.lyricId){
+      this.router.navigate([`../${this.selectedLyric?.id}/print`], {
+        relativeTo: this.activeRoute,
+      });
+    }
+    else{
+      this.router.navigate([`${this.selectedLyric?.id}/print`], {
+        relativeTo: this.activeRoute,
+      });
+    }
   }
 
   onFormatLyrics(){

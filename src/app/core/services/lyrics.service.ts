@@ -20,7 +20,8 @@ import { LyricFormat, LyricFormatHelper, LyricFormatWithScope } from "../model/l
 
 export enum PrintColumns {
   one,
-  two
+  two,
+  three
 }
 
 @Injectable({
@@ -131,17 +132,17 @@ export class LyricsService {
 
   getLyricFormat(account: Account, user: User, lyricFormat?: LyricFormat) : LyricFormatWithScope {
     if (lyricFormat) {
-      return {formatScope: FormatScope.LYRIC, lyricFormat: lyricFormat};
+      return {columns: 1, formatScope: FormatScope.LYRIC, lyricFormat: lyricFormat};
     }
     //If the user has format settings then the are using the settings for their account only
     else if(user && user.formatSettings){
-      return {formatScope: FormatScope.USER, lyricFormat: user.formatSettings};
+      return {columns: 1, formatScope: FormatScope.USER, lyricFormat: user.formatSettings};
     }
     else if(account && account.formatSettings){
-      return {formatScope: FormatScope.ACCOUNT, lyricFormat: account.formatSettings}
+      return {columns: 1, formatScope: FormatScope.ACCOUNT, lyricFormat: account.formatSettings}
     }
     else {
-      return {formatScope: FormatScope.ACCOUNT, lyricFormat: LyricFormatHelper.getDefaultFormat()};
+      return {columns: 1, formatScope: FormatScope.ACCOUNT, lyricFormat: LyricFormatHelper.getDefaultFormat()};
     }
   }
 }

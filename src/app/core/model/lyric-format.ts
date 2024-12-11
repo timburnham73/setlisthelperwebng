@@ -38,6 +38,7 @@ export interface LyricFormat {
 export interface LyricFormatWithScope {
     formatScope: FormatScope;
     lyricFormat: LyricFormat;
+    columns: number;
 }
 
 export class LyricFormatHelper {

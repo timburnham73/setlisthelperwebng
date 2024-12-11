@@ -4,7 +4,7 @@ import { MatDialog as MatDialog } from '@angular/material/dialog';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngxs/store';
-import { take } from 'rxjs';
+import { Subject, take, takeUntil } from 'rxjs';
 import { Lyric } from 'src/app/core/model/lyric';
 import { Song } from 'src/app/core/model/song';
 import { BaseUser, UserHelper } from 'src/app/core/model/user';
@@ -38,6 +38,7 @@ export class LyricsEditComponent {
   selectedLyric: Lyric;
   lyricsForm: FormGroup;
   loading = false;
+  private destroy$ = new Subject<void>();
   
   get lyrics() { return this.lyricsForm.get('lyrics'); }
   constructor(private activeRoute: ActivatedRoute,
@@ -64,29 +65,42 @@ export class LyricsEditComponent {
       });
 
       this.loading = true;
-      const accountId = this.activeRoute.snapshot.paramMap.get("accountid");
-      const songId = this.activeRoute.snapshot.paramMap.get("songid");
-      const lyricId = this.activeRoute.snapshot.paramMap.get("lyricsid");
-      if (accountId && songId && lyricId) {
-        this.accountId = accountId;
-        this.songId = songId;
-        this.lyricId = lyricId;
-        this.songService
-          .getSong(this.accountId, this.songId)
-          .pipe(take(1))
-          .subscribe((song) => {
-            this.song = song;
-          });
+      activeRoute.paramMap
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(params => {
+        this.initLyrics();
+      });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
   
-        this.lyricsService
-          .getSongLyric(this.accountId, this.songId, this.lyricId)
-          .pipe(take(1))
-          .subscribe((lyric) => {
-            this.selectedLyric = lyric;
-            const lyricsTextArea = this.lyricsForm.get("lyrics");
-            lyricsTextArea?.setValue(this.selectedLyric.lyrics);
-            this.loading = false;
-          });
+  private initLyrics() {
+    const accountId = this.activeRoute.snapshot.paramMap.get("accountid");
+    const songId = this.activeRoute.snapshot.paramMap.get("songid");
+    const lyricId = this.activeRoute.snapshot.paramMap.get("lyricsid");
+    if (accountId && songId && lyricId) {
+      this.accountId = accountId;
+      this.songId = songId;
+      this.lyricId = lyricId;
+      this.songService
+        .getSong(this.accountId, this.songId)
+        .pipe(take(1))
+        .subscribe((song) => {
+          this.song = song;
+        });
+
+      this.lyricsService
+        .getSongLyric(this.accountId, this.songId, this.lyricId)
+        .pipe(take(1))
+        .subscribe((lyric) => {
+          this.selectedLyric = lyric;
+          const lyricsTextArea = this.lyricsForm.get("lyrics");
+          lyricsTextArea?.setValue(this.selectedLyric.lyrics);
+          this.loading = false;
+        });
     }
   }
 
