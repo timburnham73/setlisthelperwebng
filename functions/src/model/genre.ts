@@ -2,19 +2,19 @@ import { Timestamp } from "firebase-admin/firestore";
 import { Base } from "./base";
 import { BaseUser } from "./user";
 
-export interface Tag extends Base {
+export interface Genre extends Base {
   name: string;
   nameLowered: string;
   countOfSongs: number;
 }
 
-export class TagHelper {
-  static getForAdd(data: Tag, editingUser: BaseUser): Tag {
+export class GenreHelper {
+  static getForAdd(data: Genre, editingUser: BaseUser): Genre {
     return {
-      ...TagHelper.getForUpdate(data, editingUser),
+      ...GenreHelper.getForUpdate(data, editingUser),
     };
   }
-  static getForUpdate(data: Tag, editingUser: BaseUser): Tag {
+  static getForUpdate(data: Genre, editingUser: BaseUser): Genre {
     return {
       name: data.name ?? "",
       nameLowered: data.nameLowered ?? "",

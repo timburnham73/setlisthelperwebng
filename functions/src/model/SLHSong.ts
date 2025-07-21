@@ -62,9 +62,13 @@ export interface SLHSong {
       const songLenSplit = this.getSongLengthMinSec(slhSong.SongLength);
       return {
         name: slhSong.Name ?? "",
+        nameLowered: slhSong.Name.toLowerCase() ?? "",
         artist: slhSong.Artist?.Name ?? "",
+        artsitLowered: slhSong.Artist?.Name.toLowerCase() ?? "",
         genre: slhSong.Genre?.Name ?? "",
+        genreLowered: slhSong.Genre?.Name.toLowerCase() ?? "",
         key: slhSong.Key ?? "",
+        keyLowered: slhSong.Key.toLowerCase() ?? "",
         songLength: slhSong.SongLength ?? 0,
         tempo: slhSong.Tempo ?? 120,
         deactivated: slhSong.Deprecated ?? false,
