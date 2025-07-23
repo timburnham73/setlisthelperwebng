@@ -137,7 +137,7 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
       }
     }
 
-    let docRef = await songsRef.doc();
+    const docRef = await songsRef.doc();
     await docRef.set(convertedSong);
     
     //Add the song ids to a map so we can find the song below in the setlist songs and associate the firebase id.
@@ -149,11 +149,13 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
   await addAccountEventWithDetails("Song", `Finished processing songs.`, [...tagDetails,...songDetails], accountImportEventRef);
 
   for(let artist in artists){
-    //TODO: ADD artists to database
+    const docRef = await artistsRef.doc();
+    await docRef.set(artist);
   }
 
   for(let genre in genres){
-    //TODO: Add genres to database
+    const docRef = await genresRef.doc();
+    await docRef.set(genre);
   }
   
   

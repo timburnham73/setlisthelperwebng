@@ -22,7 +22,7 @@ export interface AccountImport extends Base {
           return {
             username: data.username ?? "",
             createdByUser: data.createdByUser ?? "",
-            dateCreated: data.dateCreated ?? "",
+            dateCreated: data.dateCreated ?? Timestamp.fromDate(new Date()),
             lastEdit: Timestamp.fromDate(new Date()),
             lastUpdatedByUser: user,
             jwtToken: data.jwtToken ?? "",
