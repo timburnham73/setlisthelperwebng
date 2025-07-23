@@ -10,7 +10,7 @@ export async function updateParentSongSetlistRef(accountId, songId) {
         const setlistRefs = await getSetlistFromSetlistSongPath(setlistSongSnap);
 
         const songRef = db.doc(`/accounts/${accountId}/songs/${songId}`);
-        songRef.update({ setlists: setlistRefs, doNotUpdateSetlistSongs: true });
+        songRef.update({ setlists: setlistRefs });
     }
 }
 

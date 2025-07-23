@@ -204,7 +204,7 @@ export class SetlistSongsListComponent {
       sequenceNumber: sequenceNumber,
       songId: row.id!,
       isBreak: false,
-      saveChangesToRepertoire: true,
+      updateOnlyThisSetlistSong: false,
       ...row,
     };
 
@@ -222,7 +222,7 @@ export class SetlistSongsListComponent {
 
   onAddSong(songToInsertAfter?: SetlistSong) {
     const sequenceNumber = songToInsertAfter? songToInsertAfter.sequenceNumber : this.getSequenceNumberForAddOrUpdate();
-    const partialSong = { sequenceNumber: sequenceNumber, isBreak: false, saveChangesToRepertoire: true } as SetlistSong;
+    const partialSong = { sequenceNumber: sequenceNumber, isBreak: false, updateOnlyThisSetlistSong: false } as SetlistSong;
     if(this.setlist && this.setlist.id && this.accountId){
       const dialogRef = this.dialog.open(SongEditDialogComponent, {
         data: { accountId: this.accountId, setlistId: this.setlist.id, song: partialSong },

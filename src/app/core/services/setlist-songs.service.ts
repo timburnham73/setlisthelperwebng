@@ -44,7 +44,7 @@ export class SetlistSongService {
         setlistSongs.forEach(setlistSong => {
           const modifiedSongNoId = { ...modifiedSong };
           delete modifiedSongNoId.id;
-          if (setlistSong.saveChangesToRepertoire !== false) {
+          if (setlistSong.updateOnlyThisSetlistSong !== true) {
             setlistSongsUpdate$.push(from(this.updateSetlistSongFromSongByPath(setlistSong.documentPath!, setlistSong.id!, modifiedSongNoId, editingUser)));
           }
         })

@@ -25,7 +25,7 @@ export class SetlistBreakHelper {
          lastEdit: Timestamp.now(),
          lastUpdatedByUser: UserHelper.getForUpdate(editingUser),
          dateCreated: Timestamp.now(),
-         createdByUser: Timestamp.now(),
+         createdByUser: UserHelper.getForUpdate(editingUser),
          totalTimeInSeconds: setlistBreak.totalTimeInSeconds ?? 0,
          countOfSongs: setlistBreak.countOfSongs ?? 0
       };

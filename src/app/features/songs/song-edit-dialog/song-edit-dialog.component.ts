@@ -86,13 +86,13 @@ export class SongEditDialogComponent {
       noteValue: new FormControl(this.song?.noteValue || 4, [Validators.min(1), Validators.max(12)]),
       notes: new FormControl(this.song?.notes || ''),
       other: new FormControl(this.song?.other || ''),
-      saveChangesToRepertoire: new FormControl((this.song as SetlistSong)?.saveChangesToRepertoire),
+      updateOnlyThisSetlistSong: new FormControl((this.song as SetlistSong)?.updateOnlyThisSetlistSong),
       deactivated: new FormControl(this.song?.deactivated),
     });
   }
 
-  saveChangesToRepertoire() {
-    return this.songForm.get('saveChangesToRepertoire');
+  updateOnlyThisSetlistSong() {
+    return this.songForm.get('updateOnlyThisSetlistSong');
   }
 
   onNoClick(): void {
@@ -105,7 +105,7 @@ export class SongEditDialogComponent {
     if (this.song?.id) {
       //Update setlist song
       if ((this.song as SetlistSong)?.sequenceNumber && this.setlistId) {
-        if (this.saveChangesToRepertoire()?.value === false || (this.song as SetlistSong)?.isBreak === true) {
+        if (this.updateOnlyThisSetlistSong()?.value === false || (this.song as SetlistSong)?.isBreak === true) {
           const updateSetlistSong$ = this.updateSetlistSong();
           updateSetlistSong$
             .pipe(
@@ -117,7 +117,7 @@ export class SongEditDialogComponent {
 
           //This is for a setlist song when editing only. 
           //When the song is updated in the function below
-          //all setlist songs will be updated if they do not have the attribute saveChangesToRepertoire 
+          //all setlist songs will be updated if they do not have the attribute updateOnlyThisSetlistSong 
           const updateSetlistSong$ = this.updateSetlistSong();
           updateSetlistSong$.pipe(
             switchMap(() =>

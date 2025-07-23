@@ -68,7 +68,7 @@ export interface SLHSong {
         songLength: slhSong.SongLength ?? 0,
         tempo: slhSong.Tempo ?? 120,
         deactivated: slhSong.Deprecated ?? false,
-        deleted: false,
+        deleted: slhSong.Deleted,
         notes: slhSong.Notes ?? "",
         other: slhSong.Other ?? "",
         noteValue: slhSong.NoteValue ?? 0,
@@ -82,8 +82,7 @@ export interface SLHSong {
         lengthSec: songLenSplit.seconds ?? 0,
         lengthMin: songLenSplit.minutes ?? 3,
         tags: [],
-        defaultLyricForUser: [],
-        doNotUpdateSetlistSongs: false
+        defaultLyricForUser: []
       };
     }
   }

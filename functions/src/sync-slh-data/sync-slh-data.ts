@@ -95,7 +95,7 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
   const mapSongIdToFirebaseSongId: SlhSongToFirebaseSongId[] = [];
   for (let slhSong of slhSongs) {
     //Do not import deleted songs. 
-    if(slhSong.Deleted === true || slhSong.SongType === 1){
+    if(slhSong.SongType === 1){
       songDetails.push(`Not Adding song with name ${slhSong.Name}`);
       continue;
     }
@@ -144,7 +144,6 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
       const setlistSLHSong = slhSongs.find((slhSong) => slhSong.SongId === setlistSongId);
       if(setlistSLHSong){
         const convertedSong = SLHSongHelper.slhSongToSong(setlistSLHSong, importingUser);
-        const isDeleted = setlistSLHSong.Deleted;
         if(setlistSLHSong.SongType === 1){
           //Add Break
           const setBreakPartial = {
@@ -167,8 +166,8 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
           const setlistSong = {
             sequenceNumber: sequenceNumber, 
             isBreak: false,
-            saveChangesToRepertoire: !isDeleted,  
-            songId: songIdMap ? songIdMap.FireBaseSongId : 0,
+            updateOnlyThisSetlistSong: false,  
+            songId: songIdMap ? songIdMap.FireBaseSongId : "",
             ...convertedSong
           } as SetlistSong;
 

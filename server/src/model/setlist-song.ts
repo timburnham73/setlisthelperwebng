@@ -10,7 +10,7 @@ export interface SetlistSong extends Song {
    //This value is important because when you save the source it will find all the other seltist songs
    //in other setlist and update them also. If the other songs do not have this set to true it will not
    //update them
-   saveChangesToRepertoire: boolean; 
+   updateOnlyThisSetlistSong: boolean; 
 }
 
 export class SetlistSongHelper{
@@ -19,7 +19,7 @@ export class SetlistSongHelper{
          sequenceNumber: setlistSong.sequenceNumber ?? 1,
           songId: setlistSong.songId ?? "",
           isBreak: setlistSong.isBreak ?? false,
-          saveChangesToRepertoire: setlistSong.saveChangesToRepertoire ?? true, 
+          updateOnlyThisSetlistSong: setlistSong.updateOnlyThisSetlistSong ?? false, 
           ...SongHelper.getForUpdate(setlistSong, userUpdating)
        };
      }
