@@ -14,6 +14,8 @@ export class SLHTagHelper {
       const nowTimestamp = Timestamp.now();
       return {
         name: slhTag.Name ?? "",
+        nameLowered: slhTag.Name.toLowerCase() ?? "",
+        countOfSongs: 0,
         lastEdit: nowTimestamp,
         lastUpdatedByUser : UserHelper.getForUpdate(editingUser),
         dateCreated: nowTimestamp,

@@ -15,6 +15,8 @@ import { Song } from "../model/song";
 import { Setlist } from "../model/setlist";
 import { updateCountOfLyricsInSongs } from "../lyrics-count-trigger/lyric-utils";
 import { countSetlists } from "../setlists-trigger/setlist-util";
+import { Artist, ArtistHelper } from "../model/artist";
+import { Genre, GenreHelper } from "../model/genre";
 
 interface SlhSongToFirebaseSongId {
   SongId: number;
@@ -38,7 +40,7 @@ export default async (accountImportSnap, context) => {
 
   await startSync(accountImport.jwtToken, accountId, accountImportSnap.id, accountImport.createdByUser);
   
-  await countSongs(accountId);
+  await countSongs(accountId); 
 
   await countSetlists(accountId);
 
@@ -53,6 +55,8 @@ export default async (accountImportSnap, context) => {
 export const startSync = async (jwtToken: string, accountId: string, accountImportId: string, importingUser: BaseUser) => {
   const songsRef = db.collection(`/accounts/${accountId}/songs`);
   const tagsRef = db.collection(`/accounts/${accountId}/tags`);
+  const artistsRef = db.collection(`/accounts/${accountId}/artists`);
+  const genresRef = db.collection(`/accounts/${accountId}/genres`);
   const accountImportEventRef = db.collection(`/accounts/${accountId}/imports/${accountImportId}/events`);
 
   await addAccountEvent("System", "Starting import.", accountImportEventRef);
@@ -93,6 +97,8 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
 
   await addAccountEvent("Songs", "Processing Songs, Lyrics, and Tags.", accountImportEventRef);
   const mapSongIdToFirebaseSongId: SlhSongToFirebaseSongId[] = [];
+  const artists: Artist[] = [];
+  const genres: Genre[] = [];
   for (let slhSong of slhSongs) {
     //Do not import deleted songs. 
     if(slhSong.SongType === 1){
@@ -108,8 +114,29 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
       const tagNames = slhSongToTagNames.map((slhSongIdToTagName) => slhSongIdToTagName.TagName);
       convertedSong.tags = tagNames;
       songDetails.push(`Added tags to Song ${convertedSong.name}: ${tagNames.join(',')}`);
+      //TODO: Incrememnt the tag count here. 
     }
     
+    if(convertedSong.artist){
+      const foundArtist = artists.find(artist => artist.nameLowered === convertedSong.artist.toLocaleLowerCase());
+      if(!foundArtist){
+        artists.push(ArtistHelper.getForAdd({name: convertedSong.artist, nameLowered: convertedSong.artist.toLowerCase(), countOfSongs: 1}, importingUser));
+      }
+      else{
+        foundArtist.countOfSongs++;
+      }
+    }
+
+    if(convertedSong.genre){
+      const foundGenre = genres.find(genre => genre.nameLowered === convertedSong.genre.toLocaleLowerCase());
+      if(!foundGenre){
+        genres.push(GenreHelper.getForAdd({name: convertedSong.genre, nameLowered: convertedSong.genre.toLowerCase(), countOfSongs: 1}, importingUser));
+      }
+      else{
+        foundGenre.countOfSongs++;
+      }
+    }
+
     let docRef = await songsRef.doc();
     await docRef.set(convertedSong);
     
@@ -118,8 +145,18 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
     
     await addLyrics(slhSong, accountId, docRef.id, convertedSong, importingUser, songDetails);
   }
-  
+
   await addAccountEventWithDetails("Song", `Finished processing songs.`, [...tagDetails,...songDetails], accountImportEventRef);
+
+  for(let artist in artists){
+    //TODO: ADD artists to database
+  }
+
+  for(let genre in genres){
+    //TODO: Add genres to database
+  }
+  
+  
 
   await addAccountEvent("Setlists", "Downloading setlists.", accountImportEventRef);
   const setlistsRef = db.collection(`/accounts/${accountId}/setlists`);
@@ -161,7 +198,7 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
         }
         else{
           //Find the Firebase songId
-          const songIdMap = mapSongIdToFirebaseSongId.find((slhSongMap) => slhSongMap.SongId === setlistSLHSong.SongId);
+          const songIdMap = mapSongIdToFirebaseSongId.find((slhSongMap) => slhSongMap.SongId === setlistSongId);
           //Add Setlist Songs
           const setlistSong = {
             sequenceNumber: sequenceNumber, 

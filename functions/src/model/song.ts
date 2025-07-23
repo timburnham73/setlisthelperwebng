@@ -9,9 +9,13 @@ export interface UserLyric {
 
 export interface Song extends Base {
   name: string;
+  nameLowered: string;
   artist: string;
+  artsitLowered: string;
   genre: string;
+  genreLowered: string;
   key: string;
+  keyLowered: string;
   songLength: number;
   tempo: number;
   deactivated: boolean;
@@ -40,9 +44,13 @@ export class SongHelper {
   static getForUpdate(data: Song, editingUser: BaseUser): Song {
     return {
       name: data.name ?? "",
+      nameLowered: data.nameLowered ?? "",
       artist: data.artist ?? "",
+      artsitLowered: data.artsitLowered ?? "",
       genre: data.genre ?? "",
+      genreLowered: data.genreLowered ?? "",
       key: data.key ?? "",
+      keyLowered: data.keyLowered ?? "",
       songLength: data.songLength ?? 0,
       tempo: data.tempo ?? 120,
       deactivated: data.deactivated ?? false,

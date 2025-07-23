@@ -34,10 +34,10 @@ export class SongService {
   }
 
   
-  getSongsByTags(accountId: string, sortField: string, tagName: string[], sortOrder: OrderByDirection = 'asc'): Observable<Song[]> {
+  getSongsByTags(accountId: string, sortField: string, tagNames: string[], sortOrder: OrderByDirection = 'asc'): Observable<Song[]> {
     const dbPath = `/accounts/${accountId}/songs`;
     
-    const songsRef = this.db.collection(dbPath, ref => ref.orderBy("deactivated").where("deactivated", "!=", true).where("deleted", "==", false).where("tags", "array-contains-any", tagName).orderBy(sortField, sortOrder));
+    const songsRef = this.db.collection(dbPath, ref => ref.orderBy("deactivated").where("deactivated", "!=", true).where("deleted", "==", false).where("tags", "array-contains-any", tagNames).orderBy(sortField, sortOrder));
     
     return songsRef.snapshotChanges().pipe(
       map((changes) =>
