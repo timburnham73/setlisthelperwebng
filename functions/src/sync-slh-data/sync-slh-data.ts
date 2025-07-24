@@ -10,7 +10,7 @@ import { SLHSetlist, SLHSetlistHelper } from "../model/SLHSetlist";
 import { SetlistBreakHelper } from "../model/setlist-break";
 import { SetlistSong } from "../model/setlist-song";
 import { SLHTag, SLHTagHelper } from "../model/SLHTag";
-import { countSongs, getSetlistSnapshot, getSongSnapshot, updateParentSongSetlistRef, updateSetlistStatistics } from "../utils";
+import { countSongs, countTags, getSetlistSnapshot, getSongSnapshot, updateParentSongSetlistRef, updateSetlistStatistics } from "../utils";
 import { Song } from "../model/song";
 import { Setlist } from "../model/setlist";
 import { updateCountOfLyricsInSongs } from "../lyrics-count-trigger/lyric-utils";
@@ -41,6 +41,8 @@ export default async (accountImportSnap, context) => {
   await startSync(accountImport.jwtToken, accountId, accountImportSnap.id, accountImport.createdByUser);
   
   await countSongs(accountId); 
+
+  await countTags(accountId);
 
   await countSetlists(accountId);
 

@@ -45,7 +45,7 @@ async function getSetlistFromSetlistSongPath(setlistSongSnap: any) {
 
 export const countSongs = async (accountId) => {
     
-    const songsRef = db.collection(`/accounts/${accountId}/songs`).where('deactivated', '==', false);
+    const songsRef = db.collection(`/accounts/${accountId}/songs`).where('deleted', '==', false);
     
     const accountRef = db.doc(`/accounts/${accountId}`);
     
@@ -54,6 +54,20 @@ export const countSongs = async (accountId) => {
     
     //Update the lyric count on the master song
     accountRef.update({countOfSongs: songCountSnap.data().count});
+    
+}
+
+export const countTags = async (accountId) => {
+    
+    const tagssRef = db.collection(`/accounts/${accountId}/tags`);
+    
+    const accountRef = db.doc(`/accounts/${accountId}`);
+    
+    //Get the snapshot count of lyrics for the song.
+    const tagCountSnap = await tagssRef.count().get();
+    
+    //Update the lyric count on the master song
+    accountRef.update({countOfTags: tagCountSnap.data().count});
     
 }
 
