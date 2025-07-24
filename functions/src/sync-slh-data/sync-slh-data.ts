@@ -76,6 +76,7 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
     const convertedTag = SLHTagHelper.slhTagToTag(slhTag, importingUser);
     const alreadyAddedTag = mapSLHSongIdToTagName.find(tagName => tagName.TagName.toLowerCase() === convertedTag.name.toLowerCase());
     if(!alreadyAddedTag){
+      convertedTag.countOfSongs = slhTag.songs.length;
       await tagsRef.doc().set(convertedTag);
       tagDetails.push(`Adding tag with name ${convertedTag.name}`);
     }
@@ -148,12 +149,12 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
 
   await addAccountEventWithDetails("Song", `Finished processing songs.`, [...tagDetails,...songDetails], accountImportEventRef);
 
-  for(let artist in artists){
+  for(let artist of artists){
     const docRef = await artistsRef.doc();
     await docRef.set(artist);
   }
 
-  for(let genre in genres){
+  for(let genre of genres){
     const docRef = await genresRef.doc();
     await docRef.set(genre);
   }

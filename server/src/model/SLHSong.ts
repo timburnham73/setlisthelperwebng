@@ -66,6 +66,7 @@ export interface SLHSong {
         countOfLyrics: slhSong.Lyrics ? 1 : 0,
         lengthSec: slhSong.SongLength ?? 0,
         lengthMin: slhSong.SongLength ?? 0,
+        tags: []
       };
     }
   }
