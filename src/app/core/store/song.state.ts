@@ -67,7 +67,7 @@ export class SongState {
     setState(patch({ loading: true, error: null }));
 
     const dbPath = `/accounts/${accountId}/songs`;
-    const songsRef = this.db.collection(dbPath, (ref) =>
+    const songsRef = this.db.collection<Song>(dbPath, (ref) =>
       ref
         .orderBy('deactivated')
         .where('deactivated', '!=', true)
@@ -78,9 +78,9 @@ export class SongState {
     return songsRef.snapshotChanges().pipe(
       map((changes) =>
         changes.map((c) => {
-          const song = c.payload.doc.data() as Song;
-          song.id = c.payload.doc.id;
-          return song;
+          const data = c.payload.doc.data();
+          const id = c.payload.doc.id;
+          return { id, ...data };
         })
       ),
       tap((songs) => setState(patch({ songs, loading: false })))
@@ -95,7 +95,7 @@ export class SongState {
     setState(patch({ loading: true, error: null }));
 
     const dbPath = `/accounts/${accountId}/songs`;
-    const songsRef = this.db.collection(dbPath, (ref) =>
+    const songsRef = this.db.collection<Song>(dbPath, (ref) =>
       ref
         .orderBy('deactivated')
         .where('deactivated', '!=', true)
@@ -107,9 +107,9 @@ export class SongState {
     return songsRef.snapshotChanges().pipe(
       map((changes) =>
         changes.map((c) => {
-          const song = c.payload.doc.data() as Song;
-          song.id = c.payload.doc.id;
-          return song;
+          const data = c.payload.doc.data();
+          const id = c.payload.doc.id;
+          return { id, ...data };
         })
       ),
       tap((songs) => setState(patch({ songs, loading: false })))
@@ -124,13 +124,12 @@ export class SongState {
     setState(patch({ loading: true, error: null }));
 
     const dbPath = `/accounts/${accountId}/songs`;
-    const songRef = this.db.collection(dbPath).doc(songId);
+    const songRef = this.db.doc<Song>(`${dbPath}/${songId}`);
 
     return songRef.snapshotChanges().pipe(
       map((resultSong) => {
-        const song = resultSong.payload.data() as Song;
-        song.id = songId;
-        return song;
+        const data = resultSong.payload.data();
+        return { id: songId, ...data! } as Song;
       }),
       tap((song) => setState(patch({ selectedSong: song, loading: false })))
     );
@@ -194,7 +193,7 @@ export class SongState {
             songs: updateItem<Song>((s) => s?.id === songId, {
               ...song,
               id: songId,
-            } as Song),
+            }),
           })
         )
       )
@@ -226,14 +225,11 @@ export class SongState {
         this.setlistSongService.updateSetlistSongsBySongId(song.id!, song, editingUser)
       ),
       tap(() =>
-        setState(
-          patch({
-            songs: updateItem<Song>((s) => s?.id === song.id, song as Song),
-            selectedSong:
-              (s: SongStateModel) =>
-                s.selectedSong && s.selectedSong.id === song.id ? (song as Song) : s.selectedSong,
-          } as any)
-        )
+        setState((state) => {
+          const songs = state.songs.map((s) => (s.id === song.id ? song : s));
+          const selectedSong = state.selectedSong && state.selectedSong.id === song.id ? song : state.selectedSong;
+          return { ...state, songs, selectedSong };
+        })
       )
     );
   }
@@ -260,13 +256,11 @@ export class SongState {
           });
       }),
       tap(() =>
-        setState(
-          patch({
-            songs: removeItem<Song>((s) => s?.id === songToDelete.id),
-            selectedSong: (state: SongStateModel) =>
-              state.selectedSong?.id === songToDelete.id ? null : state.selectedSong,
-          } as any)
-        )
+        setState((state) => {
+          const songs = state.songs.filter((s) => s.id !== songToDelete.id);
+          const selectedSong = state.selectedSong?.id === songToDelete.id ? null : state.selectedSong;
+          return { ...state, songs, selectedSong };
+        })
       )
     );
   }

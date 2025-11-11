@@ -37,9 +37,12 @@ import {
 import { AngularFireAuthGuardModule } from "@angular/fire/compat/auth-guard";
 
 import { NgxsModule } from "@ngxs/store";
+import { provideStates } from "@ngxs/store";
 //import { LoggerModule } from "ngx-logger";
 import { AccountStateModule } from "./app/core/store/account-state.module";
-import { SongStateModule } from "./app/core/store/song-state.module";
+import { SongState } from "./app/core/store/song.state";
+import { ArtistState } from "./app/core/store/artist.state";
+import { GenreState } from "./app/core/store/genre.state";
 import { AppRoutingModule } from "./app/app-routing.module";
 import { CustomMaterialModule } from "./app/custom-material/custom-material.module";
 import { SharedModule } from "./app/shared/shared.module";
@@ -91,7 +94,6 @@ bootstrapApplication(AppComponent, {
         },
       }),
       AccountStateModule,
-      SongStateModule,
       MatCardModule,
       MatDividerModule,
       MatButtonModule,
@@ -106,6 +108,7 @@ bootstrapApplication(AppComponent, {
 
     ),
     provideFirebaseApp(() => initializeApp(environment.firebase)),
+    provideStates([SongState, ArtistState, GenreState]),
     provideAnimations(),
     {
       provide: FIRESTORE_SETTINGS,
