@@ -11,7 +11,6 @@ export enum FormatScope {
 } 
 
 export interface Lyric extends Base {
-  name: string;
   key: string;
   tempo: number;
   notes: string;
@@ -45,6 +44,7 @@ export class LyricHelper {
   static getForUpdate(data: Lyric, editingUser: BaseUser): Lyric {
     return {
       name: data.name ?? "",
+      nameLowered: data.name.toLocaleLowerCase() ?? "",
       lyrics: data.lyrics ?? "",
       key: data.key ?? "",
       tempo: data.tempo ?? 120,

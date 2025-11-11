@@ -8,8 +8,6 @@ export interface UserLyric {
   lyricId: string;
 }
 export interface Song extends Base {
-  name: string;
-  nameLowered: string;
   artist: string;
   artistLowered: string;
   genre: string;

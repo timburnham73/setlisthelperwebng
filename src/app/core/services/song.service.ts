@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { from, map, mergeMap, Observable, of, switchMap, take } from "rxjs";
-import { Timestamp } from "@angular/fire/firestore";
+import { from, map, Observable, switchMap, take } from "rxjs";
+import { QuerySnapshot, Timestamp } from "@angular/fire/firestore";
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
 import { Song, SongHelper } from '../model/song';
 import { BaseUser } from '../model/user';
@@ -8,6 +8,10 @@ import { CollectionReference, OrderByDirection } from 'firebase/firestore';
 import { SetlistSongService } from './setlist-songs.service';
 import {Query } from '@angular/fire/firestore';
 import { Account } from '../model/account';
+import { ArtistFactory } from '../model/factory/artist.factory';
+import { GenreFactory } from '../model/factory/genre.factory';
+import { Artist } from '../model/artist';
+import { Genre } from '../model/genre';
 
 @Injectable({
   providedIn: 'root'
@@ -78,6 +82,11 @@ export class SongService {
     
     let save$: Observable<any>;
     save$ = from(songsRef.add(songForAdd));
+    const batch = this.db.firestore.batch();
+
+    const artistsRef = this.db.collection<Artist>(`/accounts/${accountId}/artists`);
+    const genresRef = this.db.collection<Genre>(`/accounts/${accountId}/genres`);
+
     return save$.pipe(
       map((res) => {
         const rtnSong = {

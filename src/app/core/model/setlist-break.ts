@@ -18,10 +18,11 @@ export interface SetlistBreak extends Base {
 export class SetlistBreakHelper {
    static getSetlistBreakForAddOrUpdate(setlistBreak: Partial<SetlistBreak>, editingUser: BaseUser): SetlistBreak {
       return {
+         name: setlistBreak.name ?? "",
+         nameLowered: setlistBreak.name?.toLocaleLowerCase() ?? "",
          sequenceNumber: setlistBreak.sequenceNumber ?? 1,
          songId: setlistBreak.songId ?? "",
          isBreak: setlistBreak.isBreak ?? false,
-         name: setlistBreak.name ?? '',
          lastEdit: Timestamp.fromDate(new Date()),
          lastUpdatedByUser: UserHelper.getForUpdate(editingUser),
          dateCreated: setlistBreak.dateCreated ?? Timestamp.fromDate(new Date()),

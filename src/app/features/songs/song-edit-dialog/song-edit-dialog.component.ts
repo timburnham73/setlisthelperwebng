@@ -1,3 +1,4 @@
+import { SongService } from 'src/app/core/services/song.service';
 import { Component, Inject, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -7,7 +8,8 @@ import { SongEdit } from 'src/app/core/model/account-song';
 import { Song } from 'src/app/core/model/song';
 import { BaseUser, UserHelper } from 'src/app/core/model/user';
 import { AuthenticationService } from 'src/app/core/services/auth.service';
-import { SongService } from 'src/app/core/services/song.service';
+import { Store } from '@ngxs/store';
+import { SongActions } from 'src/app/core/store/song.actions';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -44,6 +46,7 @@ export class SongEditDialogComponent {
 
   constructor(
     public dialogRef: MatDialogRef<SongEditDialogComponent>,
+    private store: Store,
     private songService: SongService,
     private setlistService: SetlistService,
     private setlistSongService: SetlistSongService,
@@ -183,7 +186,7 @@ export class SongEditDialogComponent {
       modifiedSong = SetlistSongHelper.getSongFromSetlistSong(modifiedSong as SetlistSong);
     }
 
-    return this.songService.updateSong(this.accountId!, modifiedSong?.id!, modifiedSong, this.currentUser);
+    return this.store.dispatch(new SongActions.UpdateSong(this.accountId!, modifiedSong?.id!, modifiedSong, this.currentUser));
   }
 
   addSetlistSong(songId) {
@@ -200,6 +203,7 @@ export class SongEditDialogComponent {
 
   addSong() {
     const modifiedSong = { ...this.song, ...this.songForm.value } as Song;
+    // Use service here to get the created Song (with id) for follow-up actions in this dialog
     return this.songService.addSong(this.accountId!, modifiedSong, this.currentUser)
       .pipe(
         catchError((err) => {

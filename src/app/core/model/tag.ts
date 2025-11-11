@@ -3,8 +3,6 @@ import { BaseUser, UserHelper } from "./user";
 import { Timestamp } from "@angular/fire/firestore";
 
 export interface Tag extends Base {
-  name: string;
-  nameLowered: string;
   countOfSongs: number;
 }
 
@@ -20,7 +18,7 @@ export class TagHelper{
   static getForUpdate(user: BaseUser, data: Tag): Tag {
         return {
           name: data.name ?? "",
-          nameLowered: data.nameLowered ?? "",
+          nameLowered: data.name.toLocaleLowerCase() ?? "",
           createdByUser: data.createdByUser ?? "",
           dateCreated: data.dateCreated ?? "",
           lastEdit: Timestamp.fromDate(new Date()),

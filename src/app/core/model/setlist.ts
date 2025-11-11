@@ -3,7 +3,6 @@ import { Base } from "./base";
 import { BaseUser } from "./user";
 
 export interface Setlist extends Base {
-  name: string;
   totalTimeInSeconds: number;
   countOfSongs: number;
   countOfBreaks: number;
@@ -24,6 +23,7 @@ export class SetlistHelper {
   static getForUpdate(data: Partial<Setlist>, editingUser: BaseUser): Setlist {
     return {
       name: data.name ?? "",
+      nameLowered: data.name?.toLowerCase() ?? "",
       gigLocation: data.gigLocation ?? '',
       gigDate: data.gigDate ?? Timestamp.fromDate(new Date()),
       createdByUser: data.createdByUser ?? editingUser,

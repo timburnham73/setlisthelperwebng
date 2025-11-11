@@ -3,9 +3,8 @@ import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
 import { MatTableDataSource as MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { Title } from '@angular/platform-browser';
 import { NotificationService } from 'src/app/core/services/notification.service';
-import { SongService } from 'src/app/core/services/song.service';
 import { SAMPLE_SONGS } from 'src/app/core/model/sampleSongs';
-import { Observable, finalize, first } from 'rxjs';
+import { BehaviorSubject, Observable, combineLatest, first, map } from 'rxjs';
 import { Song } from 'src/app/core/model/song';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SongEditDialogComponent } from '../song-edit-dialog/song-edit-dialog.component';
@@ -13,11 +12,14 @@ import { SongEdit } from 'src/app/core/model/account-song';
 import { Select, Store } from '@ngxs/store';
 import { AccountActions, AccountState } from 'src/app/core/store/account.state';
 import { Account } from 'src/app/core/model/account';
+import { SongActions } from 'src/app/core/store/song.actions';
+import { SongState } from 'src/app/core/store/song.state';
+import { getSongDetails as utilGetSongDetails, getSongLength as utilGetSongLength } from 'src/app/core/util/song.util';
 import { LyricAddDialogComponent } from '../../lyrics/lyric-add-dialog/lyric-add-dialog.component';
 import { AccountLyric, Lyric } from 'src/app/core/model/lyric';
 import { AuthenticationService } from 'src/app/core/services/auth.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { NgFor, NgIf } from '@angular/common';
+import { NgFor, NgIf, AsyncPipe } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
@@ -55,6 +57,7 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
       MatInputModule, 
       NgIf, 
       NgFor,
+      AsyncPipe,
       MatProgressSpinnerModule, 
       MatTableModule, 
       MatSortModule,
@@ -69,19 +72,18 @@ export class SongListComponent implements OnInit {
   selectedAccount$!: Observable<Account>;
   currentUser: any;
   displayedColumns: string[] = [ 'name', 'artist', 'genre', 'key', 'tempo', 'timeSignature', 'songLength', 'lyrics', 'setlists', 'remove'];
-  allSongs : Song[];
-  filteredSongs : Song[];
+  @Select(SongState.all) songs$!: Observable<Song[]>;
+  @Select(SongState.loading) loading$!: Observable<boolean>;
+  private searchTerm$ = new BehaviorSubject<string>('');
+  filteredSongs$!: Observable<Song[]>;
   accountId: string;
   showRemove = false;
   showFind = false;
   @ViewChild(MatSort, { static: true }) sort: MatSort = new MatSort;
-  loading = false;
-  lastPageLoaded = 0;
 
   constructor(
     private route: ActivatedRoute,
     private titleService: Title,
-    public songService: SongService,
     private store: Store,
     private authService: AuthenticationService,
     private router: Router,
@@ -96,17 +98,18 @@ export class SongListComponent implements OnInit {
     
     const id = this.route.snapshot.paramMap.get('accountid');
     if(id){
-      this.loading = false;
       this.accountId = id;
       const songId = this.route.snapshot.queryParamMap.get('songid');
-      this.songService.getSongs(this.accountId, "name")
-        .pipe(
-          finalize(() => this.loading = false)
-        )
-        .subscribe((songs) => {
-          this.allSongs = this.filteredSongs = songs;
-          
-        });
+      // Dispatch load; do not subscribe here
+      this.store.dispatch(new SongActions.LoadSongs(this.accountId, 'name', 'asc'));
+      this.filteredSongs$ = combineLatest([this.songs$, this.searchTerm$]).pipe(
+        map(([songs, term]) => {
+          if(!songs) return [];
+          if(!term) return songs;
+          const t = term.toLowerCase();
+          return songs.filter(s => s.name?.toLowerCase().includes(t));
+        })
+      );
       this.scrollSongtoView(songId);
     }
     
@@ -128,29 +131,17 @@ export class SongListComponent implements OnInit {
   }
 
   search(search: string){
-    this.filteredSongs = this.allSongs.filter((song) => song.name.toLowerCase().includes(search));
+    this.searchTerm$.next(search || '');
   }
 
   sortChange(sortState: Sort) {
-    this.songService.getSongs(this.accountId, sortState.active, sortState.direction === "asc" ? "asc" : "desc")
-        .pipe(
-          finalize(() => this.loading = false)
-        )
-        .subscribe((songs) => {
-          this.allSongs = this.filteredSongs = songs;
-        });
+    const order = sortState.direction === 'asc' ? 'asc' : 'desc';
+    this.store.dispatch(new SongActions.LoadSongs(this.accountId, sortState.active, order));
   }
 
   loadMore(){
-    this.lastPageLoaded++;
-    this.loading = true;
-    this.songService.getSongs(this.accountId, "name")
-        .pipe(
-          finalize(() => this.loading = false)
-        )
-        .subscribe((songs) => {
-          this.allSongs =  this.allSongs.concat(songs);
-        });
+    // For now, re-dispatch load (pagination not yet implemented in state)
+    this.store.dispatch(new SongActions.LoadSongs(this.accountId, 'name', 'asc'));
   }
 
   onAddSong(){
@@ -205,15 +196,15 @@ export class SongListComponent implements OnInit {
     .afterClosed().subscribe((data) => {
       if(data && data.result === CONFIRM_DIALOG_RESULT.OK){
         if(!hasSetlists){
-          this.songService
-              .removeSong(songToDelete, this.accountId!, this.currentUser)
-              .pipe(first())
-              .subscribe();
-        }
-        else{
-          //TODO: deactivate
-          songToDelete.deactivated = true;
-           this.songService.updateSong(this.accountId!, songToDelete?.id!, songToDelete, this.currentUser);
+          this.store.dispatch(new SongActions.RemoveSong(this.accountId!, songToDelete, this.currentUser))
+            .pipe(first())
+            .subscribe();
+        } else {
+          // Deactivate instead of delete
+          const updated = { ...songToDelete, deactivated: true } as Song;
+          this.store.dispatch(new SongActions.UpdateSong(this.accountId!, updated.id!, updated, this.currentUser))
+            .pipe(first())
+            .subscribe();
         }
       }
     });
@@ -257,5 +248,14 @@ export class SongListComponent implements OnInit {
       return song.setlists.map((setlist: SetlistRef) => setlist.name).join(', ');
     }
     return 0;
+  }
+
+  // Expose utils for templates
+  getSongLength(song: Song): string {
+    return utilGetSongLength(song);
+  }
+
+  getSongDetails(song: Song): string {
+    return utilGetSongDetails(song);
   }
 }

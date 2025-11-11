@@ -10,7 +10,6 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import EmailAuthProvider = firebase.auth.EmailAuthProvider;
 import GoogleAuthProvider = firebase.auth.GoogleAuthProvider;
 import { UserService } from 'src/app/core/services/user.service';
-import { SongService } from 'src/app/core/services/song.service';
 
 @Component({
     selector: 'app-login',
@@ -25,7 +24,6 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     constructor(private router: Router,
         private titleService: Title,
-        private songService: SongService,
         private notificationService: NotificationService,
         private authenticationService: AuthenticationService,
         private afAuth: AngularFireAuth,

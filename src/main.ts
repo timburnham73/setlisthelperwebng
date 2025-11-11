@@ -39,6 +39,7 @@ import { AngularFireAuthGuardModule } from "@angular/fire/compat/auth-guard";
 import { NgxsModule } from "@ngxs/store";
 //import { LoggerModule } from "ngx-logger";
 import { AccountStateModule } from "./app/core/store/account-state.module";
+import { SongStateModule } from "./app/core/store/song-state.module";
 import { AppRoutingModule } from "./app/app-routing.module";
 import { CustomMaterialModule } from "./app/custom-material/custom-material.module";
 import { SharedModule } from "./app/shared/shared.module";
@@ -79,7 +80,6 @@ bootstrapApplication(AppComponent, {
       SharedModule,
       CustomMaterialModule.forRoot(),
       AppRoutingModule,
-      AccountStateModule,
       // LoggerModule.forRoot({
       //   serverLoggingUrl: `https://www.songsetter.com/logs`,
       //   level: environment.logLevel,
@@ -90,6 +90,8 @@ bootstrapApplication(AppComponent, {
           injectContainerState: false,
         },
       }),
+      AccountStateModule,
+      SongStateModule,
       MatCardModule,
       MatDividerModule,
       MatButtonModule,

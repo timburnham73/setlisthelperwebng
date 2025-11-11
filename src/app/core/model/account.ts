@@ -4,7 +4,6 @@ import { BaseUser, UserHelper } from "./user";
 import { LyricFormat } from "./lyric-format";
 
 export interface Account extends Base{
-    name: string;
     description?: string;
     users?: string[];
     ownerUser: any;
@@ -28,6 +27,7 @@ export class AccountHelper{
   static getForUpdate(user: BaseUser, data: Account): Account {
         return {
           name: data.name ?? "",
+          nameLowered: data.name?.toLocaleLowerCase() ?? "",
           description: data.description ?? "",
           users: data.users ?? [],
           ownerUser: data.ownerUser ?? undefined,
