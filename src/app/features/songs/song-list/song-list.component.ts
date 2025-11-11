@@ -9,8 +9,9 @@ import { Song } from 'src/app/core/model/song';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SongEditDialogComponent } from '../song-edit-dialog/song-edit-dialog.component';
 import { SongEdit } from 'src/app/core/model/account-song';
-import { Select, Store } from '@ngxs/store';
-import { AccountActions, AccountState } from 'src/app/core/store/account.state';
+import { Store } from '@ngxs/store';
+import { AccountActions } from 'src/app/core/store/account.actions';
+import { AccountState } from 'src/app/core/store/account.state';
 import { Account } from 'src/app/core/model/account';
 import { SongActions } from 'src/app/core/store/song.actions';
 import { SongState } from 'src/app/core/store/song.state';
@@ -68,12 +69,11 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
     ]
 })
 export class SongListComponent implements OnInit {
-  @Select(AccountState.selectedAccount) 
-  selectedAccount$!: Observable<Account>;
+  selectedAccount$: Observable<Account>;
   currentUser: any;
   displayedColumns: string[] = [ 'name', 'artist', 'genre', 'key', 'tempo', 'timeSignature', 'songLength', 'lyrics', 'setlists', 'remove'];
-  @Select(SongState.all) songs$!: Observable<Song[]>;
-  @Select(SongState.loading) loading$!: Observable<boolean>;
+  songs$: Observable<Song[]>;
+  loading$: Observable<boolean>;
   private searchTerm$ = new BehaviorSubject<string>('');
   filteredSongs$!: Observable<Song[]>;
   accountId: string;
@@ -89,7 +89,10 @@ export class SongListComponent implements OnInit {
     private router: Router,
     public dialog: MatDialog
 
-  ) { 
+  ) {
+    this.selectedAccount$ = this.store.select(AccountState.selectedAccount);
+    this.songs$ = this.store.select(SongState.all);
+    this.loading$ = this.store.select(SongState.loading); 
     this.authService.user$.subscribe((user) => {
       if(user && user.uid){
         this.currentUser = user;

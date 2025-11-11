@@ -2,14 +2,14 @@ import { Component, OnInit, inject } from "@angular/core";
 import { NotificationService } from "src/app/core/services/notification.service";
 import { Title } from "@angular/platform-browser";
 import { AuthenticationService } from "src/app/core/services/auth.service";
-import { AccountService } from "src/app/core/services/account.service";
 import { Observable, catchError, from, throwError } from "rxjs";
 import { Account } from "src/app/core/model/account";
 import { MatDialog as MatDialog } from "@angular/material/dialog";
 import { EditAccountDialogComponent } from "../edit-account-dialog/edit-account-dialog.component";
 import { Firestore, collection, collectionData } from "@angular/fire/firestore";
 import { Store } from "@ngxs/store";
-import { AccountActions } from "src/app/core/store/account.state";
+import { AccountActions } from "src/app/core/store/account.actions";
+import { AccountState } from "src/app/core/store/account.state";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { UserService } from "src/app/core/services/user.service";
 import { AccountUsersComponent } from "../account-users/account-users.component";
@@ -45,24 +45,23 @@ export class AccountHomeComponent implements OnInit {
   accounts$: Observable<Account[]>;
 
   constructor(
-    private notificationService: NotificationService,
     private authService: AuthenticationService,
     private titleService: Title,
-    private store:Store,
+    private store: Store,
     private router: Router,
-    private accountService: AccountService,
     public dialog: MatDialog,
     private userService: UserService,
     private route: ActivatedRoute,
     private http: HttpClient
   ) {
+    this.accounts$ = this.store.select(AccountState.all);
+    
     this.authService.user$.subscribe((user) => {
       if(user && user.uid){
         this.currentUser = user;
-        this.accounts$ = this.accountService.getAccounts(user.uid);
+        this.store.dispatch(new AccountActions.LoadAccounts(user.uid));
       }
     });
-    
   }
 
   ngOnInit() {
@@ -81,7 +80,9 @@ export class AccountHomeComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((data) => {
-      this.accounts$ = this.accountService.getAccounts(this.currentUser.uid);
+      if (data) {
+        this.store.dispatch(new AccountActions.LoadAccounts(this.currentUser.uid));
+      }
     }); 
   }
 
@@ -104,7 +105,9 @@ export class AccountHomeComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((data) => {
-      this.accounts$ = this.accountService.getAccounts(this.currentUser.uid);
+      if (data) {
+        this.store.dispatch(new AccountActions.LoadAccounts(this.currentUser.uid));
+      }
     });
   }
 
@@ -115,7 +118,9 @@ export class AccountHomeComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((data) => {
-      this.accounts$ = this.accountService.getAccounts(this.currentUser.uid);
+      if (data) {
+        this.store.dispatch(new AccountActions.LoadAccounts(this.currentUser.uid));
+      }
     });
   }
 }

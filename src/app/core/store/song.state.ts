@@ -148,24 +148,18 @@ export class SongState {
     const save$ = from(songsRef.add(songForAdd));
 
     return save$.pipe(
-      map((res) => {
-        const rtnSong: Song = {
-          id: res.id,
-          ...songForAdd,
-        } as Song;
-
+      switchMap((res) => {
+        const rtnSong: Song = { id: res.id, ...songForAdd } as Song;
         const accountRef = this.db.doc(`/accounts/${accountId}`);
-        accountRef
-          .valueChanges()
-          .pipe(take(1))
-          .subscribe((result) => {
-            const account = result as Account;
-            accountRef.update({
-              countOfSongs: account.countOfSongs ? account.countOfSongs + 1 : 1,
-            });
-          });
 
-        return rtnSong;
+        return accountRef.valueChanges().pipe(
+          take(1),
+          switchMap((result) => {
+            const account = result as Account;
+            const nextCount = account?.countOfSongs ? account.countOfSongs + 1 : 1;
+            return from(accountRef.update({ countOfSongs: nextCount })).pipe(map(() => rtnSong));
+          })
+        );
       }),
       tap((rtnSong) =>
         setState(

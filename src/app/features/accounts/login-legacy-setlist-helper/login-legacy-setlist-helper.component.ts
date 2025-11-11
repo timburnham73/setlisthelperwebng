@@ -19,7 +19,8 @@ import { AccountImportService } from 'src/app/core/services/account-import.servi
 import { AccountService } from 'src/app/core/services/account.service';
 import { AuthenticationService } from 'src/app/core/services/auth.service';
 import { UserService } from 'src/app/core/services/user.service';
-import { AccountActions } from 'src/app/core/store/account.state';
+import { AccountActions } from 'src/app/core/store/account.actions';
+import { AccountState } from 'src/app/core/store/account.state';
 import { environment } from 'src/environments/environment';
 
 @Component({
