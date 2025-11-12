@@ -10,7 +10,8 @@ import {
 import { BaseUser, User, UserHelper } from "../model/user";
 
 import { SongService } from "./song.service";
-import { Song, SongHelper } from "../model/song";
+import { Song } from "../model/song";
+import { SongFactory } from "../model/factory/song.factory";
 import { Account } from "../model/account";
 
 //import OrderByDirection = firebase.firestore.OrderByDirection;
@@ -98,7 +99,7 @@ export class TagService {
             if(songIds.includes(song.id)){
               const dbPath = `/accounts/${accountId}/songs`;
               const songsRef = this.db.collection(dbPath);
-              const songToUpdate = SongHelper.getForUpdate(song, editingUser);
+              const songToUpdate = new SongFactory(editingUser).getForUpdate(song);
               tags.forEach((tag) => {
                 const tagIndex = songToUpdate.tags.findIndex((tagInSong) => tagInSong === tag);
                 const canAdd = songToUpdate.tags.length === 0 ||  tagIndex === -1;
@@ -140,7 +141,7 @@ export class TagService {
             
               const dbPath = `/accounts/${accountId}/songs`;
               const songsRef = this.db.collection(dbPath);
-              const songToUpdate = SongHelper.getForUpdate(song, editingUser);
+              const songToUpdate = new SongFactory(editingUser).getForUpdate(song);
               
               const tagIndex = songToUpdate.tags.findIndex((tagInSong) => tagInSong === tagNameOld);
               const canRename = tagIndex > -1;
@@ -193,7 +194,7 @@ export class TagService {
           if(song.id){
             const dbPath = `/accounts/${accountId}/songs`;
             const songsRef = this.db.collection(dbPath);
-            const songToUpdate = SongHelper.getForUpdate(song, editingUser);
+            const songToUpdate = new SongFactory(editingUser).getForUpdate(song);
             const tagIndex = songToUpdate.tags.findIndex((tagInSong) => tagInSong === tagToDelete.name);
             if(songToUpdate.tags.length !== 0 || tagIndex > -1){
               songToUpdate.tags.splice(tagIndex, 1);
@@ -227,7 +228,7 @@ export class TagService {
             if(songIdsToRemoveTags.includes(song.id)){
               const dbPath = `/accounts/${accountId}/songs`;
               const songsRef = this.db.collection(dbPath);
-              const songToUpdate = SongHelper.getForUpdate(song, editingUser);
+              const songToUpdate = new SongFactory(editingUser).getForUpdate(song);
               tags.forEach((tag) => {
                 const tagIndex = songToUpdate.tags.findIndex((tagInSong) => tagInSong === tag);
                 if(songToUpdate.tags.length !== 0 || tagIndex > -1){

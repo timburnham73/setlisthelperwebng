@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, RequiredValidator, Validators } from '@angular/forms';
 
 import {ActivatedRoute, Router} from '@angular/router';
-import { Song, SongHelper } from 'src/app/core/model/song';
+import { Song } from 'src/app/core/model/song';
 import { SongService } from 'src/app/core/services/song.service';
 import { MatButtonModule } from '@angular/material/button';
 import { NgIf, NgFor, JsonPipe } from '@angular/common';

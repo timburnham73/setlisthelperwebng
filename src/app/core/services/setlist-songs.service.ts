@@ -4,7 +4,8 @@ import {
   AngularFirestoreCollection,
 } from "@angular/fire/compat/firestore";
 import { Observable, concat, concatMap, first, from, map, switchMap, tap } from "rxjs";
-import { Song, SongHelper } from "../model/song";
+import { Song } from "../model/song";
+import { SongFactory } from "../model/factory/song.factory";
 import { SetlistSong, SetlistSongHelper } from "../model/setlist-song";
 import { SetlistBreak, SetlistBreakHelper } from "../model/setlist-break";
 import { BaseUser } from "../model/user";
@@ -233,10 +234,7 @@ export class SetlistSongService {
     song: Song,
     editingUser: BaseUser
   ): any {
-    const setlisSongForUpdate = SongHelper.getForUpdate(
-      song,
-      editingUser
-    );
+    const setlisSongForUpdate = new SongFactory(editingUser).getForUpdate(song);
 
     const splitPath = documentPath.split('/');
     splitPath.pop();

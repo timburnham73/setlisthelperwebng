@@ -12,7 +12,8 @@ import { Timestamp } from '@angular/fire/firestore';
 import { Store } from '@ngxs/store';
 import { map, Observable, from, take, tap, switchMap, forkJoin } from 'rxjs';
 
-import { Song, SongHelper } from '../model/song';
+import { Song } from '../model/song';
+import { SongFactory } from '../model/factory/song.factory';
 import { Account } from '../model/account';
 import { Artist } from '../model/artist';
 import { Genre } from '../model/genre';
@@ -159,7 +160,7 @@ export class SongState {
     { getState, setState }: StateContext<SongStateModel>,
     { accountId, song, editingUser }: SongActions.AddSong
   ): Observable<Song> {
-    const songForAdd = SongHelper.getForAdd(song, editingUser);
+    const songForAdd = new SongFactory(editingUser).getForAdd(song);
     const dbPath = `/accounts/${accountId}/songs`;
     const artistsPath = `/accounts/${accountId}/artists`;
     const genresPath = `/accounts/${accountId}/genres`;
@@ -224,7 +225,7 @@ export class SongState {
     const dbPath = `/accounts/${accountId}/songs`;
     const artistsPath = `/accounts/${accountId}/artists`;
     const genresPath = `/accounts/${accountId}/genres`;
-    const songForUpdate = SongHelper.getForUpdate(song, editingUser);
+    const songForUpdate = new SongFactory(editingUser).getForUpdate(song);
 
     const runTx = () =>
       this.db.firestore.runTransaction(async (tx) => {
@@ -320,7 +321,7 @@ export class SongState {
       }
     }
 
-    const songForUpdate = SongHelper.getForUpdate(song, editingUser);
+    const songForUpdate = new SongFactory(editingUser).getForUpdate(song);
     const dbPath = `/accounts/${accountId}/songs`;
     const songsRef = this.db.collection(dbPath);
 

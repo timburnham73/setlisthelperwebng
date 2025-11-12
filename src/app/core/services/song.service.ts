@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { from, map, Observable, switchMap, take } from "rxjs";
 import { QuerySnapshot, Timestamp } from "@angular/fire/firestore";
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
-import { Song, SongHelper } from '../model/song';
+import { Song } from '../model/song';
+import { SongFactory } from '../model/factory/song.factory';
 import { BaseUser } from '../model/user';
 import { CollectionReference, OrderByDirection } from 'firebase/firestore';
 import { SetlistSongService } from './setlist-songs.service';
@@ -75,7 +76,7 @@ export class SongService {
   }
 
   addSong(accountId: string, song: Song, editingUser: BaseUser): Observable<Song> {
-    const songForAdd = SongHelper.getForAdd(song, editingUser);
+    const songForAdd = new SongFactory(editingUser).getForAdd(song);
     
     const dbPath = `/accounts/${accountId}/songs`;
     const songsRef = this.db.collection(dbPath);
@@ -123,7 +124,7 @@ export class SongService {
         song.defaultLyricForUser.push({uid: editingUser.uid, lyricId: lyricId});
       }
     }
-    const songForUpdate = SongHelper.getForUpdate(song, editingUser);
+    const songForUpdate = new SongFactory(editingUser).getForUpdate(song);
     const dbPath = `/accounts/${accountId}/songs`;
     const songsRef = this.db.collection(dbPath);
     
@@ -135,7 +136,7 @@ export class SongService {
   }
 
   updateSong(accountId: string, songId: string, song: Song, editingUser: BaseUser): Observable<any> {
-    const songForUpdate = SongHelper.getForUpdate(song, editingUser);
+    const songForUpdate = new SongFactory(editingUser).getForUpdate(song);
     const dbPath = `/accounts/${accountId}/songs`;
     const songsRef = this.db.collection(dbPath);
     

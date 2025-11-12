@@ -1,5 +1,6 @@
 
-import {Song, SongHelper} from './song';
+import { Song } from './song';
+import { SongFactory } from './factory/song.factory';
 import { BaseUser } from './user';
 
 export interface SetlistSong extends Song {
@@ -20,7 +21,7 @@ export class SetlistSongHelper{
           songId: setlistSong.songId ?? "",
           isBreak: setlistSong.isBreak ?? false,
           updateOnlyThisSetlistSong: setlistSong.updateOnlyThisSetlistSong ?? false, 
-          ...SongHelper.getForUpdate(setlistSong, userUpdating)
+          ...new SongFactory(userUpdating).getForUpdate(setlistSong)
        };
      }
 
