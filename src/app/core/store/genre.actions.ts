@@ -12,16 +12,17 @@ export namespace GenreActions {
     ) {}
   }
 
-  export class GetGenreByNameLowered {
-    public static readonly type = '[Genres] Get By NameLowered';
-    constructor(public accountId: string, public nameLowered: string) {}
+  export class GetGenre {
+    public static readonly type = '[Genres] Get Genre';
+    constructor(public accountId: string, public name: string) {}
   }
 
   export class AddGenre {
     public static readonly type = '[Genres] Add Genre';
     constructor(
       public accountId: string,
-      public genre: Genre,
+      public name: string,
+      public countOfSongs: number,
       public editingUser: BaseUser
     ) {}
   }
@@ -31,7 +32,8 @@ export namespace GenreActions {
     constructor(
       public accountId: string,
       public genreId: string,
-      public genre: Genre,
+      public name: string,
+      public countOfSongs: number,
       public editingUser: BaseUser
     ) {}
   }

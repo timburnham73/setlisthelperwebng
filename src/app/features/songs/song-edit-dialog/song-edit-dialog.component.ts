@@ -1,9 +1,8 @@
-import { SongService } from 'src/app/core/services/song.service';
 import { Component, Inject, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef as MatDialogRef, MatDialogModule } from '@angular/material/dialog';
-import { catchError, concat, concatMap, first, mergeMap, switchMap, take, tap, throwError, zip } from 'rxjs';
+import { catchError, concat, concatMap, first, map, mergeMap, switchMap, take, tap, throwError, zip } from 'rxjs';
 import { SongEdit } from 'src/app/core/model/account-song';
 import { Song } from 'src/app/core/model/song';
 import { BaseUser, UserHelper } from 'src/app/core/model/user';
@@ -47,7 +46,6 @@ export class SongEditDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<SongEditDialogComponent>,
     private store: Store,
-    private songService: SongService,
     private setlistService: SetlistService,
     private setlistSongService: SetlistSongService,
     private authService: AuthenticationService,
@@ -141,20 +139,33 @@ export class SongEditDialogComponent {
     } else {
       //If this is a seltist song a seuqence number will be passed in with no songId. 
       if ((this.song as SetlistSong)?.sequenceNumber) {
-        this.addSong()
+        this.store.dispatch(new SongActions.AddSong(this.accountId!, { ...this.song, ...this.songForm.value } as Song, this.currentUser))
           .pipe(
-            concatMap((song) => {
+            switchMap(() => this.store.select(state => state.songs.songs)),
+            take(1),
+            map((songs: Song[]) => songs[songs.length - 1]), // Get the last added song
+            concatMap((song: Song) => {
               return this.addSetlistSong(song.id)
             }),
-            tap((result) => this.dialogRef.close(result))
+            tap((result) => this.dialogRef.close(result)),
+            catchError((err) => {
+              console.log(err);
+              alert('Could not add song.');
+              return throwError(() => new Error(err));
+            })
           )
           .subscribe();
       }
       else {
-        this.addSong()
+        this.store.dispatch(new SongActions.AddSong(this.accountId!, { ...this.song, ...this.songForm.value } as Song, this.currentUser))
           .pipe(
             first(),
-            tap((result) => this.dialogRef.close(result))
+            tap(() => this.dialogRef.close()),
+            catchError((err) => {
+              console.log(err);
+              alert('Could not add song.');
+              return throwError(() => new Error(err));
+            })
           )
           .subscribe();
       }
@@ -186,7 +197,14 @@ export class SongEditDialogComponent {
       modifiedSong = SetlistSongHelper.getSongFromSetlistSong(modifiedSong as SetlistSong);
     }
 
-    return this.store.dispatch(new SongActions.UpdateSong(this.accountId!, modifiedSong?.id!, modifiedSong, this.currentUser));
+    return this.store.dispatch(new SongActions.UpdateSong(this.accountId!, modifiedSong?.id!, modifiedSong, this.currentUser))
+      .pipe(
+        catchError((err) => {
+          console.log(err);
+          alert('Could not update song.');
+          return throwError(() => new Error(err));
+        })
+      );
   }
 
   addSetlistSong(songId) {
@@ -201,18 +219,6 @@ export class SongEditDialogComponent {
       );
   }
 
-  addSong() {
-    const modifiedSong = { ...this.song, ...this.songForm.value } as Song;
-    // Use service here to get the created Song (with id) for follow-up actions in this dialog
-    return this.songService.addSong(this.accountId!, modifiedSong, this.currentUser)
-      .pipe(
-        catchError((err) => {
-          console.log(err);
-          alert('Could not add song.');
-          return throwError(() => new Error(err));
-        })
-      );
-  }
 
   //If the song is a Setlist song then show the checkbox
   showChangesToRepertoire() {

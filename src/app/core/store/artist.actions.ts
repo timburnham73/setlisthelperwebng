@@ -12,16 +12,17 @@ export namespace ArtistActions {
     ) {}
   }
 
-  export class GetArtistByNameLowered {
-    public static readonly type = '[Artists] Get By NameLowered';
-    constructor(public accountId: string, public nameLowered: string) {}
+  export class GetArtist {
+    public static readonly type = '[Artists] Get Artist';
+    constructor(public accountId: string, public name: string) {}
   }
 
   export class AddArtist {
     public static readonly type = '[Artists] Add Artist';
     constructor(
       public accountId: string,
-      public artist: Artist,
+      public name: string,
+      public countOfSongs: number,
       public editingUser: BaseUser
     ) {}
   }
@@ -31,7 +32,8 @@ export namespace ArtistActions {
     constructor(
       public accountId: string,
       public artistId: string,
-      public artist: Artist,
+      public name: string,
+      public countOfSongs: number,
       public editingUser: BaseUser
     ) {}
   }

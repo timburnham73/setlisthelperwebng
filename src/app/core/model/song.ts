@@ -50,13 +50,13 @@ export class SongHelper {
   static getForUpdate(data: Song, editingUser: BaseUser): Song {
     return {
       name: data.name ?? "",
-      nameLowered: data.nameLowered ?? "",
+      nameLowered: data.name.toLowerCase() ?? "",
       artist: data.artist ?? "",
-      artistLowered: data.artistLowered ?? "",
+      artistLowered: data.artist.toLowerCase() ?? "",
       genre: data.genre ?? "",
-      genreLowered: data.genreLowered ?? "",
+      genreLowered: data.genre.toLowerCase() ?? "",
       key: data.key ?? "",
-      keyLowered: data.keyLowered ?? "",
+      keyLowered: data.key.toLowerCase() ?? "",
       songLength: data.songLength ?? 0,
       tempo: data.tempo ?? 120,
       deactivated: data.deactivated ?? false,

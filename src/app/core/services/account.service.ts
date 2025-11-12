@@ -37,17 +37,16 @@ export class AccountService {
       );
   }
 
-  getAccount(accountId: string): Observable<any> {
-    const dbPath = `/accounts`;
-    const accountRef = this.db.collection(dbPath).doc(accountId);
-    return accountRef.snapshotChanges().pipe(
-      map((resultAccount) =>
-          {
-            const account = resultAccount.payload.data() as Account;
-            account.id = accountId;
-            return account;
-          }
-      )
+  getAccount(accountId: string): Observable<Account> {
+    const accountRef = this.db.collection<Account>(this.dbPath).doc(accountId);
+    return accountRef.get().pipe(
+      map((doc) => {
+        const data = doc.data();
+        if (!data) {
+          throw new Error(`Account ${accountId} not found`);
+        }
+        return { ...data, id: accountId };
+      })
     );
   }
 

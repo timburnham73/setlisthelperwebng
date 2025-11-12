@@ -4,8 +4,9 @@ import { Action, Selector, State, StateContext } from '@ngxs/store';
 import { append, patch, updateItem } from '@ngxs/store/operators';
 import { from, map, Observable, take, tap } from 'rxjs';
 
-import { Artist, ArtistHelper } from '../model/artist';
+import { Artist } from '../model/artist';
 import { Account } from '../model/account';
+import { ArtistFactory } from '../model/factory/artist.factory';
 import { ArtistActions } from './artist.actions';
 
 export interface ArtistStateModel {
@@ -67,13 +68,14 @@ export class ArtistState {
     );
   }
 
-  @Action(ArtistActions.GetArtistByNameLowered)
-  getArtistByNameLowered(
+  @Action(ArtistActions.GetArtist)
+  getArtist(
     { setState }: StateContext<ArtistStateModel>,
-    { accountId, nameLowered }: ArtistActions.GetArtistByNameLowered
+    { accountId, name }: ArtistActions.GetArtist
   ): Observable<Artist | undefined> {
     setState(patch({ loading: true, error: null }));
     const dbPath = `/accounts/${accountId}/artists`;
+    const nameLowered = name.toLowerCase();
     const col = this.db.collection<Artist>(dbPath, (ref) =>
       ref.where('nameLowered', '==', nameLowered).limit(1)
     );
@@ -92,14 +94,15 @@ export class ArtistState {
   @Action(ArtistActions.AddArtist)
   addArtist(
     { setState }: StateContext<ArtistStateModel>,
-    { accountId, artist, editingUser }: ArtistActions.AddArtist
+    { accountId, name, countOfSongs, editingUser }: ArtistActions.AddArtist
   ): Observable<Artist> {
-    const artistForAdd = ArtistHelper.getForUpdate(editingUser, artist);
+    const factory = new ArtistFactory(editingUser);
+    const artistForAdd = factory.getForAdd({ name, countOfSongs });
     const dbPath = `/accounts/${accountId}/artists`;
     const col = this.db.collection(dbPath);
 
     return from(col.add(artistForAdd)).pipe(
-      map((res) => ({ id: res.id, ...artistForAdd } as any as Artist)),
+      map((res) => ({ ...artistForAdd, id: res.id })),
       tap((saved) => setState(patch({ artists: append([saved]) })))
     );
   }
@@ -107,9 +110,10 @@ export class ArtistState {
   @Action(ArtistActions.UpdateArtist)
   updateArtist(
     { setState }: StateContext<ArtistStateModel>,
-    { accountId, artistId, artist, editingUser }: ArtistActions.UpdateArtist
+    { accountId, artistId, name, countOfSongs, editingUser }: ArtistActions.UpdateArtist
   ): Observable<void> {
-    const artistForUpdate = ArtistHelper.getForUpdate(editingUser, artist);
+    const factory = new ArtistFactory(editingUser);
+    const artistForUpdate = factory.getForUpdate({ name, countOfSongs });
     const dbPath = `/accounts/${accountId}/artists`;
     const col = this.db.collection(dbPath);
 
@@ -117,10 +121,10 @@ export class ArtistState {
       tap(() =>
         setState(
           patch({
-            artists: updateItem<Artist>((a) => (a as any)?.id === artistId, {
-              ...(artist as any),
-              id: artistId,
-            } as any as Artist),
+            artists: updateItem<Artist>(
+              (a) => !!a && a.id === artistId,
+              (a) => ({ ...a!, ...artistForUpdate, id: artistId })
+            ),
           })
         )
       )

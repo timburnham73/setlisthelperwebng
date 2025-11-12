@@ -68,13 +68,14 @@ export class GenreState {
     );
   }
 
-  @Action(GenreActions.GetGenreByNameLowered)
-  getGenreByNameLowered(
+  @Action(GenreActions.GetGenre)
+  getGenre(
     { setState }: StateContext<GenreStateModel>,
-    { accountId, nameLowered }: GenreActions.GetGenreByNameLowered
+    { accountId, name }: GenreActions.GetGenre
   ): Observable<Genre | undefined> {
     setState(patch({ loading: true, error: null }));
     const dbPath = `/accounts/${accountId}/genres`;
+    const nameLowered = name.toLowerCase();
     const col = this.db.collection<Genre>(dbPath, (ref) =>
       ref.where('nameLowered', '==', nameLowered).limit(1)
     );
@@ -93,15 +94,15 @@ export class GenreState {
   @Action(GenreActions.AddGenre)
   addGenre(
     { setState }: StateContext<GenreStateModel>,
-    { accountId, genre, editingUser }: GenreActions.AddGenre
+    { accountId, name, countOfSongs, editingUser }: GenreActions.AddGenre
   ): Observable<Genre> {
     const factory = new GenreFactory(editingUser as BaseUser);
-    const genreForAdd = factory.getForAdd(genre);
+    const genreForAdd = factory.getForAdd({ name, countOfSongs });
     const dbPath = `/accounts/${accountId}/genres`;
     const col = this.db.collection(dbPath);
 
     return from(col.add(genreForAdd)).pipe(
-      map((res) => ({ id: res.id, ...genreForAdd } as any as Genre)),
+      map((res) => ({ ...genreForAdd, id: res.id })),
       tap((saved) => setState(patch({ genres: append([saved]) })))
     );
   }
@@ -109,10 +110,10 @@ export class GenreState {
   @Action(GenreActions.UpdateGenre)
   updateGenre(
     { setState }: StateContext<GenreStateModel>,
-    { accountId, genreId, genre, editingUser }: GenreActions.UpdateGenre
+    { accountId, genreId, name, countOfSongs, editingUser }: GenreActions.UpdateGenre
   ): Observable<void> {
     const factory = new GenreFactory(editingUser as BaseUser);
-    const genreForUpdate = factory.getForUpdate(genre);
+    const genreForUpdate = factory.getForUpdate({ name, countOfSongs });
     const dbPath = `/accounts/${accountId}/genres`;
     const col = this.db.collection(dbPath);
 
@@ -120,10 +121,10 @@ export class GenreState {
       tap(() =>
         setState(
           patch({
-            genres: updateItem<Genre>((g) => (g as any)?.id === genreId, {
-              ...(genre as any),
-              id: genreId,
-            } as any as Genre),
+            genres: updateItem<Genre>(
+              (g) => !!g && g.id === genreId,
+              (g) => ({ ...g!, ...genreForUpdate, id: genreId })
+            ),
           })
         )
       )

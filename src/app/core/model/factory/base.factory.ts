@@ -1,6 +1,6 @@
 import { Timestamp } from "@angular/fire/firestore";
 import { Base } from "../base";
-import { BaseUser } from "../user";
+import { BaseUser, UserHelper } from "../user";
 
 export abstract class BaseFactory<T extends Base> {
   protected user: BaseUser;
@@ -13,7 +13,7 @@ export abstract class BaseFactory<T extends Base> {
     return {
       ...this.getForUpdate(data),
       dateCreated: Timestamp.fromDate(new Date()),
-      createdByUser: this.user,
+      createdByUser: UserHelper.getForUpdate(this.user),
     } as T;
   }
 
@@ -21,9 +21,9 @@ export abstract class BaseFactory<T extends Base> {
     return {
       ...data, // Keep existing data
       name: data.name ?? "",
-      nameLowered: data.name?.toLocaleLowerCase() ?? "",
+      nameLowered: data.name?.toLowerCase() ?? "",
       lastEdit: Timestamp.fromDate(new Date()),
-      lastUpdatedByUser: this.user,
+      lastUpdatedByUser: UserHelper.getForUpdate(this.user),
     };
   }
 }
