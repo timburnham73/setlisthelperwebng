@@ -7,6 +7,7 @@ import {
 import { append, patch, removeItem, updateItem } from '@ngxs/store/operators';
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import firebase from 'firebase/compat/app';
 import { Timestamp } from '@angular/fire/firestore';
 import { Store } from '@ngxs/store';
 import { map, Observable, from, take, tap, switchMap, forkJoin } from 'rxjs';
@@ -15,6 +16,8 @@ import { Song, SongHelper } from '../model/song';
 import { Account } from '../model/account';
 import { Artist } from '../model/artist';
 import { Genre } from '../model/genre';
+import { ArtistFactory } from '../model/factory/artist.factory';
+import { GenreFactory } from '../model/factory/genre.factory';
 import { SetlistSongService } from '../services/setlist-songs.service';
 import { AccountService } from '../services/account.service';
 import { ArtistService } from '../services/artist.service';
@@ -157,64 +160,58 @@ export class SongState {
     { accountId, song, editingUser }: SongActions.AddSong
   ): Observable<Song> {
     const songForAdd = SongHelper.getForAdd(song, editingUser);
-
     const dbPath = `/accounts/${accountId}/songs`;
-    const songsRef = this.db.collection(dbPath);
+    const artistsPath = `/accounts/${accountId}/artists`;
+    const genresPath = `/accounts/${accountId}/genres`;
 
-    const save$ = from(songsRef.add(songForAdd));
+    // Pre-read artist/genre to determine existing docs
+    const artist$ = song.artist ? this.artistService.getArtist(accountId, song.artist) : from([undefined]);
+    const genre$ = song.genre ? this.genreService.getGenre(accountId, song.genre) : from([undefined]);
 
-    return save$.pipe(
-      switchMap((res) => {
-        const rtnSong: Song = { id: res.id, ...songForAdd } as Song;
-        
-        // Fetch account, artist, and genre data in parallel
-        const fetches: { [key: string]: Observable<any> } = {
-          account: this.accountService.getAccount(accountId)
-        };
-        
+    return forkJoin({ artist: artist$, genre: genre$ }).pipe(
+      switchMap(({ artist: existingArtist, genre: existingGenre }) => {
+        const batch = this.db.firestore.batch();
+
+        // Create song doc with generated id in batch
+        const songDocRef = this.db.firestore.collection(dbPath).doc();
+        const rtnSong: Song = { id: songDocRef.id, ...songForAdd };
+        batch.set(songDocRef, songForAdd);
+
+        // Account count increment
+        const accountRef = this.db.firestore.doc(`/accounts/${accountId}`);
+        batch.set(accountRef, { countOfSongs: firebase.firestore.FieldValue.increment(1) }, { merge: true });
+
+        // Artist upsert/increment
         if (song.artist) {
-          fetches.artist = this.artistService.getArtist(accountId, song.artist);
+          if (existingArtist && existingArtist.id) {
+            const aRef = this.db.firestore.doc(`${artistsPath}/${existingArtist.id}`);
+            batch.set(
+              aRef,
+              { countOfSongs: firebase.firestore.FieldValue.increment(1) },
+              { merge: true }
+            );
+          } else {
+            const factory = new ArtistFactory(editingUser);
+            const artistForAdd = factory.getForAdd({ name: song.artist, countOfSongs: 1 });
+            const aRef = this.db.firestore.collection(artistsPath).doc();
+            batch.set(aRef, artistForAdd);
+          }
         }
-        
+
+        // Genre upsert/increment
         if (song.genre) {
-          fetches.genre = this.genreService.getGenre(accountId, song.genre);
+          if (existingGenre && existingGenre.id) {
+            const gRef = this.db.firestore.doc(`${genresPath}/${existingGenre.id}`);
+            batch.set(gRef, { countOfSongs: firebase.firestore.FieldValue.increment(1) }, { merge: true });
+          } else {
+            const factory = new GenreFactory(editingUser);
+            const genreForAdd = factory.getForAdd({ name: song.genre, countOfSongs: 1 });
+            const gRef = this.db.firestore.collection(genresPath).doc();
+            batch.set(gRef, genreForAdd);
+          }
         }
-        
-        // Wait for all fetches to complete, then process updates in background
-        return forkJoin(fetches).pipe(
-          tap((results) => {
-            // Update account song count if account exists
-            const account = results.account as Account;
-            if (account && account.id) {
-              const accountRef = this.db.doc<Account>(`/accounts/${accountId}`);
-              const nextCount = account.countOfSongs ? account.countOfSongs + 1 : 1;
-              accountRef.update({ countOfSongs: nextCount });
-            }
-            
-            // Handle artist: create or update count
-            if (song.artist) {
-              const existingArtist = results.artist as Artist | undefined;
-              if (existingArtist && existingArtist.id) {
-                const nextCount = (existingArtist.countOfSongs || 0) + 1;
-                this.store.dispatch(new ArtistActions.UpdateArtist(accountId, existingArtist.id, existingArtist.name, nextCount, editingUser));
-              } else {
-                this.store.dispatch(new ArtistActions.AddArtist(accountId, song.artist, 1, editingUser));
-              }
-            }
-            
-            // Handle genre: create or update count
-            if (song.genre) {
-              const existingGenre = results.genre as Genre | undefined;
-              if (existingGenre && existingGenre.id) {
-                const nextCount = (existingGenre.countOfSongs || 0) + 1;
-                this.store.dispatch(new GenreActions.UpdateGenre(accountId, existingGenre.id, existingGenre.name, nextCount, editingUser));
-              } else {
-                this.store.dispatch(new GenreActions.AddGenre(accountId, song.genre, 1, editingUser));
-              }
-            }
-          }),
-          map(() => rtnSong)
-        );
+
+        return from(batch.commit()).pipe(map(() => rtnSong));
       })
     );
   }
@@ -224,134 +221,86 @@ export class SongState {
     { setState }: StateContext<SongStateModel>,
     { accountId, songId, song, editingUser }: SongActions.UpdateSong
   ): Observable<void> {
-    const songForUpdate = SongHelper.getForUpdate(song, editingUser);
     const dbPath = `/accounts/${accountId}/songs`;
-    const songsRef = this.db.collection<Song>(dbPath);
+    const artistsPath = `/accounts/${accountId}/artists`;
+    const genresPath = `/accounts/${accountId}/genres`;
+    const songForUpdate = SongHelper.getForUpdate(song, editingUser);
 
-    // Read previous song to detect artist/genre name changes
-    const prev$ = songsRef.doc(songId).get().pipe(map((doc) => ({ id: songId, ...(doc.data() || {}) } as Song)));
+    const runTx = () =>
+      this.db.firestore.runTransaction(async (tx) => {
+        const songDocRef = this.db.firestore.doc(`${dbPath}/${songId}`);
+        const accountRef = this.db.firestore.doc(`/accounts/${accountId}`);
 
-    return prev$.pipe(
-      switchMap((prevSong) =>
-        from(songsRef.doc(songId).update(songForUpdate)).pipe(
-          tap(() =>
-            setState(
-              patch({
-                songs: updateItem<Song>((s) => !!s && (s as any).id === songId, (s) => ({ ...s!, ...song, id: songId })),
-              })
-            )
-          ),
-          switchMap(() => {
-            // Build parallel fetches for counts and lookups
-            const allSongsCount$ = this.db
-              .collection<Song>(dbPath, (ref) => ref.where('deleted', '==', false))
-              .get()
-              .pipe(map((snap) => snap.size));
+        // Read previous song
+        const prevSnap = await tx.get(songDocRef);
+        const prevData = prevSnap.data() ?? {};
 
-            const newArtistName = song.artist?.trim();
-            const oldArtistName = prevSong.artist?.trim();
-            const newGenreName = song.genre?.trim();
-            const oldGenreName = prevSong.genre?.trim();
+        // Update the song first
+        tx.update(songDocRef, songForUpdate);
 
-            const buildCount$ = (field: 'artistLowered' | 'genreLowered', name?: string) =>
-              name
-                ? this.db
-                    .collection<Song>(dbPath, (ref) => ref.where(field, '==', name.toLowerCase()).where('deleted', '==', false))
-                    .get()
-                    .pipe(map((snap) => snap.size))
-                : this.db.collection<Song>(dbPath).get().pipe(map(() => 0));
+        // Account: typically unchanged on update; keep consistent by not altering unless you want to recompute elsewhere
+        // If you need to ensure account count correctness via increments only on add/remove, skip here
 
-            const fetches: { [k: string]: Observable<any> } = {
-              accountCount: allSongsCount$,
-            };
+        const anyPrev: any = prevData;
+        const oldArtist = typeof anyPrev.artist === 'string' ? anyPrev.artist.trim() : undefined;
+        const newArtist = song.artist?.trim();
+        const oldGenre = typeof anyPrev.genre === 'string' ? anyPrev.genre.trim() : undefined;
+        const newGenre = song.genre?.trim();
 
-            if (newArtistName) {
-              fetches.newArtistCount = buildCount$('artistLowered', newArtistName);
-              fetches.newArtistDoc = this.artistService.getArtist(accountId, newArtistName);
+        // Helper to upsert and increment a named doc in a collection
+        const upsertIncrement = async (
+          collPath: string,
+          name: string,
+          factory: 'artist' | 'genre',
+          delta: number
+        ) => {
+          // Find by nameLowered
+          const qSnap = await this.db.firestore
+            .collection(collPath)
+            .where('nameLowered', '==', name.toLowerCase())
+            .limit(1)
+            .get();
+          if (!qSnap.empty) {
+            const docRef = qSnap.docs[0].ref;
+            tx.set(docRef, { countOfSongs: firebase.firestore.FieldValue.increment(delta) }, { merge: true });
+          } else if (delta > 0) {
+            const docRef = this.db.firestore.collection(collPath).doc();
+            if (factory === 'artist') {
+              const a = new ArtistFactory(editingUser).getForAdd({ name, countOfSongs: delta });
+              tx.set(docRef, a);
+            } else {
+              const g = new GenreFactory(editingUser).getForAdd({ name, countOfSongs: delta });
+              tx.set(docRef, g);
             }
-            if (oldArtistName && oldArtistName.toLowerCase() !== (newArtistName || '').toLowerCase()) {
-              fetches.oldArtistCount = buildCount$('artistLowered', oldArtistName);
-              fetches.oldArtistDoc = this.artistService.getArtist(accountId, oldArtistName);
-            }
+          }
+        };
 
-            if (newGenreName) {
-              fetches.newGenreCount = buildCount$('genreLowered', newGenreName);
-              fetches.newGenreDoc = this.genreService.getGenre(accountId, newGenreName);
-            }
-            if (oldGenreName && oldGenreName.toLowerCase() !== (newGenreName || '').toLowerCase()) {
-              fetches.oldGenreCount = buildCount$('genreLowered', oldGenreName);
-              fetches.oldGenreDoc = this.genreService.getGenre(accountId, oldGenreName);
-            }
+        // Adjust artist counts if changed
+        if (oldArtist && oldArtist.toLowerCase() !== (newArtist || '').toLowerCase()) {
+          await upsertIncrement(artistsPath, oldArtist, 'artist', -1);
+        }
+        if (newArtist) {
+          await upsertIncrement(artistsPath, newArtist, 'artist', 1);
+        }
 
-            return forkJoin(fetches).pipe(
-              tap((results) => {
-                // Update account songs count
-                const total = results.accountCount as number;
-                const accountRef = this.db.doc<Account>(`/accounts/${accountId}`);
-                accountRef.update({ countOfSongs: total });
+        // Adjust genre counts if changed
+        if (oldGenre && oldGenre.toLowerCase() !== (newGenre || '').toLowerCase()) {
+          await upsertIncrement(genresPath, oldGenre, 'genre', -1);
+        }
+        if (newGenre) {
+          await upsertIncrement(genresPath, newGenre, 'genre', 1);
+        }
+      });
 
-                // Update/add new artist
-                if (newArtistName) {
-                  const newCount = results.newArtistCount as number;
-                  const doc = results.newArtistDoc as Artist | undefined;
-                  if (doc && doc.id) {
-                    this.store.dispatch(
-                      new ArtistActions.UpdateArtist(accountId, doc.id, doc.name, newCount, editingUser)
-                    );
-                  } else {
-                    this.store.dispatch(new ArtistActions.AddArtist(accountId, newArtistName, newCount, editingUser));
-                  }
-                }
-
-                // Update old artist if name changed
-                if (oldArtistName && oldArtistName.toLowerCase() !== (newArtistName || '').toLowerCase()) {
-                  const oldCount = results.oldArtistCount as number;
-                  const oldDoc = results.oldArtistDoc as Artist | undefined;
-                  if (oldDoc && oldDoc.id) {
-                    this.store.dispatch(
-                      new ArtistActions.UpdateArtist(accountId, oldDoc.id, oldDoc.name, oldCount, editingUser)
-                    );
-                  } else if (oldArtistName) {
-                    // If old artist doc missing but songs exist, ensure doc exists
-                    if (oldCount > 0) {
-                      this.store.dispatch(new ArtistActions.AddArtist(accountId, oldArtistName, oldCount, editingUser));
-                    }
-                  }
-                }
-
-                // Update/add new genre
-                if (newGenreName) {
-                  const newGCount = results.newGenreCount as number;
-                  const gdoc = results.newGenreDoc as Genre | undefined;
-                  if (gdoc && gdoc.id) {
-                    this.store.dispatch(
-                      new GenreActions.UpdateGenre(accountId, gdoc.id, gdoc.name, newGCount, editingUser)
-                    );
-                  } else {
-                    this.store.dispatch(new GenreActions.AddGenre(accountId, newGenreName, newGCount, editingUser));
-                  }
-                }
-
-                // Update old genre if name changed
-                if (oldGenreName && oldGenreName.toLowerCase() !== (newGenreName || '').toLowerCase()) {
-                  const oldGCount = results.oldGenreCount as number;
-                  const oldGDoc = results.oldGenreDoc as Genre | undefined;
-                  if (oldGDoc && oldGDoc.id) {
-                    this.store.dispatch(
-                      new GenreActions.UpdateGenre(accountId, oldGDoc.id, oldGDoc.name, oldGCount, editingUser)
-                    );
-                  } else if (oldGenreName) {
-                    if (oldGCount > 0) {
-                      this.store.dispatch(new GenreActions.AddGenre(accountId, oldGenreName, oldGCount, editingUser));
-                    }
-                  }
-                }
-              }),
-              map(() => void 0)
-            );
+    return from(runTx()).pipe(
+      tap(() =>
+        setState(
+          patch({
+            songs: updateItem<Song>((s) => !!s && s.id === songId, (s) => ({ ...s!, ...song, id: songId })),
           })
         )
-      )
+      ),
+      map(() => void 0)
     );
   }
 
