@@ -248,52 +248,74 @@ export class SongState {
         const oldGenre = typeof anyPrev.genre === 'string' ? anyPrev.genre.trim() : undefined;
         const newGenre = song.genre?.trim();
 
-        // Helper to upsert and increment a named doc in a collection
-        const upsertIncrement = async (
-          collPath: string,
+        return { oldArtist, newArtist, oldGenre, newGenre };
+      });
+
+    return from(runTx()).pipe(
+      switchMap(({ oldArtist, newArtist, oldGenre, newGenre }) => {
+        const songsColl = this.db.firestore.collection(dbPath);
+
+        const recompute = async (
           name: string,
-          factory: 'artist' | 'genre',
-          delta: number
+          songField: 'artist' | 'genre',
+          targetCollPath: string,
+          makeDocForAdd: (name: string, count: number) => any
         ) => {
-          // Find by nameLowered
+          const countSnap = await songsColl
+            .where(songField, '==', name)
+            .where('deleted', '==', false)
+            .get();
+          const count = countSnap.size;
+
           const qSnap = await this.db.firestore
-            .collection(collPath)
+            .collection(targetCollPath)
             .where('nameLowered', '==', name.toLowerCase())
             .limit(1)
             .get();
           if (!qSnap.empty) {
-            const docRef = qSnap.docs[0].ref;
-            tx.set(docRef, { countOfSongs: firebase.firestore.FieldValue.increment(delta) }, { merge: true });
-          } else if (delta > 0) {
-            const docRef = this.db.firestore.collection(collPath).doc();
-            if (factory === 'artist') {
-              const a = new ArtistFactory(editingUser).getForAdd({ name, countOfSongs: delta });
-              tx.set(docRef, a);
-            } else {
-              const g = new GenreFactory(editingUser).getForAdd({ name, countOfSongs: delta });
-              tx.set(docRef, g);
-            }
+            await qSnap.docs[0].ref.set({ countOfSongs: count }, { merge: true });
+          } else if (count > 0) {
+            const doc = makeDocForAdd(name, count);
+            await this.db.firestore.collection(targetCollPath).add(doc);
           }
         };
 
-        // Adjust artist counts if changed
-        if (oldArtist && oldArtist.toLowerCase() !== (newArtist || '').toLowerCase()) {
-          await upsertIncrement(artistsPath, oldArtist, 'artist', -1);
-        }
-        if (newArtist) {
-          await upsertIncrement(artistsPath, newArtist, 'artist', 1);
+        const recomputeArtist = (name: string) =>
+          recompute(
+            name,
+            'artist',
+            artistsPath,
+            (n, c) => new ArtistFactory(editingUser).getForAdd({ name: n, countOfSongs: c })
+          );
+
+        const recomputeGenre = (name: string) =>
+          recompute(
+            name,
+            'genre',
+            genresPath,
+            (n, c) => new GenreFactory(editingUser).getForAdd({ name: n, countOfSongs: c })
+          );
+
+        const artistNames = new Set<string>();
+        if (newArtist) artistNames.add(newArtist);
+        if (!newArtist && oldArtist) artistNames.add(oldArtist);
+        if (oldArtist && newArtist && oldArtist.toLowerCase() !== newArtist.toLowerCase()) {
+          artistNames.add(oldArtist);
         }
 
-        // Adjust genre counts if changed
-        if (oldGenre && oldGenre.toLowerCase() !== (newGenre || '').toLowerCase()) {
-          await upsertIncrement(genresPath, oldGenre, 'genre', -1);
+        const genreNames = new Set<string>();
+        if (newGenre) genreNames.add(newGenre);
+        if (!newGenre && oldGenre) genreNames.add(oldGenre);
+        if (oldGenre && newGenre && oldGenre.toLowerCase() !== newGenre.toLowerCase()) {
+          genreNames.add(oldGenre);
         }
-        if (newGenre) {
-          await upsertIncrement(genresPath, newGenre, 'genre', 1);
-        }
-      });
 
-    return from(runTx()).pipe(
+        const promises: Promise<any>[] = [];
+        artistNames.forEach((n) => promises.push(recomputeArtist(n)));
+        genreNames.forEach((n) => promises.push(recomputeGenre(n)));
+
+        return from(Promise.all(promises));
+      }),
       tap(() =>
         setState(
           patch({
