@@ -17,11 +17,11 @@ export interface SetlistSong extends Song {
 export class SetlistSongHelper{
    static getForUpdate(setlistSong: SetlistSong, userUpdating: BaseUser): SetlistSong {
        return {
+         ...new SongFactory(userUpdating).getForUpdate(setlistSong),
          sequenceNumber: setlistSong.sequenceNumber ?? 1,
           songId: setlistSong.songId ?? "",
           isBreak: setlistSong.isBreak ?? false,
-          updateOnlyThisSetlistSong: setlistSong.updateOnlyThisSetlistSong ?? false, 
-          ...new SongFactory(userUpdating).getForUpdate(setlistSong)
+          updateOnlyThisSetlistSong: setlistSong.updateOnlyThisSetlistSong ?? false
        };
      }
 
