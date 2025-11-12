@@ -230,8 +230,7 @@ export class SongState {
     const runTx = () =>
       this.db.firestore.runTransaction(async (tx) => {
         const songDocRef = this.db.firestore.doc(`${dbPath}/${songId}`);
-        const accountRef = this.db.firestore.doc(`/accounts/${accountId}`);
-
+        
         // Read previous song
         const prevSnap = await tx.get(songDocRef);
         const prevData = prevSnap.data() ?? {};
@@ -316,6 +315,9 @@ export class SongState {
 
         return from(Promise.all(promises));
       }),
+      switchMap(() =>
+        this.setlistSongService.updateSetlistSongsBySongId(songId, song, editingUser)
+      ),
       tap(() =>
         setState(
           patch({
