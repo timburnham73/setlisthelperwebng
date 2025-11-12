@@ -104,7 +104,7 @@ export class TagService {
                 const tagIndex = songToUpdate.tags.findIndex((tagInSong) => tagInSong === tag);
                 const canAdd = songToUpdate.tags.length === 0 ||  tagIndex === -1;
                 if(canAdd){
-                  songToUpdate.tags.push(tag);
+                  songToUpdate.tags.push(tag.toLowerCase());
                 }
               });
               batch.update(songsRef.doc(song.id).ref, songToUpdate);

@@ -195,7 +195,7 @@ export class TagListComponent implements OnInit {
       this.selectedTags.push(selectedTag);
     }
     if(this.accountId){
-      const tags = this.selectedTags.map(tag => tag.name);
+      const tags = this.selectedTags.map(tag => tag.name.toLowerCase());
       if (tags && tags.length > 0) {
         if(this.subscription){
           this.subscription.unsubscribe();
@@ -266,7 +266,7 @@ export class TagListComponent implements OnInit {
 
       dialogRef.afterClosed().subscribe((songs) => {
         
-        this.tagService.addTagsToSongs(songs, this.accountId!, this.selectedTags.map(tag => tag.name), this.currentUser).subscribe((songs) => {
+        this.tagService.addTagsToSongs(songs, this.accountId!, this.selectedTags.map(tag => tag.name.toLowerCase()), this.currentUser).subscribe((songs) => {
           
         });
         
@@ -290,7 +290,7 @@ export class TagListComponent implements OnInit {
 
   onRemoveTagFromSong($event, song){
     $event.preventDefault();
-    this.tagService.removeTagsToSongs([song], this.accountId!, this.selectedTags.map(tag => tag.name), this.currentUser).subscribe((songs) => {
+    this.tagService.removeTagsToSongs([song], this.accountId!, this.selectedTags.map(tag => tag.name.toLowerCase()), this.currentUser).subscribe((songs) => {
       console.log('Removed song');
     });
   }
