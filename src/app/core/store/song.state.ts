@@ -316,7 +316,7 @@ export class SongState {
         return from(Promise.all(promises));
       }),
       switchMap(() =>
-        this.setlistSongService.updateSetlistSongsBySongId(songId, song, editingUser)
+        this.setlistSongService.updateSetlistSongsBySongId(accountId, songId, song, editingUser)
       ),
       tap(() =>
         setState(
@@ -351,7 +351,7 @@ export class SongState {
 
     return from(songsRef.doc(song.id!).update(songForUpdate)).pipe(
       switchMap(() =>
-        this.setlistSongService.updateSetlistSongsBySongId(song.id!, song, editingUser)
+        this.setlistSongService.updateSetlistSongsBySongId(accountId, song.id!, song, editingUser)
       ),
       tap(() =>
         setState((state) => {

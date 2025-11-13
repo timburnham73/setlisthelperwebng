@@ -6,7 +6,10 @@ import { SetlistSong } from "./model/setlist-song";
 //Compiles the Setlists that contain the song (setlistSong.songId) and updatings that SetlistRef array in the song.
 export async function updateParentSongSetlistRef(accountId, songId) {
     if (songId) {
-        const setlistSongSnap = await db.collectionGroup(`songs`).where('songId', '==', songId).get();
+        const setlistSongSnap = await db
+            .collectionGroup(`songs`)
+            .where('songId', '==', songId)
+            .where('accountId', '==', accountId).get();
         const setlistRefs = await getSetlistFromSetlistSongPath(setlistSongSnap);
 
         const songRef = db.doc(`/accounts/${accountId}/songs/${songId}`);

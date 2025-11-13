@@ -186,7 +186,8 @@ export class SongEditDialogComponent {
 
   updateSetlistSongAll() {
     const modifiedSong = { ...this.song, ...this.songForm.value } as SetlistSong;
-    return this.setlistSongService.updateSetlistSongsBySongId(modifiedSong.id!, modifiedSong, this.currentUser);
+    const masterSongId = (modifiedSong as SetlistSong).songId ?? (modifiedSong as any).id;
+    return this.setlistSongService.updateSetlistSongsBySongId(this.accountId!, masterSongId!, modifiedSong, this.currentUser);
   }
 
   updateSong() {

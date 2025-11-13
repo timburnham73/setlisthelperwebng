@@ -130,7 +130,7 @@ export class SongService {
     
     return from(songsRef.doc(song.id).update(songForUpdate)).pipe(
       switchMap(() => {
-        return this.setlistSongService.updateSetlistSongsBySongId(song.id!, song, editingUser);
+        return this.setlistSongService.updateSetlistSongsBySongId(accountId, song.id!, song, editingUser);
       }
     ));
   }

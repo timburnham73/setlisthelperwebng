@@ -3,7 +3,7 @@ import {
   AngularFirestore,
   AngularFirestoreCollection,
 } from "@angular/fire/compat/firestore";
-import { Observable, concat, concatMap, first, from, map, switchMap, tap } from "rxjs";
+import { Observable, concat, concatMap, first, from, map, switchMap, tap, forkJoin, of } from "rxjs";
 import { Song } from "../model/song";
 import { SongFactory } from "../model/factory/song.factory";
 import { SetlistSong, SetlistSongHelper } from "../model/setlist-song";
@@ -18,9 +18,9 @@ import { SetlistRef } from "functions/src/model/setlist";
 export class SetlistSongService {
   constructor(private db: AngularFirestore) { }
 
-  getSetlistSongsBySongId(songId: string): Observable<SetlistSong[]> {
+  getSetlistSongsBySongId(accountId: string, songId: string): Observable<SetlistSong[]> {
     return this.db.collectionGroup(`songs`,
-      ref => ref.where("songId", "==", songId)
+      ref => ref.where("songId", "==", songId).where('accountId', '==', accountId)
     )
       .get()
       .pipe(
@@ -38,23 +38,35 @@ export class SetlistSongService {
       );
   }
 
-  updateSetlistSongsBySongId(songId: string, modifiedSong: Song, editingUser: BaseUser) {
-    return this.getSetlistSongsBySongId(songId).pipe(
-      map(setlistSongs => {
-        const setlistSongsUpdate$: Observable<any>[] = [];
-        setlistSongs.forEach(setlistSong => {
-          const modifiedSongNoId = { ...modifiedSong };
-          delete modifiedSongNoId.id;
-          if (setlistSong.updateOnlyThisSetlistSong !== true) {
-            setlistSongsUpdate$.push(from(this.updateSetlistSongFromSongByPath(setlistSong.documentPath!, setlistSong.id!, modifiedSongNoId, editingUser)));
-          }
+  updateSetlistSongsBySongId(accountId: string, songId: string, modifiedSong: Song, editingUser: BaseUser) {
+    const modifiedSongNoId = { ...modifiedSong } as Song;
+    delete (modifiedSongNoId as any).id;
+
+    const setlists = modifiedSong.setlists || [];
+
+    const updates$: Observable<any>[] = setlists.map((setlistRef) => {
+      const path = `/accounts/${accountId}/setlists/${setlistRef.id}/songs`;
+      const q = this.db.collection(path, (ref) => ref.where('songId', '==', songId));
+      return q.get().pipe(
+        switchMap((snap) => {
+          const ops: Promise<any>[] = [];
+          snap.forEach((doc) => {
+            const data = doc.data() as SetlistSong;
+            if (data.updateOnlyThisSetlistSong !== true) {
+              const payload = new SongFactory(editingUser).getForUpdate(modifiedSongNoId);
+              ops.push(doc.ref.update(payload));
+            }
+          });
+          return from(Promise.all(ops));
         })
-        return setlistSongsUpdate$;
-      }),
-      switchMap((setlistSongUpdates$) => {
-        return concat(setlistSongUpdates$);
-      })
-    )
+      );
+    });
+
+    if (updates$.length === 0) {
+      return of(void 0);
+    }
+
+    return forkJoin(updates$);
   }
 
   getOrderedSetlistSongs(accountId: string, setlistId: string): Observable<SetlistSong[]> {
