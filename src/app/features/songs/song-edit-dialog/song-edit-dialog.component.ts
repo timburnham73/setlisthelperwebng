@@ -18,7 +18,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { NgIf } from '@angular/common';
-import { SetlistSong, SetlistSongHelper } from 'src/app/core/model/setlist-song';
+import { SetlistSong } from 'src/app/core/model/setlist-song';
+import { SetlistSongFactory } from 'src/app/core/model/factory/setlist-song.factory';
 import { SetlistSongService } from 'src/app/core/services/setlist-songs.service';
 import { MatDivider } from '@angular/material/divider';
 import { SetlistService } from 'src/app/core/services/setlist.service';
@@ -106,7 +107,7 @@ export class SongEditDialogComponent {
     if (this.song?.id) {
       //Update setlist song
       if ((this.song as SetlistSong)?.sequenceNumber && this.setlistId) {
-        if (this.updateOnlyThisSetlistSong()?.value === false || (this.song as SetlistSong)?.isBreak === true) {
+        if (this.updateOnlyThisSetlistSong()?.value === true || (this.song as SetlistSong)?.isBreak === true) {
           const updateSetlistSong$ = this.updateSetlistSong();
           updateSetlistSong$
             .pipe(
@@ -191,11 +192,20 @@ export class SongEditDialogComponent {
   }
 
   updateSong() {
-    let modifiedSong = { ...this.song, ...this.songForm.value } as Song;
+    const formValue: any = { ...this.songForm.value };
+    const isSetlistSong = !!(this.song as SetlistSong)?.sequenceNumber && this.setlistId;
+
+    // When updating a plain Song, do not include updateOnlyThisSetlistSong in the payload
+    if (!isSetlistSong) {
+      delete formValue.updateOnlyThisSetlistSong;
+    }
+
+    let modifiedSong = { ...this.song, ...formValue } as Song;
     const setlistSong = modifiedSong as SetlistSong;
     //If we are updating a setlist song then the master song needs updating. 
     if (setlistSong?.sequenceNumber && this.setlistId) {
-      modifiedSong = SetlistSongHelper.getSongFromSetlistSong(modifiedSong as SetlistSong);
+      const setlistSongFactory = new SetlistSongFactory(this.currentUser);
+      modifiedSong = setlistSongFactory.getSongFromSetlistSong(modifiedSong as SetlistSong);
     }
 
     return this.store.dispatch(new SongActions.UpdateSong(this.accountId!, modifiedSong?.id!, modifiedSong, this.currentUser))
@@ -221,12 +231,9 @@ export class SongEditDialogComponent {
   }
 
 
-  //If the song is a Setlist song then show the checkbox
-  showChangesToRepertoire() {
-    if ((this.song as SetlistSong)?.sequenceNumber) {
-      return true;
-    }
-    return false;
+  //Show "Update only this Setlist Song" only when editing an existing SetlistSong
+  isEditingSetlistSong() {
+    return !!(this.song as SetlistSong)?.sequenceNumber && !this.isNew;
   }
 
   isAddingNewSong() {

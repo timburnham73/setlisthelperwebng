@@ -91,7 +91,7 @@
         <mat-label>Other</mat-label>
         <input matInput formControlName="other" />
       </mat-form-field>
-      @if(showChangesToRepertoire() && !isAddingNewSong()){
+      @if(isEditingSetlistSong()){
         <div>
           <mat-checkbox formControlName="updateOnlyThisSetlistSong">Update only this Setlist Song.</mat-checkbox>
         </div>

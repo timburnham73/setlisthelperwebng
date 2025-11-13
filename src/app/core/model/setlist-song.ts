@@ -1,7 +1,4 @@
-
 import { Song } from './song';
-import { SongFactory } from './factory/song.factory';
-import { BaseUser } from './user';
 
 export interface SetlistSong extends Song {
    sequenceNumber: number;
@@ -13,21 +10,3 @@ export interface SetlistSong extends Song {
    //update them
    updateOnlyThisSetlistSong: boolean; 
 }
-
-export class SetlistSongHelper{
-   static getForUpdate(setlistSong: SetlistSong, userUpdating: BaseUser): SetlistSong {
-       return {
-         ...new SongFactory(userUpdating).getForUpdate(setlistSong),
-         sequenceNumber: setlistSong.sequenceNumber ?? 1,
-          songId: setlistSong.songId ?? "",
-          isBreak: setlistSong.isBreak ?? false,
-          updateOnlyThisSetlistSong: setlistSong.updateOnlyThisSetlistSong ?? false
-       };
-     }
-
-   static getSongFromSetlistSong(setlistSong: SetlistSong){
-      let songForReturn: Song = {...setlistSong};
-      songForReturn.id = setlistSong.songId;
-      return songForReturn;
-   }
- }

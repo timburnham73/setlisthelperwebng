@@ -6,7 +6,8 @@ import {
 import { Observable, concat, concatMap, first, from, map, switchMap, tap, forkJoin, of } from "rxjs";
 import { Song } from "../model/song";
 import { SongFactory } from "../model/factory/song.factory";
-import { SetlistSong, SetlistSongHelper } from "../model/setlist-song";
+import { SetlistSong } from "../model/setlist-song";
+import { SetlistSongFactory } from "../model/factory/setlist-song.factory";
 import { SetlistBreak, SetlistBreakHelper } from "../model/setlist-break";
 import { BaseUser } from "../model/user";
 import { Setlist } from "../model/setlist";
@@ -39,9 +40,6 @@ export class SetlistSongService {
   }
 
   updateSetlistSongsBySongId(accountId: string, songId: string, modifiedSong: Song, editingUser: BaseUser) {
-    const modifiedSongNoId = { ...modifiedSong } as Song;
-    delete (modifiedSongNoId as any).id;
-
     const setlists = modifiedSong.setlists || [];
 
     const updates$: Observable<any>[] = setlists.map((setlistRef) => {
@@ -51,9 +49,12 @@ export class SetlistSongService {
         switchMap((snap) => {
           const ops: Promise<any>[] = [];
           snap.forEach((doc) => {
-            const data = doc.data() as SetlistSong;
-            if (data.updateOnlyThisSetlistSong !== true) {
-              const payload = new SongFactory(editingUser).getForUpdate(modifiedSongNoId);
+            const existingSetlistSong = doc.data() as SetlistSong;
+            if (existingSetlistSong.updateOnlyThisSetlistSong !== true) {
+              const factory = new SetlistSongFactory(editingUser);
+              const merged = factory.getForUpdateFromSong(existingSetlistSong, modifiedSong);
+              const payload = { ...merged } as any;
+              delete payload.id;
               ops.push(doc.ref.update(payload));
             }
           });
@@ -106,7 +107,7 @@ export class SetlistSongService {
     setlist: Setlist,
     editingUser: BaseUser
   ): any {
-    const songForAdd = SetlistSongHelper.getForUpdate(setlistSong, editingUser);
+    const songForAdd = new SetlistSongFactory(editingUser).getForUpdate(setlistSong);
     
     if(setlist && setlist.id){
       //return a concat observable with the increment and add combined.
@@ -175,7 +176,7 @@ export class SetlistSongService {
         sequenceNumber: sequenceNumberForNewSongs++,
         ...songToAdd
       } as SetlistSong;
-      const songForAdd = SetlistSongHelper.getForUpdate(setlistSongToAdd, editingUser);
+      const songForAdd = new SetlistSongFactory(editingUser).getForUpdate(setlistSongToAdd);
       setlistSongsForadd.push(songForAdd);
     }
     
@@ -264,9 +265,8 @@ export class SetlistSongService {
     setlistSong: SetlistSong,
     editingUser: BaseUser
   ): any {
-    const setlisSongForUpdate = SetlistSongHelper.getForUpdate(
-      setlistSong,
-      editingUser
+    const setlisSongForUpdate = new SetlistSongFactory(editingUser).getForUpdate(
+      setlistSong
     );
     const dbPath = `/accounts/${accountId}/setlists/${setlistId}/songs`;
     const setlistSongsRef = this.db.collection(dbPath);
@@ -484,9 +484,8 @@ export class SetlistSongService {
     batch
   ) {
     const setlistSongRef = setlistSongsRef.doc(setlistSong.id).ref;
-    const setlisSongForUpdate = SetlistSongHelper.getForUpdate(
-      setlistSong,
-      editingUser
+    const setlisSongForUpdate = new SetlistSongFactory(editingUser).getForUpdate(
+      setlistSong
     );
     setlisSongForUpdate.sequenceNumber = sequenceNumber;
     setlisSongForUpdate.lastUpdatedByUser = editingUser;

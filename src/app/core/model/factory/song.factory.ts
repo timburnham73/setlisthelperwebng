@@ -41,9 +41,10 @@ export class SongFactory extends BaseFactory<Song> {
   }
 
   override getForUpdate(data: Partial<Song>): Song {
+    const { id: _ignoredId, ...withoutId } = data;
     return {
-      ...super.getForUpdate(data),
-      ...this.mapSongFields(data)
+      ...super.getForUpdate(withoutId),
+      ...this.mapSongFields(withoutId)
     } as Song;
   }
 }
