@@ -1,10 +1,10 @@
 <form class="dialog-form" [formGroup]="accountForm">
   <div mat-dialog-content>
-    <p *ngIf="!isNew">Edit Account</p>
-    <p *ngIf="isNew">Add Account</p>
+    <p *ngIf="!isNew">Edit Band</p>
+    <p *ngIf="isNew">Add Band</p>
     <p>
       <mat-form-field appearance="outline" class="dialog-input-full-width">
-        <mat-label>Account Name</mat-label>
+        <mat-label>Band Name</mat-label>
         <input matInput formControlName="name" />
       </mat-form-field>
     </p>

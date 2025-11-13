@@ -1,7 +1,7 @@
 <div class="container" fxLayout="row" fxLayoutAlign="center none">
   <div fxFlex="95%">
     <div mat-dialog-title class="dialog-title">
-      <h4>Account Users</h4>
+      <h4>Band Users</h4>
       <button mat-icon-button aria-label="close dialog" mat-dialog-close>
         <mat-icon>close</mat-icon>
       </button>
@@ -51,8 +51,8 @@
     <form class="dialog-form" [formGroup]="addUserForm">
       <div mat-dialog-content>
         <p>
-          Enter an email address of the user to share songs with. Make sure the
-          user has a Setlist Songs account registered with this email.
+          Enter an email address of the user to collaborate with. Make sure the
+          user has an account registered with this email.
         </p>
         {{email?.errors?.email}}
         <div class="email-group">
