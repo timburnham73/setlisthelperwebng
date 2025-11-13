@@ -45,20 +45,19 @@ export class UserService {
     return from(this.userRef.doc(id).update(userToUpdate));
   }
 
-  getUserById(uid: string): Observable<User | undefined>{
+  getUserById(uid: string): Observable<User | undefined> {
     return this.db
-      .collection(this.dbPath).doc(uid)
-      .snapshotChanges()
+      .doc(`${this.dbPath}/${uid}`)
+      .get()
       .pipe(
-        map((resultUser) => {
-          const user = resultUser.payload.data() as User;
-          if(user){
-            user.id = uid;
-            return user;
+        map((snap) => {
+          const data = snap.data() as User | undefined;
+          if (data) {
+            return { id: uid, ...data } as User;
           }
           return undefined;
-        }
-      ));
+        })
+      );
   }
 
   getUserByEmail(emailAddress: string): Observable<User>{

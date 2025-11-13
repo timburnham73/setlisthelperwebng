@@ -14,7 +14,11 @@ export const updateCountOfLyricsInSongs = async (accountId, songId) =>{
     
     //Update all setlist songs with the lyric count
     //Find all the setlist songs
-    const setlistSongSnap = await db.collectionGroup("songs").where('songId', '==', `${songId}`).get();
+    const setlistSongSnap = await db
+      .collectionGroup("songs")
+      .where('songId', '==', `${songId}`)
+      .where('accountId', '==', accountId)
+      .get();
     
     //Loop through and update the songs. 
     setlistSongSnap.forEach((doc) => {

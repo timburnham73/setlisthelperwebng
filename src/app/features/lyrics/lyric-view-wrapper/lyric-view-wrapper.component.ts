@@ -15,7 +15,7 @@ import { FlexModule, FlexLayoutModule } from 'ngx-flexible-layout';
 import { SafeHtml } from 'src/app/shared/pipes/safe-html.pipe';
 import { Song } from 'src/app/core/model/song';
 import { ActivatedRoute, Router } from '@angular/router';
-import { switchMap, take } from 'rxjs';
+import { switchMap, take, filter, tap } from 'rxjs';
 import { AccountState } from 'src/app/core/store/account.state';
 import { SongService } from 'src/app/core/services/song.service';
 import { Store } from '@ngxs/store';
@@ -119,21 +119,21 @@ export class LyricViewWrapperComponent {
         }
       }
 
-      this.authService.user$.pipe(
-        switchMap((user) =>
-          this.userService.getUserById(user.uid)
-        ))
-        .subscribe((user) => {
-          if (user && user.uid) {
-            this.currentUser = user;
-            this.initLyrics();
-            //The version can change on the page. This will subscribe to the page change event
-            //Normally navigating to the same component is not supported. 
-            //I added the onSameUrlNavigation: 'reload' on the router config.
-            activeRoute.params.subscribe(params => {
+      this.authService.user$
+        .pipe(
+          filter((authUser) => !!authUser && !!authUser.uid),
+          take(1),
+          switchMap((authUser) => this.userService.getUserById(authUser.uid).pipe(take(1))),
+          tap((user) => {
+            if (user && user.uid) {
+              this.currentUser = user;
               this.initLyrics();
-            });
-          }
+            }
+          }),
+          switchMap(() => this.activeRoute.params)
+        )
+        .subscribe(() => {
+          this.initLyrics();
         });
   }
 
