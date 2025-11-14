@@ -23,7 +23,7 @@ import { MatTabsModule as MatTabsModule } from '@angular/material/tabs';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatChipsModule as MatChipsModule } from '@angular/material/chips';
-import { MatIconModule } from '@angular/material/icon';
+import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { MatProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatProgressBarModule as MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatDialogModule as MatDialogModule } from '@angular/material/dialog';
@@ -35,6 +35,7 @@ import { MatPaginatorModule as MatPaginatorModule } from '@angular/material/pagi
 import { SelectCheckAllComponent } from './select-check-all/select-check-all.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MAT_DATE_FORMATS } from '@angular/material/core';
+import { DomSanitizer } from '@angular/platform-browser';
 
 export const MY_FORMATS = {
   parse: {
@@ -73,6 +74,17 @@ export const MY_FORMATS = {
     ]
 })
 export class CustomMaterialModule {
+  constructor(iconRegistry: MatIconRegistry, sanitizer: DomSanitizer) {
+    iconRegistry.addSvgIcon(
+      'expand_circle_right',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/expand_circle_right.svg')
+    );
+    iconRegistry.addSvgIcon(
+      'expand_circle_left',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/expand_circle_left.svg')
+    );
+  }
+
   static forRoot() {
     return {
       ngModule: CustomMaterialModule,

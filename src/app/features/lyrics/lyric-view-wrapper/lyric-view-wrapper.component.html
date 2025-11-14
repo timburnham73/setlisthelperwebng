@@ -8,17 +8,13 @@
       <mat-card>
         <mat-card-content class="lyrics-view">
           @if(shouldShowPageIcon(false)){
-          <div class="lyric-nav-icon page-left-icon">
-            <span class="material-symbols-outlined" (click)="onPageLeft()" >
-              expand_circle_right
-            </span>
+          <div class="lyric-nav-icon page-left-icon" (click)="onPageLeft()">
+            <mat-icon svgIcon="expand_circle_left"></mat-icon>
           </div>
           }
           @if(shouldShowPageIcon(true)){
             <div class="lyric-nav-icon page-right-icon" (click)="onPageRight()">
-              <span class="material-symbols-outlined">
-                expand_circle_right
-              </span>
+              <mat-icon svgIcon="expand_circle_right"></mat-icon>
             </div>
           }
           <app-lyrics [currentUser]="currentUser" [song]="song" [lyrics]="lyrics" [defaultLyricId]="defaultLyricId"

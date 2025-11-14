@@ -83,28 +83,30 @@
           <mat-icon>arrow_back_ios</mat-icon>
         </button>
         <h4 fxShow fxHide.lt-lg>{{ song?.name }}</h4>
-        <div class="vl"></div>
-        <button mat-button aria-label="Edit Lyrics" title="Edit" (click)="onEditLyric()" *ngIf="selectedLyric">
+        @if(selectedLyric){
+        
+        
+        <button mat-button aria-label="Edit Lyrics" title="Edit" (click)="onEditLyric()">
           <mat-icon>edit</mat-icon>
           <span fxShow fxHide.lt-md>
             Edit
           </span>
         </button>
-        <button mat-button aria-label="Print Lyrics" title="Print" (click)="onPrintLyric()" *ngIf="selectedLyric">
+        <button mat-button aria-label="Print Lyrics" title="Print" (click)="onPrintLyric()" >
           <mat-icon>print</mat-icon>
           <span fxShow fxHide.lt-md>
             Print
           </span>
         </button>
         <div class="vl"></div>
-        <button mat-button fxShow fxHide.lt-md aria-label="Toggle Transpose" title="Toggle Transpose" *ngIf="selectedLyric"
+        <button mat-button fxShow fxHide.lt-md aria-label="Toggle Transpose" title="Toggle Transpose" 
           (click)="onTranspose()">
           <mat-icon>swap_vert</mat-icon>
           <span fxShow fxHide.lt-md>
             Transpose
           </span>
         </button>
-        <button mat-button fxShow fxHide.lt-md aria-label="Toggle Format" title="Toggle Format" *ngIf="selectedLyric"
+        <button mat-button fxShow fxHide.lt-md aria-label="Toggle Format" title="Toggle Format"
           (click)="onFormatLyrics()">
           <mat-icon>format_color_text</mat-icon>
           <span fxShow fxHide.lt-md>
@@ -112,7 +114,7 @@
           </span>
         </button>
 
-
+        }
         <span class="spacer"></span>
         @if(!isDefaultLyric){
         <button mat-button fxShow fxHide.lt-md aria-label="Set the default lyric for this song." *ngIf="selectedLyric"
