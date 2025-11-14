@@ -3,8 +3,6 @@ import { Base } from "./base";
 import { BaseUser } from "./user";
 
 export interface Tag extends Base {
-  name: string;
-  nameLowered: string;
   countOfSongs: number;
 }
 
@@ -17,7 +15,7 @@ export class TagHelper {
   static getForUpdate(data: Tag, editingUser: BaseUser): Tag {
     return {
       name: data.name ?? "",
-      nameLowered: data.nameLowered ?? "",
+      nameLowered: (data.name ?? "").toLowerCase(),
       countOfSongs: data.countOfSongs ?? 1,
       lastEdit: Timestamp.fromDate(new Date()),
       lastUpdatedByUser: editingUser,

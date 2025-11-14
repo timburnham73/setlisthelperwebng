@@ -12,7 +12,6 @@ import { SetlistSong } from "../model/setlist-song";
 import { SLHTag, SLHTagHelper } from "../model/SLHTag";
 import { countSongs, countTags, getSetlistSnapshot, getSongSnapshot, updateParentSongSetlistRef, updateSetlistStatistics } from "../utils";
 import { Song } from "../model/song";
-import { Setlist } from "../model/setlist";
 import { updateCountOfLyricsInSongs } from "../lyrics-count-trigger/lyric-utils";
 import { countSetlists } from "../setlists-trigger/setlist-util";
 import { Artist, ArtistHelper } from "../model/artist";
@@ -50,6 +49,7 @@ export default async (accountImportSnap, context) => {
   
   await updateAllSongs(accountId);
 
+
   await accountRef.update({ slhImportInProgress: false });
 }
 
@@ -66,6 +66,8 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
   //Tags
   await addAccountEvent("Tags", "Downloading tags.", accountImportEventRef);
   const tagDetails: string[] = [];
+  
+  const slhSetlists = await getSetlists(jwtToken);
   
   const slhTags: SLHTag[] = await getTags(jwtToken);
   const mapSLHSongIdToTagName: SlhSongIdToTagName[] = [];
@@ -117,7 +119,7 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
       const tagNames = slhSongToTagNames.map((slhSongIdToTagName) => slhSongIdToTagName.TagName);
       convertedSong.tags = tagNames;
       songDetails.push(`Added tags to Song ${convertedSong.name}: ${tagNames.join(',')}`);
-      //TODO: Incrememnt the tag count here. 
+      
     }
     
     if(convertedSong.artist){
@@ -165,7 +167,7 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
 
   await addAccountEvent("Setlists", "Downloading setlists.", accountImportEventRef);
   const setlistsRef = db.collection(`/accounts/${accountId}/setlists`);
-  const slhSetlists = await getSetlists(jwtToken);
+
 
   const setlistDetails: string[] = [];
   await addAccountEvent("Setlists", "Processing setlists.", accountImportEventRef);
@@ -230,22 +232,29 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
 
 async function updateAllSetlists(accountId: string) {
   const setlistSnap = await getSetlistSnapshot(accountId);
+  const updatePromises: Promise<any>[] = [];
+
   setlistSnap.forEach((doc) => {
-    const setlist = doc.data() as Setlist;
-    setlist.id = doc.id;
-    updateSetlistStatistics(accountId, doc.id);
+    updatePromises.push(updateSetlistStatistics(accountId, doc.id));
   });
+
+  await Promise.all(updatePromises);
 }
 
 async function updateAllSongs(accountId: string) {
   const songSnap = await getSongSnapshot(accountId);
-  songSnap.forEach((doc) => {
-    const song = doc.data() as Song;
-    song.id = doc.id;
-    updateParentSongSetlistRef(accountId, song.id);
+  const updatePromises: Promise<any>[] = [];
 
-    updateCountOfLyricsInSongs(accountId, song.id);
+  songSnap.forEach((doc) => {
+    const songId = doc.id;
+
+    updatePromises.push((async () => {
+      await updateParentSongSetlistRef(accountId, songId);
+      await updateCountOfLyricsInSongs(accountId, songId);
+    })());
   });
+
+  await Promise.all(updatePromises);
 }
 
 async function addLyrics(slhSong: SLHSong, accountId: string, songId: string, convertedSong: Song, importingUser: BaseUser, songDetails: string[]) {
@@ -327,27 +336,20 @@ async function addAccountEvent(eventType: string, message: string, accountImport
     eventTime: Timestamp.now()
   } as AccountImportEvent);
 }
-
 async function getSongs(accessToken: string) {
   const actionUrl = "https://setlisthelper.azurewebsites.net/api/v2.0/Song";
-  // const startIndex = 0;
-  // const numberOfSongsToGet = 100;
-  // const orderByColumnName = 'name';
-  // const orderByColumDirection = "asc";
   const jwt = accessToken;
-  const songsUrl = actionUrl;//+ `?start=${startIndex}&records=${numberOfSongsToGet}&orderbycol=${orderByColumnName}&orderbydirection=${orderByColumDirection}`;
+  const songsUrl = actionUrl;
 
-  const headers: Headers = new Headers()
-  headers.set('Content-Type', 'application/json')
-  headers.set('Authorization', 'Bearer ' + jwt,)
+  const headers: Headers = new Headers();
+  headers.set("Content-Type", "application/json");
+  headers.set("Authorization", "Bearer " + jwt);
 
   const request: RequestInfo = new Request(songsUrl, {
-    // We need to set the `method` to `POST` and assign the headers
-    method: 'GET',
+    method: "GET",
     headers: headers,
   });
 
-  // Send the request and print the response
   const response = await fetch(request);
   const data = await response.json();
   return data as SLHSong[];

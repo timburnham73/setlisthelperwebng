@@ -64,7 +64,7 @@ export interface SLHSong {
         name: slhSong.Name ?? "",
         nameLowered: slhSong.Name.toLowerCase() ?? "",
         artist: slhSong.Artist?.Name ?? "",
-        artsitLowered: slhSong.Artist && slhSong.Artist.Name ? slhSong.Artist?.Name.toLowerCase() : "",
+        artistLowered: slhSong.Artist && slhSong.Artist.Name ? slhSong.Artist?.Name.toLowerCase() : "",
         genre: slhSong.Genre && slhSong.Genre.Name ? slhSong.Genre?.Name : "",
         genreLowered: slhSong.Genre && slhSong.Genre.Name ? slhSong.Genre?.Name.toLowerCase() : "",
         key: slhSong.Key ?? "",
@@ -86,7 +86,8 @@ export interface SLHSong {
         lengthSec: songLenSplit.seconds ?? 0,
         lengthMin: songLenSplit.minutes ?? 3,
         tags: [],
-        defaultLyricForUser: []
+        defaultLyricForUser: [],
+        setlists: [],
       };
     }
   }

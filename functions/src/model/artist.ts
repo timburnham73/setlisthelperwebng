@@ -3,8 +3,6 @@ import { Base } from "./base";
 import { BaseUser } from "./user";
 
 export interface Artist extends Base {
-  name: string;
-  nameLowered: string;
   countOfSongs: number;
 }
 
@@ -17,7 +15,7 @@ export interface Artist extends Base {
     static getForUpdate(data: Artist, editingUser: BaseUser): Artist {
       return {
         name: data.name ?? "",
-        nameLowered: data.nameLowered ?? "",
+        nameLowered: (data.name ?? "").toLowerCase(),
         countOfSongs: data.countOfSongs ?? 1,
         lastEdit: Timestamp.fromDate(new Date()),
         lastUpdatedByUser: editingUser,

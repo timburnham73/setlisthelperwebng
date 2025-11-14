@@ -3,7 +3,6 @@ import { Base } from "./base";
 import { BaseUser } from "./user";
 
 export interface Lyric extends Base {
-  name: string;
   key: string;
   tempo: number;
   notes: string;
@@ -15,6 +14,9 @@ export interface Lyric extends Base {
   transpose: number;
   documentLocation: string;
   audioLocation: string;
+  defaultLyricForUser: string[];
+  formatScope?: any;
+  formatSettings?: any;
 }
 
 export interface AccountLyric extends Lyric {
@@ -34,6 +36,7 @@ export class LyricHelper {
   static getForUpdate(data: Partial<Lyric>, editingUser: BaseUser): Lyric {
     return {
       name: data.name ?? "",
+      nameLowered: (data.name ?? "").toLowerCase(),
       lyrics: data.lyrics ?? "",
       key: data.key ?? "",
       tempo: data.tempo ?? 120,
@@ -43,6 +46,7 @@ export class LyricHelper {
       beatValue: data.beatValue ?? 0,
       youTubeUrl: data.youTubeUrl ?? "",
       songId: data.songId ?? "",
+      defaultLyricForUser: data.defaultLyricForUser ?? [],
       createdByUser: data.createdByUser ?? editingUser,
       dateCreated: data.dateCreated ?? Timestamp.now(),
       lastUpdatedByUser: editingUser,

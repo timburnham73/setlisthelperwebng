@@ -1,6 +1,7 @@
 import { Base } from "./base";
 import { BaseUser, UserHelper } from "./user";
 import { Timestamp } from "firebase-admin/firestore";
+import { SetlistRef } from "./setlist";
 
 export interface UserLyric {
   uid: string;
@@ -8,10 +9,8 @@ export interface UserLyric {
 }
 
 export interface Song extends Base {
-  name: string;
-  nameLowered: string;
   artist: string;
-  artsitLowered: string;
+  artistLowered: string;
   genre: string;
   genreLowered: string;
   key: string;
@@ -30,6 +29,7 @@ export interface Song extends Base {
   countOfLyrics: number;
   tags: string[];
   defaultLyricForUser: UserLyric[];
+  setlists: SetlistRef[];
 }
 
 export class SongHelper {
@@ -44,13 +44,13 @@ export class SongHelper {
   static getForUpdate(data: Song, editingUser: BaseUser): Song {
     return {
       name: data.name ?? "",
-      nameLowered: data.nameLowered ?? "",
+      nameLowered: (data.name ?? "").toLowerCase(),
       artist: data.artist ?? "",
-      artsitLowered: data.artsitLowered ?? "",
+      artistLowered: (data.artist ?? "").toLowerCase(),
       genre: data.genre ?? "",
-      genreLowered: data.genreLowered ?? "",
+      genreLowered: (data.genre ?? "").toLowerCase(),
       key: data.key ?? "",
-      keyLowered: data.keyLowered ?? "",
+      keyLowered: (data.key ?? "").toLowerCase(),
       songLength: data.songLength ?? 0,
       tempo: data.tempo ?? 120,
       deactivated: data.deactivated ?? false,
@@ -67,8 +67,9 @@ export class SongHelper {
       lengthMin: data.lengthMin ?? 3,
       countOfLyrics: data.countOfLyrics ?? 0,
       lengthSec: data.lengthSec ?? 0,
-      tags: data.tags ?? 0,
-      defaultLyricForUser: data.defaultLyricForUser ?? []
+      tags: data.tags ?? [],
+      defaultLyricForUser: data.defaultLyricForUser ?? [],
+      setlists: data.setlists ?? [],
     };
   }
 }

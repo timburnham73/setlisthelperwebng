@@ -28,6 +28,7 @@ export class SLHSetlistHelper {
       const nowTimestamp = Timestamp.now();
       return {
         name: slhSetlist.Name ?? "",
+        nameLowered: (slhSetlist.Name ?? "").toLowerCase(),
         gigDate: Timestamp.fromDate(new Date(slhSetlist.GigDate)),
         gigLocation: slhSetlist.GigLocation ?? "",
         makePublic: slhSetlist.MakePublic,
@@ -36,7 +37,9 @@ export class SLHSetlistHelper {
         lastUpdatedByUser : UserHelper.getForUpdate(editingUser),
         dateCreated: nowTimestamp,
         createdByUser: UserHelper.getForUpdate(editingUser),
-        
+        totalTimeInSeconds: 0,
+        countOfSongs: 0,
+        countOfBreaks: 0,
       };
     }
   }

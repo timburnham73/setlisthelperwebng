@@ -20,6 +20,8 @@ export interface AccountImport extends Base {
   
     static getForUpdate(user: BaseUser, data: AccountImport): AccountImport {
           return {
+            name: data.username ?? "",
+            nameLowered: (data.username ?? "").toLowerCase(),
             username: data.username ?? "",
             createdByUser: data.createdByUser ?? "",
             dateCreated: data.dateCreated ?? Timestamp.fromDate(new Date()),
