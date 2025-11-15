@@ -1,12 +1,10 @@
-import { Timestamp } from "firebase-admin/firestore";
-
 export interface BaseUser {
   uid: string; //This is the user ID that comes from the firebase auth.
   displayName: string;
   email: string;
   photoUrl?: string;
   formatSettings?: any;
-  lastLoginDate?: Timestamp;
+  lastLoginDate?: any;
 }
 
 export interface User extends BaseUser {
