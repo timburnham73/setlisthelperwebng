@@ -60,6 +60,11 @@ export interface SLHSong {
     static slhSongToSong(slhSong: SLHSong, editingUser: BaseUser): Song {
       const nowTimestamp = Timestamp.now();
       const songLenSplit = this.getSongLengthMinSec(slhSong.SongLength);
+      //If there is a lyrics field and a document location then the lyricCount is 2.
+      let lyricCount = slhSong.Lyrics && slhSong.Lyrics.trim().length > 0 ? 1 : 0;
+      if (slhSong.DocumentLocation && slhSong.DocumentLocation.trim().length > 0) {
+        lyricCount += 1;
+      }
       return {
         name: slhSong.Name ?? "",
         nameLowered: slhSong.Name.toLowerCase() ?? "",
@@ -82,7 +87,7 @@ export interface SLHSong {
         lastUpdatedByUser : UserHelper.getForUpdate(editingUser),
         dateCreated: nowTimestamp,
         createdByUser: UserHelper.getForUpdate(editingUser),
-        countOfLyrics: slhSong.Lyrics ? 1 : 0,
+        countOfLyrics: lyricCount,
         lengthSec: songLenSplit.seconds ?? 0,
         lengthMin: songLenSplit.minutes ?? 3,
         tags: [],

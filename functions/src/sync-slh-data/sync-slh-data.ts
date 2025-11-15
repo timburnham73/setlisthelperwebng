@@ -10,12 +10,12 @@ import { SLHSetlist, SLHSetlistHelper } from "../model/SLHSetlist";
 import { SetlistBreakHelper } from "../model/setlist-break";
 import { SetlistSong } from "../model/setlist-song";
 import { SLHTag, SLHTagHelper } from "../model/SLHTag";
-import { countSongs, countTags, getSetlistSnapshot, getSongSnapshot, updateParentSongSetlistRef, updateSetlistStatistics } from "../utils";
+import { countSongs, countTags } from "../utils";
 import { Song } from "../model/song";
-import { updateCountOfLyricsInSongs } from "../lyrics-count-trigger/lyric-utils";
 import { countSetlists } from "../setlists-trigger/setlist-util";
 import { Artist, ArtistHelper } from "../model/artist";
 import { Genre, GenreHelper } from "../model/genre";
+import { SetlistRef } from "../model/setlist";
 
 interface SlhSongToFirebaseSongId {
   SongId: number;
@@ -25,6 +25,11 @@ interface SlhSongToFirebaseSongId {
 interface SlhSongIdToTagName {
   SLHSongId: number;
   TagName: string;
+}
+
+interface SlhSongIdToSetlists {
+  SLHSongId: number;
+  setlists: SetlistRef[];
 }
 
 //Entry point
@@ -44,11 +49,6 @@ export default async (accountImportSnap, context) => {
   await countTags(accountId);
 
   await countSetlists(accountId);
-
-  await updateAllSetlists(accountId);
-  
-  await updateAllSongs(accountId);
-
 
   await accountRef.update({ slhImportInProgress: false });
 }
@@ -100,96 +100,111 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
   const accountRef = db.doc(`/accounts/${accountId}`);
   await accountRef.update({ slhImportInProgress: true });
 
+  await addAccountEvent("Setlists", "Downloading setlists.", accountImportEventRef);
+  const setlistsRef = db.collection(`/accounts/${accountId}/setlists`);
+
+  const setlistDetails: string[] = [];
+  const mapSLHSongIdToSetlists: SlhSongIdToSetlists[] = [];
+  const setlistContext: { slhSetlist: SLHSetlist; setlistId: string }[] = [];
+
+  await addAccountEvent("Setlists", "Processing setlists.", accountImportEventRef);
+  for (let slhSetlist of slhSetlists) {
+    const convertedSetlist = SLHSetlistHelper.slhSetlistToSetlist(slhSetlist, importingUser);
+
+    const addedSetlist = setlistsRef.doc();
+    await addedSetlist.set(convertedSetlist);
+
+    setlistDetails.push(`Added setlist with name ${convertedSetlist.name}`);
+
+    setlistContext.push({ slhSetlist, setlistId: addedSetlist.id });
+
+    const setlistRefForSong: SetlistRef = { id: addedSetlist.id, name: convertedSetlist.name };
+    for (const setlistSongId of slhSetlist.songs) {
+      const setlistSLHSong = slhSongs.find((slhSong) => slhSong.SongId === setlistSongId);
+      if (setlistSLHSong && setlistSLHSong.SongType === SongType.Song) {
+        let mapEntry = mapSLHSongIdToSetlists.find((m) => m.SLHSongId === setlistSLHSong.SongId);
+        if (!mapEntry) {
+          mapEntry = { SLHSongId: setlistSLHSong.SongId, setlists: [] };
+          mapSLHSongIdToSetlists.push(mapEntry);
+        }
+        mapEntry.setlists.push(setlistRefForSong);
+      }
+    }
+  }
+
   await addAccountEvent("Songs", "Processing Songs, Lyrics, and Tags.", accountImportEventRef);
   const mapSongIdToFirebaseSongId: SlhSongToFirebaseSongId[] = [];
   const artists: Artist[] = [];
   const genres: Genre[] = [];
   for (let slhSong of slhSongs) {
-    //Do not import deleted songs. 
-    if(slhSong.SongType === 1){
+    if (slhSong.SongType === 1) {
       songDetails.push(`Not Adding song with name ${slhSong.Name}`);
       continue;
     }
 
     const convertedSong = SLHSongHelper.slhSongToSong(slhSong, importingUser);
 
-    //ADD TAGS: Add tags to the converted song if there were any from seltist helper.
     const slhSongToTagNames = mapSLHSongIdToTagName.filter((slhSongIdToTagName) => slhSongIdToTagName.SLHSongId === slhSong.SongId);
-    if(slhSongToTagNames.length > 0){
+    if (slhSongToTagNames.length > 0) {
       const tagNames = slhSongToTagNames.map((slhSongIdToTagName) => slhSongIdToTagName.TagName);
       convertedSong.tags = tagNames;
       songDetails.push(`Added tags to Song ${convertedSong.name}: ${tagNames.join(',')}`);
-      
     }
-    
-    if(convertedSong.artist){
+
+    const slhSongSetlists = mapSLHSongIdToSetlists.find((m) => m.SLHSongId === slhSong.SongId);
+    if (slhSongSetlists) {
+      convertedSong.setlists = slhSongSetlists.setlists;
+    }
+
+    if (convertedSong.artist) {
       const foundArtist = artists.find(artist => artist.nameLowered === convertedSong.artist.toLocaleLowerCase());
-      if(!foundArtist){
-        artists.push(ArtistHelper.getForAdd({name: convertedSong.artist, nameLowered: convertedSong.artist.toLowerCase(), countOfSongs: 1}, importingUser));
+      if (!foundArtist) {
+        artists.push(ArtistHelper.getForAdd({ name: convertedSong.artist, nameLowered: convertedSong.artist.toLowerCase(), countOfSongs: 1 }, importingUser));
       }
-      else{
+      else {
         foundArtist.countOfSongs++;
       }
     }
 
-    if(convertedSong.genre){
+    if (convertedSong.genre) {
       const foundGenre = genres.find(genre => genre.nameLowered === convertedSong.genre.toLocaleLowerCase());
-      if(!foundGenre){
-        genres.push(GenreHelper.getForAdd({name: convertedSong.genre, nameLowered: convertedSong.genre.toLowerCase(), countOfSongs: 1}, importingUser));
+      if (!foundGenre) {
+        genres.push(GenreHelper.getForAdd({ name: convertedSong.genre, nameLowered: convertedSong.genre.toLowerCase(), countOfSongs: 1 }, importingUser));
       }
-      else{
+      else {
         foundGenre.countOfSongs++;
       }
     }
 
     const docRef = await songsRef.doc();
     await docRef.set(convertedSong);
-    
-    //Add the song ids to a map so we can find the song below in the setlist songs and associate the firebase id.
-    mapSongIdToFirebaseSongId.push({SongId: slhSong.SongId, FireBaseSongId: docRef.id });
-    
+
+    mapSongIdToFirebaseSongId.push({ SongId: slhSong.SongId, FireBaseSongId: docRef.id });
+
     await addLyrics(slhSong, accountId, docRef.id, convertedSong, importingUser, songDetails);
   }
 
-  await addAccountEventWithDetails("Song", `Finished processing songs.`, [...tagDetails,...songDetails], accountImportEventRef);
+  await addAccountEventWithDetails("Song", `Finished processing songs.`, [...tagDetails, ...songDetails], accountImportEventRef);
 
-  for(let artist of artists){
+  for (let artist of artists) {
     const docRef = await artistsRef.doc();
     await docRef.set(artist);
   }
 
-  for(let genre of genres){
+  for (let genre of genres) {
     const docRef = await genresRef.doc();
     await docRef.set(genre);
   }
-  
-  
 
-  await addAccountEvent("Setlists", "Downloading setlists.", accountImportEventRef);
-  const setlistsRef = db.collection(`/accounts/${accountId}/setlists`);
+  for (const context of setlistContext) {
+    const setlistSongsRef = db.collection(`/accounts/${accountId}/setlists/${context.setlistId}/songs`);
 
-
-  const setlistDetails: string[] = [];
-  await addAccountEvent("Setlists", "Processing setlists.", accountImportEventRef);
-  for(let slhSetlist of slhSetlists){
-    
-    const convertedSetlist = SLHSetlistHelper.slhSetlistToSetlist(slhSetlist, importingUser);
-    
-    //Add Setlist
-    const addedSetlist = setlistsRef.doc();
-    await addedSetlist.set(convertedSetlist);
-
-    setlistDetails.push(`Added setlist with name ${convertedSetlist.name}`);
-
-    const setlistSongsRef = db.collection(`/accounts/${accountId}/setlists/${addedSetlist.id}/songs`);
-    
     let sequenceNumber = 1;
-    for(const setlistSongId of slhSetlist.songs){
+    for (const setlistSongId of context.slhSetlist.songs) {
       const setlistSLHSong = slhSongs.find((slhSong) => slhSong.SongId === setlistSongId);
-      if(setlistSLHSong){
+      if (setlistSLHSong) {
         const convertedSong = SLHSongHelper.slhSongToSong(setlistSLHSong, importingUser);
-        if(setlistSLHSong.SongType === 1){
-          //Add Break
+        if (setlistSLHSong.SongType === 1) {
           const setBreakPartial = {
             sequenceNumber: sequenceNumber,
             isBreak: true,
@@ -197,20 +212,18 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
             notes: convertedSong.notes,
             breakTime: convertedSong.songLength
           }
-          
+
           const setBreak = SetlistBreakHelper.getSetlistBreakForAdd(setBreakPartial, importingUser);
           await setlistSongsRef.doc().set(setBreak);
 
           setlistDetails.push(`Added setlist break with name ${setBreak.name}`);
         }
-        else{
-          //Find the Firebase songId
+        else {
           const songIdMap = mapSongIdToFirebaseSongId.find((slhSongMap) => slhSongMap.SongId === setlistSongId);
-          //Add Setlist Songs
           const setlistSong = {
-            sequenceNumber: sequenceNumber, 
+            sequenceNumber: sequenceNumber,
             isBreak: false,
-            updateOnlyThisSetlistSong: false,  
+            updateOnlyThisSetlistSong: false,
             songId: songIdMap ? songIdMap.FireBaseSongId : "",
             ...convertedSong
           } as SetlistSong;
@@ -228,33 +241,6 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
   functions.logger.debug(`Finished importing data`);
 
   await addAccountEvent("System", `Finished importing data.`, accountImportEventRef);
-}
-
-async function updateAllSetlists(accountId: string) {
-  const setlistSnap = await getSetlistSnapshot(accountId);
-  const updatePromises: Promise<any>[] = [];
-
-  setlistSnap.forEach((doc) => {
-    updatePromises.push(updateSetlistStatistics(accountId, doc.id));
-  });
-
-  await Promise.all(updatePromises);
-}
-
-async function updateAllSongs(accountId: string) {
-  const songSnap = await getSongSnapshot(accountId);
-  const updatePromises: Promise<any>[] = [];
-
-  songSnap.forEach((doc) => {
-    const songId = doc.id;
-
-    updatePromises.push((async () => {
-      await updateParentSongSetlistRef(accountId, songId);
-      await updateCountOfLyricsInSongs(accountId, songId);
-    })());
-  });
-
-  await Promise.all(updatePromises);
 }
 
 async function addLyrics(slhSong: SLHSong, accountId: string, songId: string, convertedSong: Song, importingUser: BaseUser, songDetails: string[]) {
