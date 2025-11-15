@@ -57,7 +57,7 @@ export class LoginComponent implements OnInit, OnDestroy {
             this.ui.disableAutoSignIn();
         });
 
-        this.titleService.setTitle('Song Setter - Login');
+        this.titleService.setTitle('Band Central - Login');
     }
 
     ngOnDestroy() {

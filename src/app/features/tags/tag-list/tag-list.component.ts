@@ -20,7 +20,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
-import { BaseUser, UserHelper } from 'functions/src/model/user';
 import { finalize, first, Observable, Subscription, take } from 'rxjs';
 import { AuthenticationService } from 'src/app/core/services/auth.service';
 import { SongService } from 'src/app/core/services/song.service';
@@ -35,6 +34,7 @@ import { TagEditDialogComponent } from '../tag-edit-dialog/tag-edit-dialog.compo
 import { CONFIRM_DIALOG_RESULT, ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { user } from '@angular/fire/auth';
 import { Setlist } from 'src/app/core/model/setlist';
+import { BaseUser, UserHelper } from 'src/app/core/model/user';
 
 @Component({
   selector: 'app-tag-list',
