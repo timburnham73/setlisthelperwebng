@@ -180,6 +180,9 @@ export class SongService {
 
         return this.recomputeArtistAndGenreCounts(accountId, artistNames, genreNames, editingUser);
       }),
+      switchMap(() =>
+        this.setlistSongService.updateSetlistSongsFromSong(accountId, { ...song, id: songId } as Song, editingUser)
+      ),
       map(() => ({ ...song, id: songId } as Song))
     );
   }

@@ -1,50 +1,5 @@
 import { db } from "./init";
-import { SetlistRef } from "./model/setlist";
 import { SetlistSong } from "./model/setlist-song";
-////////////////////////////////////////////////////////////////////////////////////////////
-//Updates parent song from the setlist song with the setlist ids and arrays
-//Compiles the Setlists that contain the song (setlistSong.songId) and updatings that SetlistRef array in the song.
-export async function updateParentSongSetlistRef(accountId, songId) {
-    if (songId) {
-        const setlistSongSnap = await db
-            .collectionGroup(`songs`)
-            .where('songId', '==', songId)
-            .where('accountId', '==', accountId).get();
-        const setlistRefs = await getSetlistFromSetlistSongPath(setlistSongSnap);
-
-        const songRef = db.doc(`/accounts/${accountId}/songs/${songId}`);
-        songRef.update({ setlists: setlistRefs });
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////
-//Get an array of setlist ids and names to put into a song object.
-async function getSetlistFromSetlistSongPath(setlistSongSnap: any) {
-    const setlistPaths: string[] = [];
-    //Get the path to each setlist
-    setlistSongSnap.forEach(async (doc) => {
-        
-        const splitSetlistSongPath = doc.ref.path.split('/');
-        splitSetlistSongPath.splice(splitSetlistSongPath.length - 2, 2);
-        
-        const pathToSetlist = splitSetlistSongPath.join('/');
-        
-        setlistPaths.push(pathToSetlist);
-    });
-
-    const setlistRefs: SetlistRef[] = [];
-    //Get the setlist from the path and return the id and name.
-    for(const setlistPath of setlistPaths){
-        const setlistBreakRef = db.doc(setlistPath);
-        const setlistRef = await setlistBreakRef.get();
-        const setlist = setlistRef.data();
-        if(setlist && setlist.name && setlistRef && setlistRef.id){
-            setlistRefs.push({name: setlist.name, id: setlistRef.id});
-        }
-    }
-
-    return setlistRefs;
-}
 
 export const countSongs = async (accountId) => {
     

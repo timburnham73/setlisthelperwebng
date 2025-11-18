@@ -70,6 +70,44 @@ export class SetlistSongService {
     return forkJoin(updates$);
   }
 
+  // Update specific SetlistSong documents referenced by a Song's setlists array.
+  // Uses the setlistSongId on each SetlistSongRef and only updates when
+  // updateOnlyThisSetlistSong is not true.
+  updateSetlistSongsFromSong(accountId: string, song: Song, editingUser: BaseUser) {
+    const setlists: SetlistSongRef[] = song.setlists || [];
+
+    const updates$: Observable<any>[] = setlists.map((setlistRef) => {
+      const docPath = `/accounts/${accountId}/setlists/${setlistRef.id}/songs/${setlistRef.setlistSongId}`;
+      const doc = this.db.doc(docPath);
+
+      return doc.get().pipe(
+        switchMap((snap) => {
+          if (!snap.exists) {
+            return of(void 0);
+          }
+
+          const existingSetlistSong = snap.data() as SetlistSong;
+          if (existingSetlistSong.updateOnlyThisSetlistSong === true) {
+            return of(void 0);
+          }
+
+          const factory = new SetlistSongFactory(editingUser);
+          const merged = factory.getForUpdateFromSong(existingSetlistSong, song);
+          const payload = { ...merged } as any;
+          delete payload.id;
+
+          return from(doc.ref.update(payload));
+        })
+      );
+    });
+
+    if (updates$.length === 0) {
+      return of(void 0);
+    }
+
+    return forkJoin(updates$);
+  }
+
   getOrderedSetlistSongs(accountId: string, setlistId: string): Observable<SetlistSong[]> {
     const dbPath = `/accounts/${accountId}/setlists/${setlistId}/songs`;
     const songsRef = this.db.collection(dbPath, (ref) =>

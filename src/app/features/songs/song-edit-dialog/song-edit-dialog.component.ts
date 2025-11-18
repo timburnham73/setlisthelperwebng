@@ -203,6 +203,7 @@ export class SongEditDialogComponent {
 
     // When updating a plain Song, do not include updateOnlyThisSetlistSong in the payload
     if (!isSetlistSong) {
+      delete formValue.sequenceNumber;
       delete formValue.updateOnlyThisSetlistSong;
     }
 
