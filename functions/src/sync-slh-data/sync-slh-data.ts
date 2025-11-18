@@ -15,7 +15,7 @@ import { Song } from "../model/song";
 import { countSetlists } from "../setlists-trigger/setlist-util";
 import { Artist, ArtistHelper } from "../model/artist";
 import { Genre, GenreHelper } from "../model/genre";
-import { SetlistRef } from "../model/setlist";
+import { SetlistSongRef } from "../model/setlist";
 
 interface SlhSongToFirebaseSongId {
   SongId: number;
@@ -29,7 +29,7 @@ interface SlhSongIdToTagName {
 
 interface SlhSongIdToSetlists {
   SLHSongId: number;
-  setlists: SetlistRef[];
+  setlists: SetlistSongRef[];
 }
 
 //Entry point
@@ -105,7 +105,7 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
 
   const setlistDetails: string[] = [];
   const mapSLHSongIdToSetlists: SlhSongIdToSetlists[] = [];
-  const setlistContext: { slhSetlist: SLHSetlist; setlistId: string }[] = [];
+  const setlistContext: { slhSetlist: SLHSetlist; setlistId: string; precreatedSongRefs: { index: number; docRef: any }[] }[] = [];
 
   await addAccountEvent("Setlists", "Processing setlists.", accountImportEventRef);
   for (let slhSetlist of slhSetlists) {
@@ -115,21 +115,33 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
     await addedSetlist.set(convertedSetlist);
 
     setlistDetails.push(`Added setlist with name ${convertedSetlist.name}`);
+    const precreatedSongRefs: { index: number; docRef: any }[] = [];
 
-    setlistContext.push({ slhSetlist, setlistId: addedSetlist.id });
-
-    const setlistRefForSong: SetlistRef = { id: addedSetlist.id, name: convertedSetlist.name };
-    for (const setlistSongId of slhSetlist.songs) {
+    const setlistSongsRef = db.collection(`/accounts/${accountId}/setlists/${addedSetlist.id}/songs`);
+    for (let index = 0; index < slhSetlist.songs.length; index++) {
+      const setlistSongId = slhSetlist.songs[index];
       const setlistSLHSong = slhSongs.find((slhSong) => slhSong.SongId === setlistSongId);
       if (setlistSLHSong && setlistSLHSong.SongType === SongType.Song) {
+        // Pre-create the SetlistSong doc ref so we can use its id in Song.setlists
+        const setlistSongDocRef = setlistSongsRef.doc();
+        precreatedSongRefs.push({ index, docRef: setlistSongDocRef });
+
+        const setlistSongRefForSong: SetlistSongRef = {
+          id: addedSetlist.id,
+          name: convertedSetlist.name,
+          setlistSongId: setlistSongDocRef.id,
+        };
+
         let mapEntry = mapSLHSongIdToSetlists.find((m) => m.SLHSongId === setlistSLHSong.SongId);
         if (!mapEntry) {
           mapEntry = { SLHSongId: setlistSLHSong.SongId, setlists: [] };
           mapSLHSongIdToSetlists.push(mapEntry);
         }
-        mapEntry.setlists.push(setlistRefForSong);
+        mapEntry.setlists.push(setlistSongRefForSong);
       }
     }
+
+    setlistContext.push({ slhSetlist, setlistId: addedSetlist.id, precreatedSongRefs });
   }
 
   await addAccountEvent("Songs", "Processing Songs, Lyrics, and Tags.", accountImportEventRef);
@@ -200,7 +212,8 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
     const setlistSongsRef = db.collection(`/accounts/${accountId}/setlists/${context.setlistId}/songs`);
 
     let sequenceNumber = 1;
-    for (const setlistSongId of context.slhSetlist.songs) {
+    for (let index = 0; index < context.slhSetlist.songs.length; index++) {
+      const setlistSongId = context.slhSetlist.songs[index];
       const setlistSLHSong = slhSongs.find((slhSong) => slhSong.SongId === setlistSongId);
       if (setlistSLHSong) {
         const convertedSong = SLHSongHelper.slhSongToSong(setlistSLHSong, importingUser);
@@ -228,7 +241,9 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
             ...convertedSong
           } as SetlistSong;
 
-          await setlistSongsRef.doc().set(setlistSong);
+          const precreated = context.precreatedSongRefs.find((p) => p.index === index);
+          const setlistSongDocRef = precreated ? precreated.docRef : setlistSongsRef.doc();
+          await setlistSongDocRef.set(setlistSong);
           setlistDetails.push(`Added setlist song with name ${setlistSong.name}`);
         }
         sequenceNumber++;
