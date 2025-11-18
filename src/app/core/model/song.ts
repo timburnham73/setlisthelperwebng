@@ -1,7 +1,7 @@
 import { Timestamp } from "@angular/fire/firestore";
 import { Base } from "./base";
 import { BaseUser } from "./user";
-import { SetlistRef } from "functions/src/model/setlist";
+import { SetlistRef, SetlistSongRef } from "functions/src/model/setlist";
 
 export interface UserLyric {
   uid: string;
@@ -28,5 +28,5 @@ export interface Song extends Base {
   countOfLyrics: number;
   tags: string[];
   defaultLyricForUser: UserLyric[];
-  setlists: SetlistRef[];
+  setlists: SetlistSongRef[];
 }

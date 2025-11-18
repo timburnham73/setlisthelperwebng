@@ -11,7 +11,7 @@ import { SetlistSongFactory } from "../model/factory/setlist-song.factory";
 import { SetlistBreak, SetlistBreakHelper } from "../model/setlist-break";
 import { BaseUser } from "../model/user";
 import { Setlist } from "../model/setlist";
-import { SetlistRef } from "functions/src/model/setlist";
+import { SetlistSongRef } from "functions/src/model/setlist";
 
 @Injectable({
   providedIn: "root",
@@ -94,9 +94,7 @@ export class SetlistSongService {
   ): any {
     const breakForAdd =
       SetlistBreakHelper.getSetlistBreakForAddOrUpdate(setlistBreak, editingUser);
-    const dbPath = `/accounts/${accountId}/setlists/${setlist.id}/songs`;
-    const setlistSongsRef = this.db.collection(dbPath);
-
+    
     //return a concat observable with the increment and add combined.
     return this.incrementSequenceOfSongs(breakForAdd.sequenceNumber, breakForAdd, accountId, setlist, editingUser);
   }
@@ -148,14 +146,16 @@ export class SetlistSongService {
           songToAdd.sequenceNumber = startingSequenceNumber + 1;
         }
 
-        batch.set(setlistSongsRef.doc().ref, songToAdd);
+        const newSetlistSongDocRef = setlistSongsRef.doc();
+        (songToAdd as SetlistSong).id = newSetlistSongDocRef.ref.id;
+        batch.set(newSetlistSongDocRef.ref, songToAdd);
         //Batch commit incrementing the setlist song sequence number.
         return from(batch.commit()).pipe(
           tap(
             this.updateSetlistSongStatistics(accountId,setlist.id!)
           ),
           tap(
-            this.addSetlistRefInSong(accountId, songToAdd.songId, setlist)
+            this.addSetlistRefInSong(accountId, songToAdd.songId, songToAdd.id!, setlist)
           )
         );
       })
@@ -222,7 +222,9 @@ export class SetlistSongService {
             songToAdd.sequenceNumber = startingSequenceNumber + 1;
           }
 
-          batch.set(setlistSongsRef.doc().ref, songToAdd);
+          const newSetlistSongDocRef = setlistSongsRef.doc();
+          songToAdd.id = newSetlistSongDocRef.ref.id;
+          batch.set(newSetlistSongDocRef.ref, songToAdd);
         }
         //Batch commit incrementing the setlist song sequence number.
         return from(batch.commit()).pipe(
@@ -232,7 +234,7 @@ export class SetlistSongService {
           tap(() => {
               
               for(const songToAdd of songsToAdd){
-                this.addSetlistRefInSong(accountId, songToAdd.songId, setlist)
+                this.addSetlistRefInSong(accountId, songToAdd.songId, songToAdd.id!, setlist)
               }
             }
           )
@@ -387,18 +389,18 @@ export class SetlistSongService {
           {
             const song = resultSong.data() as Song;
             if(song.setlists){
-              const newSetlistRef: SetlistRef[] = [];
+              const newSetlistRef: SetlistSongRef[] = [];
               let removedOne = false;
               for(const setlistRef of song.setlists) {
                 if(setlistRef.id === setlist.id){
                   if(removedOne === true){
                     //There could be multiple songs in the setlist. Just remove one. 
-                    newSetlistRef.push({name: setlist.name, id: setlist.id! });  
+                    newSetlistRef.push({name: setlist.name, id: setlist.id!, setlistSongId: setlistRef.setlistSongId });  
                   }
                   removedOne = true;
                 }
                 else{
-                  newSetlistRef.push({name: setlistRef.name, id: setlistRef.id! });  
+                  newSetlistRef.push({name: setlistRef.name, id: setlistRef.id!, setlistSongId: setlistRef.setlistSongId });  
                 }
               }
               song.setlists = newSetlistRef;
@@ -411,7 +413,7 @@ export class SetlistSongService {
     );
   }
 
-  addSetlistRefInSong(accountId: string, songId: string, setlist: Setlist) {
+  addSetlistRefInSong(accountId: string, songId: string, setlistSongId: string, setlist: Setlist) {
     const songDoc = this.db.doc(`/accounts/${accountId}/songs/${songId}`);
 
     return songDoc.get().pipe(
@@ -419,10 +421,10 @@ export class SetlistSongService {
           {
             const song = resultSong.data() as Song;
             if(song.setlists){
-              song.setlists.push({name: setlist.name, id: setlist.id! });
+              song.setlists.push({name: setlist.name, id: setlist.id!, setlistSongId: setlistSongId });
             }
             else{
-              song.setlists = [{name: setlist.name, id: setlist.id! }];
+              song.setlists = [{name: setlist.name, id: setlist.id!, setlistSongId: setlistSongId }];
             }
             songDoc.update(song);
             return song;

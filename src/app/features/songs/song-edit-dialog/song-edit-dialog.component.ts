@@ -2,7 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef as MatDialogRef, MatDialogModule } from '@angular/material/dialog';
-import { catchError, concat, concatMap, first, map, mergeMap, switchMap, take, tap, throwError, zip } from 'rxjs';
+import { Observable, catchError, concat, concatMap, first, map, mergeMap, switchMap, take, tap, throwError, zip } from 'rxjs';
 import { SongEdit } from 'src/app/core/model/account-song';
 import { Song } from 'src/app/core/model/song';
 import { BaseUser, UserHelper } from 'src/app/core/model/user';
@@ -21,6 +21,7 @@ import { NgIf } from '@angular/common';
 import { SetlistSong } from 'src/app/core/model/setlist-song';
 import { SetlistSongFactory } from 'src/app/core/model/factory/setlist-song.factory';
 import { SetlistSongService } from 'src/app/core/services/setlist-songs.service';
+import { SongService } from 'src/app/core/services/song.service';
 import { MatDivider } from '@angular/material/divider';
 import { SetlistService } from 'src/app/core/services/setlist.service';
 import { Setlist } from 'src/app/core/model/setlist';
@@ -49,6 +50,7 @@ export class SongEditDialogComponent {
     private store: Store,
     private setlistService: SetlistService,
     private setlistSongService: SetlistSongService,
+    private songService: SongService,
     private authService: AuthenticationService,
     @Inject(MAT_DIALOG_DATA) public data: SongEdit,
   ) { 
@@ -138,15 +140,19 @@ export class SongEditDialogComponent {
           .subscribe();
       }
     } else {
+      // Build a plain Song payload (no setlist-specific fields)
+      const songPayload: any = { ...this.song, ...this.songForm.value };
+      delete songPayload.sequenceNumber;
+      delete songPayload.updateOnlyThisSetlistSong;
+
       //If this is a seltist song a seuqence number will be passed in with no songId. 
       if ((this.song as SetlistSong)?.sequenceNumber) {
-        this.store.dispatch(new SongActions.AddSong(this.accountId!, { ...this.song, ...this.songForm.value } as Song, this.currentUser))
+        this.songService.addSong(this.accountId!, songPayload as Song, this.currentUser)
           .pipe(
-            switchMap(() => this.store.select(state => state.songs.songs)),
-            take(1),
-            map((songs: Song[]) => songs[songs.length - 1]), // Get the last added song
             concatMap((song: Song) => {
-              return this.addSetlistSong(song.id)
+              // Re-add setlist-specific fields when creating the SetlistSong
+              const modifiedSong = { ...this.song, songId: song.id, ...this.songForm.value } as SetlistSong;
+              return this.setlistSongService.addSetlistSong(modifiedSong, this.accountId!, this.setlist!, this.currentUser);
             }),
             tap((result) => this.dialogRef.close(result)),
             catchError((err) => {
@@ -158,7 +164,7 @@ export class SongEditDialogComponent {
           .subscribe();
       }
       else {
-        this.store.dispatch(new SongActions.AddSong(this.accountId!, { ...this.song, ...this.songForm.value } as Song, this.currentUser))
+        this.songService.addSong(this.accountId!, songPayload as Song, this.currentUser)
           .pipe(
             first(),
             tap(() => this.dialogRef.close()),
@@ -217,19 +223,6 @@ export class SongEditDialogComponent {
         })
       );
   }
-
-  addSetlistSong(songId) {
-    const modifiedSong = { ...this.song, songId: songId, ...this.songForm.value } as SetlistSong;
-    return this.setlistSongService.addSetlistSong(modifiedSong, this.accountId!, this.setlist!, this.currentUser)
-      .pipe(
-        catchError((err) => {
-          console.log(err);
-          alert('Could not add song.');
-          return throwError(() => new Error(err));
-        })
-      );
-  }
-
 
   //Show "Update only this Setlist Song" only when editing an existing SetlistSong
   isEditingSetlistSong() {

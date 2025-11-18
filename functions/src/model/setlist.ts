@@ -8,6 +8,11 @@ export interface SetlistRef {
   name: string;
 }
 
+//Use to store the setlist name and id in the song document.
+export interface SetlistSongRef extends SetlistRef{
+  setlistSongId: string;
+}
+
 export interface Setlist extends Base {
   totalTimeInSeconds: number;
   countOfSongs: number;
