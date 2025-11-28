@@ -1,2 +1,3 @@
-# setlisthelperwebng
-Latest version of setlist helper built with Angular
+# Band Central
+From the createor of Setlist Helper this is the next generation website.
+It is currently in beta. 
