@@ -1,6 +1,6 @@
-import { Timestamp } from "firebase-admin/firestore";
-import { Base } from "./base";
-import { BaseUser } from "./user";
+import {Timestamp} from "firebase-admin/firestore";
+import {Base} from "./base";
+import {BaseUser} from "./user";
 
 export interface Lyric extends Base {
   key: string;
@@ -28,7 +28,7 @@ export class LyricHelper {
     const lyricForAdd = {
       ...this.getForUpdate(data, editingUser),
       dateCreated: Timestamp.now(),
-      createdByUser: editingUser
+      createdByUser: editingUser,
     };
     return lyricForAdd;
   }
@@ -52,7 +52,7 @@ export class LyricHelper {
       lastUpdatedByUser: editingUser,
       documentLocation: data.documentLocation ?? "",
       audioLocation: data.audioLocation ?? "",
-      transpose: data.transpose ?? 0
+      transpose: data.transpose ?? 0,
     };
   }
 }

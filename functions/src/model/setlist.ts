@@ -1,14 +1,14 @@
-import { Timestamp } from "firebase-admin/firestore";
-import { Base } from "./base";
-import { BaseUser } from "./user";
+import {Timestamp} from "firebase-admin/firestore";
+import {Base} from "./base";
+import {BaseUser} from "./user";
 
-//Use to store the setlist name and id in the song document.
+// Use to store the setlist name and id in the song document.
 export interface SetlistRef {
   id: string;
   name: string;
 }
 
-//Use to store the setlist name and id in the song document.
+// Use to store the setlist name and id in the song document.
 export interface SetlistSongRef extends SetlistRef{
   setlistSongId: string;
 }

@@ -2,15 +2,15 @@
  * Import function triggers from their respective submodules:
  *
  * See a full list of supported triggers at https://firebase.google.com/docs/functions
- * 
+ *
  * The exported function name has the format of {Model}_{Event}_{Function Name}
  */
 
 import * as functions from "firebase-functions";
 
-//////////////////////////////////////////////////
-//Lyrics
-/*export const Lyrics_OnAdd_UpdateSongLyricsCount =
+// ////////////////////////////////////////////////
+// Lyrics
+/* export const Lyrics_OnAdd_UpdateSongLyricsCount =
   functions
     .runWith({
       timeoutSeconds: 300,
@@ -20,7 +20,7 @@ import * as functions from "firebase-functions";
     .onCreate(async (snap, context) => {
       //Dynamically import this function to reduce start up times.
       //When cloud functions are spun up all exported functions in the file will be loaded.
-      //If all the code was below every function would load. 
+      //If all the code was below every function would load.
       await (
         await import("./lyrics-count-trigger/on-add-lyrics"))
         .default(snap, context);
@@ -136,19 +136,19 @@ export const Setlist_onDelete_RemoveSetlistSongs =
         .default(snap, context);
     });*/
 
-//////////////////////////////////
-//Sync functions
+// ////////////////////////////////
+// Sync functions
 export const AccoutImport_OnAdd_StartSLHSync =
   functions
     .runWith({
       timeoutSeconds: 300,
-      memory: "256MB"
+      memory: "256MB",
     })
     .firestore.document("accounts/{accountId}/imports/{importId}")
     .onCreate(async (snap, context) => {
-      //Dynamically import this function to reduce start up times.
-      //When cloud functions are spun up all exported functions in the file will be loaded.
-      //If all the code was below every function would load. 
+      // Dynamically import this function to reduce start up times.
+      // When cloud functions are spun up all exported functions in the file will be loaded.
+      // If all the code was below every function would load.
       await (
         await import("./sync-slh-data/sync-slh-data"))
         .default(snap, context);

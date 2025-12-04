@@ -1,6 +1,6 @@
-import { Timestamp } from "firebase-admin/firestore"
-import { BaseUser, UserHelper } from "./user"
-import { Tag } from "./tag"
+import {Timestamp} from "firebase-admin/firestore";
+import {BaseUser, UserHelper} from "./user";
+import {Tag} from "./tag";
 export interface SLHTag {
     Deleted: boolean
     TagId: number
@@ -10,17 +10,17 @@ export interface SLHTag {
 }
 
 export class SLHTagHelper {
-    static slhTagToTag(slhTag: SLHTag, editingUser: BaseUser): Tag {
-      const nowTimestamp = Timestamp.now();
-      return {
-        name: slhTag.Name ?? "",
-        nameLowered: slhTag.Name.toLowerCase() ?? "",
-        countOfSongs: 0,
-        lastEdit: nowTimestamp,
-        lastUpdatedByUser : UserHelper.getForUpdate(editingUser),
-        dateCreated: nowTimestamp,
-        createdByUser: UserHelper.getForUpdate(editingUser),
-        
-      };
-    }
+  static slhTagToTag(slhTag: SLHTag, editingUser: BaseUser): Tag {
+    const nowTimestamp = Timestamp.now();
+    return {
+      name: slhTag.Name ?? "",
+      nameLowered: slhTag.Name.toLowerCase() ?? "",
+      countOfSongs: 0,
+      lastEdit: nowTimestamp,
+      lastUpdatedByUser: UserHelper.getForUpdate(editingUser),
+      dateCreated: nowTimestamp,
+      createdByUser: UserHelper.getForUpdate(editingUser),
+
+    };
   }
+}

@@ -1,6 +1,6 @@
-import { Timestamp } from "firebase-admin/firestore";
-import { Base } from "./base";
-import { BaseUser } from "./user";
+import {Timestamp} from "firebase-admin/firestore";
+import {Base} from "./base";
+import {BaseUser} from "./user";
 
 export interface Tag extends Base {
   countOfSongs: number;
@@ -19,8 +19,8 @@ export class TagHelper {
       countOfSongs: data.countOfSongs ?? 1,
       lastEdit: Timestamp.fromDate(new Date()),
       lastUpdatedByUser: editingUser,
-      createdByUser: data.createdByUser ?? editingUser,  
-      dateCreated: data.dateCreated ?? Timestamp.fromDate(new Date()), 
+      createdByUser: data.createdByUser ?? editingUser,
+      dateCreated: data.dateCreated ?? Timestamp.fromDate(new Date()),
     };
   }
 }

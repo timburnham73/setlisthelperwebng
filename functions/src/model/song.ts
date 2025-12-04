@@ -1,7 +1,7 @@
-import { Base } from "./base";
-import { BaseUser, UserHelper } from "./user";
-import { Timestamp } from "firebase-admin/firestore";
-import { SetlistSongRef } from "./setlist";
+import {Base} from "./base";
+import {BaseUser, UserHelper} from "./user";
+import {Timestamp} from "firebase-admin/firestore";
+import {SetlistSongRef} from "./setlist";
 
 export interface UserLyric {
   uid: string;
@@ -37,7 +37,7 @@ export class SongHelper {
     const songForAdd = this.getForUpdate(song, editingUser);
     songForAdd.createdByUser = UserHelper.getForUpdate(editingUser);
     songForAdd.dateCreated = Timestamp.now();
-    
+
     return songForAdd;
   }
 
@@ -61,7 +61,7 @@ export class SongHelper {
       beatValue: data.beatValue ?? 0,
       youTubeUrl: data.youTubeUrl ?? "",
       lastEdit: Timestamp.now(),
-      lastUpdatedByUser : UserHelper.getForUpdate(editingUser),
+      lastUpdatedByUser: UserHelper.getForUpdate(editingUser),
       dateCreated: data.dateCreated ?? Timestamp.now(),
       createdByUser: data.createdByUser ?? UserHelper.getForUpdate(editingUser),
       lengthMin: data.lengthMin ?? 3,
