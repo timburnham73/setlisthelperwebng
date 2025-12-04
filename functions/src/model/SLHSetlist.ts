@@ -1,6 +1,6 @@
-import {Timestamp} from "firebase-admin/firestore";
-import {BaseUser, UserHelper} from "./user";
-import {Setlist} from "./setlist";
+import { Timestamp } from "firebase-admin/firestore";
+import { BaseUser, UserHelper } from "./user";
+import { Setlist } from "./setlist";
 export interface SLHSetlist {
     Deleted: boolean
     Deprecated: boolean

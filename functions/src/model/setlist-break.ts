@@ -1,7 +1,7 @@
 
-import {Timestamp} from "firebase-admin/firestore";
-import {Base} from "./base";
-import {BaseUser, UserHelper} from "./user";
+import { Timestamp } from "firebase-admin/firestore";
+import { Base } from "./base";
+import { BaseUser, UserHelper } from "./user";
 
 export interface SetlistBreak extends Base {
    sequenceNumber: number;

@@ -1,4 +1,4 @@
-import {db} from "../init";
+import { db } from "../init";
 
 export const updateCountOfLyricsInSongs = async (accountId, songId) =>{
   // Get the reference to Lyrics and Song
@@ -9,7 +9,7 @@ export const updateCountOfLyricsInSongs = async (accountId, songId) =>{
   const lyricCountSnap = await lyricsRef.count().get();
 
   // Update the lyric count on the master song
-  songsRef.update({countOfLyrics: lyricCountSnap.data().count});
+  songsRef.update({ countOfLyrics: lyricCountSnap.data().count });
 
   // Update all setlist songs with the lyric count
   // Find all the setlist songs
@@ -20,7 +20,7 @@ export const updateCountOfLyricsInSongs = async (accountId, songId) =>{
     .get();
 
   // Loop through and update the songs.
-  setlistSongSnap.forEach((doc) => {
-    doc.ref.update({countOfLyrics: lyricCountSnap.data().count});
+  setlistSongSnap.forEach(doc => {
+    doc.ref.update({ countOfLyrics: lyricCountSnap.data().count });
   });
 };

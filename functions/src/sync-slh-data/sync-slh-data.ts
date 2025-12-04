@@ -1,21 +1,21 @@
 import * as functions from "firebase-functions";
-import {db} from "../init";
-import {AccountImport} from "../model/account-import";
-import {SLHSong, SLHSongHelper, SongType} from "../model/SLHSong";
-import {Lyric, LyricHelper} from "../model/lyric";
-import {BaseUser} from "../model/user";
-import {AccountImportEvent} from "../model/account-import-event";
-import {Timestamp} from "firebase-admin/firestore";
-import {SLHSetlist, SLHSetlistHelper} from "../model/SLHSetlist";
-import {SetlistBreakHelper} from "../model/setlist-break";
-import {SetlistSong} from "../model/setlist-song";
-import {SLHTag, SLHTagHelper} from "../model/SLHTag";
-import {countSongs, countTags} from "../utils";
-import {Song} from "../model/song";
-import {countSetlists} from "../setlists-trigger/setlist-util";
-import {Artist, ArtistHelper} from "../model/artist";
-import {Genre, GenreHelper} from "../model/genre";
-import {SetlistSongRef} from "../model/setlist";
+import { db } from "../init";
+import { AccountImport } from "../model/account-import";
+import { SLHSong, SLHSongHelper, SongType } from "../model/SLHSong";
+import { Lyric, LyricHelper } from "../model/lyric";
+import { BaseUser } from "../model/user";
+import { AccountImportEvent } from "../model/account-import-event";
+import { Timestamp } from "firebase-admin/firestore";
+import { SLHSetlist, SLHSetlistHelper } from "../model/SLHSetlist";
+import { SetlistBreakHelper } from "../model/setlist-break";
+import { SetlistSong } from "../model/setlist-song";
+import { SLHTag, SLHTagHelper } from "../model/SLHTag";
+import { countSongs, countTags } from "../utils";
+import { Song } from "../model/song";
+import { countSetlists } from "../setlists-trigger/setlist-util";
+import { Artist, ArtistHelper } from "../model/artist";
+import { Genre, GenreHelper } from "../model/genre";
+import { SetlistSongRef } from "../model/setlist";
 
 interface SlhSongToFirebaseSongId {
   SongId: number;
@@ -40,7 +40,7 @@ export default async (accountImportSnap, context) => {
 
   const accountRef = db.doc(`/accounts/${accountId}`);
 
-  await accountRef.update({slhImportInProgress: true});
+  await accountRef.update({ slhImportInProgress: true });
 
   await startSync(accountImport.jwtToken, accountId, accountImportSnap.id, accountImport.createdByUser);
 
@@ -50,7 +50,7 @@ export default async (accountImportSnap, context) => {
 
   await countSetlists(accountId);
 
-  await accountRef.update({slhImportInProgress: false});
+  await accountRef.update({ slhImportInProgress: false });
 };
 
 // Starting to Sync
@@ -78,7 +78,7 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
 
     // TAG: Add the tag to the database
     const convertedTag = SLHTagHelper.slhTagToTag(slhTag, importingUser);
-    const alreadyAddedTag = mapSLHSongIdToTagName.find((tagName) => tagName.TagName.toLowerCase() === convertedTag.name.toLowerCase());
+    const alreadyAddedTag = mapSLHSongIdToTagName.find(tagName => tagName.TagName.toLowerCase() === convertedTag.name.toLowerCase());
     if (!alreadyAddedTag) {
       convertedTag.countOfSongs = slhTag.songs.length;
       await tagsRef.doc().set(convertedTag);
@@ -89,7 +89,7 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
     for (const songId of slhTag.songs) {
       // If there was a duplicate tag name add the tag name that was already added first.
       const tagName = alreadyAddedTag?.TagName? alreadyAddedTag?.TagName: slhTag.Name;
-      mapSLHSongIdToTagName.push({SLHSongId: songId, TagName: tagName});
+      mapSLHSongIdToTagName.push({ SLHSongId: songId, TagName: tagName });
     }
   }
 
@@ -98,7 +98,7 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
   const slhSongs: SLHSong[] = await getSongs(jwtToken);
 
   const accountRef = db.doc(`/accounts/${accountId}`);
-  await accountRef.update({slhImportInProgress: true});
+  await accountRef.update({ slhImportInProgress: true });
 
   await addAccountEvent("Setlists", "Downloading setlists.", accountImportEventRef);
   const setlistsRef = db.collection(`/accounts/${accountId}/setlists`);
@@ -120,11 +120,11 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
     const setlistSongsRef = db.collection(`/accounts/${accountId}/setlists/${addedSetlist.id}/songs`);
     for (let index = 0; index < slhSetlist.songs.length; index++) {
       const setlistSongId = slhSetlist.songs[index];
-      const setlistSLHSong = slhSongs.find((slhSong) => slhSong.SongId === setlistSongId);
+      const setlistSLHSong = slhSongs.find(slhSong => slhSong.SongId === setlistSongId);
       if (setlistSLHSong && setlistSLHSong.SongType === SongType.Song) {
         // Pre-create the SetlistSong doc ref so we can use its id in Song.setlists
         const setlistSongDocRef = setlistSongsRef.doc();
-        precreatedSongRefs.push({index, docRef: setlistSongDocRef});
+        precreatedSongRefs.push({ index, docRef: setlistSongDocRef });
 
         const setlistSongRefForSong: SetlistSongRef = {
           id: addedSetlist.id,
@@ -132,16 +132,16 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
           setlistSongId: setlistSongDocRef.id,
         };
 
-        let mapEntry = mapSLHSongIdToSetlists.find((m) => m.SLHSongId === setlistSLHSong.SongId);
+        let mapEntry = mapSLHSongIdToSetlists.find(m => m.SLHSongId === setlistSLHSong.SongId);
         if (!mapEntry) {
-          mapEntry = {SLHSongId: setlistSLHSong.SongId, setlists: []};
+          mapEntry = { SLHSongId: setlistSLHSong.SongId, setlists: [] };
           mapSLHSongIdToSetlists.push(mapEntry);
         }
         mapEntry.setlists.push(setlistSongRefForSong);
       }
     }
 
-    setlistContext.push({slhSetlist, setlistId: addedSetlist.id, precreatedSongRefs});
+    setlistContext.push({ slhSetlist, setlistId: addedSetlist.id, precreatedSongRefs });
   }
 
   await addAccountEvent("Songs", "Processing Songs, Lyrics, and Tags.", accountImportEventRef);
@@ -156,31 +156,31 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
 
     const convertedSong = SLHSongHelper.slhSongToSong(slhSong, importingUser);
 
-    const slhSongToTagNames = mapSLHSongIdToTagName.filter((slhSongIdToTagName) => slhSongIdToTagName.SLHSongId === slhSong.SongId);
+    const slhSongToTagNames = mapSLHSongIdToTagName.filter(slhSongIdToTagName => slhSongIdToTagName.SLHSongId === slhSong.SongId);
     if (slhSongToTagNames.length > 0) {
-      const tagNames = slhSongToTagNames.map((slhSongIdToTagName) => slhSongIdToTagName.TagName);
+      const tagNames = slhSongToTagNames.map(slhSongIdToTagName => slhSongIdToTagName.TagName);
       convertedSong.tags = tagNames;
       songDetails.push(`Added tags to Song ${convertedSong.name}: ${tagNames.join(",")}`);
     }
 
-    const slhSongSetlists = mapSLHSongIdToSetlists.find((m) => m.SLHSongId === slhSong.SongId);
+    const slhSongSetlists = mapSLHSongIdToSetlists.find(m => m.SLHSongId === slhSong.SongId);
     if (slhSongSetlists) {
       convertedSong.setlists = slhSongSetlists.setlists;
     }
 
     if (convertedSong.artist) {
-      const foundArtist = artists.find((artist) => artist.nameLowered === convertedSong.artist.toLocaleLowerCase());
+      const foundArtist = artists.find(artist => artist.nameLowered === convertedSong.artist.toLocaleLowerCase());
       if (!foundArtist) {
-        artists.push(ArtistHelper.getForAdd({name: convertedSong.artist, nameLowered: convertedSong.artist.toLowerCase(), countOfSongs: 1}, importingUser));
+        artists.push(ArtistHelper.getForAdd({ name: convertedSong.artist, nameLowered: convertedSong.artist.toLowerCase(), countOfSongs: 1 }, importingUser));
       } else {
         foundArtist.countOfSongs++;
       }
     }
 
     if (convertedSong.genre) {
-      const foundGenre = genres.find((genre) => genre.nameLowered === convertedSong.genre.toLocaleLowerCase());
+      const foundGenre = genres.find(genre => genre.nameLowered === convertedSong.genre.toLocaleLowerCase());
       if (!foundGenre) {
-        genres.push(GenreHelper.getForAdd({name: convertedSong.genre, nameLowered: convertedSong.genre.toLowerCase(), countOfSongs: 1}, importingUser));
+        genres.push(GenreHelper.getForAdd({ name: convertedSong.genre, nameLowered: convertedSong.genre.toLowerCase(), countOfSongs: 1 }, importingUser));
       } else {
         foundGenre.countOfSongs++;
       }
@@ -189,7 +189,7 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
     const docRef = await songsRef.doc();
     await docRef.set(convertedSong);
 
-    mapSongIdToFirebaseSongId.push({SongId: slhSong.SongId, FireBaseSongId: docRef.id});
+    mapSongIdToFirebaseSongId.push({ SongId: slhSong.SongId, FireBaseSongId: docRef.id });
 
     await addLyrics(slhSong, accountId, docRef.id, convertedSong, importingUser, songDetails);
   }
@@ -212,7 +212,7 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
     let sequenceNumber = 1;
     for (let index = 0; index < context.slhSetlist.songs.length; index++) {
       const setlistSongId = context.slhSetlist.songs[index];
-      const setlistSLHSong = slhSongs.find((slhSong) => slhSong.SongId === setlistSongId);
+      const setlistSLHSong = slhSongs.find(slhSong => slhSong.SongId === setlistSongId);
       if (setlistSLHSong) {
         const convertedSong = SLHSongHelper.slhSongToSong(setlistSLHSong, importingUser);
         if (setlistSLHSong.SongType === 1) {
@@ -229,7 +229,7 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
 
           setlistDetails.push(`Added setlist break with name ${setBreak.name}`);
         } else {
-          const songIdMap = mapSongIdToFirebaseSongId.find((slhSongMap) => slhSongMap.SongId === setlistSongId);
+          const songIdMap = mapSongIdToFirebaseSongId.find(slhSongMap => slhSongMap.SongId === setlistSongId);
           const setlistSong = {
             sequenceNumber: sequenceNumber,
             isBreak: false,
@@ -238,7 +238,7 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
             ...convertedSong,
           } as SetlistSong;
 
-          const precreated = context.precreatedSongRefs.find((p) => p.index === index);
+          const precreated = context.precreatedSongRefs.find(p => p.index === index);
           const setlistSongDocRef = precreated ? precreated.docRef : setlistSongsRef.doc();
           await setlistSongDocRef.set(setlistSong);
           setlistDetails.push(`Added setlist song with name ${setlistSong.name}`);
@@ -281,7 +281,7 @@ async function addLyrics(slhSong: SLHSong, accountId: string, songId: string, co
       const addedLyricRef = lyricsRef.doc();
       await addedLyricRef.set(LyricHelper.getForAdd(lyricDocument, importingUser));
 
-      convertedSong.defaultLyricForUser.push({uid: importingUser.uid, lyricId: addedLyricRef.id});
+      convertedSong.defaultLyricForUser.push({ uid: importingUser.uid, lyricId: addedLyricRef.id });
       await songUpdateRef.doc(songId).update(convertedSong);
 
       songDetails.push(`Adding ${lyricName} lyrics for song with name ${slhSong.Name}`);
@@ -309,7 +309,7 @@ async function addLyrics(slhSong: SLHSong, accountId: string, songId: string, co
       songDetails.push(`Adding ${lyricName} lyrics for song with name ${slhSong.Name}`);
 
       if (documentLyricCreated == false) {
-        convertedSong.defaultLyricForUser.push({uid: importingUser.uid, lyricId: addedLyricRef.id});
+        convertedSong.defaultLyricForUser.push({ uid: importingUser.uid, lyricId: addedLyricRef.id });
         await songUpdateRef.doc(songId).update(convertedSong);
       }
     }
@@ -324,7 +324,7 @@ async function addAccountEventWithDetails(eventType: string, message: string, de
   } as AccountImportEvent);
 
   const accountImportEventDetailsRef = db.collection(accountImportEvent.path + "/details");
-  accountImportEventDetailsRef.add({details: details});
+  accountImportEventDetailsRef.add({ details: details });
 }
 
 async function addAccountEvent(eventType: string, message: string, accountImportEventRef) {

@@ -138,7 +138,7 @@ export const Setlist_onDelete_RemoveSetlistSongs =
 
 // ////////////////////////////////
 // Sync functions
-export const AccoutImport_OnAdd_StartSLHSync =
+export const accoutImportOnAddStartSLHSync =
   functions
     .runWith({
       timeoutSeconds: 300,

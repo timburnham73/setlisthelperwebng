@@ -1,6 +1,6 @@
-import {Timestamp} from "@angular/fire/firestore";
-import {BaseUser} from "./user";
-import {Base} from "./base";
+import { Timestamp } from "@angular/fire/firestore";
+import { BaseUser } from "./user";
+import { Base } from "./base";
 
 export interface AccountImport extends Base {
     username: string;

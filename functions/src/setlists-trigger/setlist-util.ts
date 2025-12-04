@@ -1,6 +1,6 @@
-import {db} from "../init";
+import { db } from "../init";
 
-export const countSetlists = async (accountId) => {
+export const countSetlists = async accountId => {
   const setlistsRef = db.collection(`/accounts/${accountId}/setlists`);
 
   const accountRef = db.doc(`/accounts/${accountId}`);
@@ -9,5 +9,5 @@ export const countSetlists = async (accountId) => {
   const setlistCountSnap = await setlistsRef.count().get();
 
   // Update the lyric count on the master song
-  accountRef.update({countOfSetlists: setlistCountSnap.data().count});
+  accountRef.update({ countOfSetlists: setlistCountSnap.data().count });
 };

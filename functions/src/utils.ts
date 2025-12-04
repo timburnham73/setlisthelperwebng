@@ -1,7 +1,7 @@
-import {db} from "./init";
-import {SetlistSong} from "./model/setlist-song";
+import { db } from "./init";
+import { SetlistSong } from "./model/setlist-song";
 
-export const countSongs = async (accountId) => {
+export const countSongs = async accountId => {
   const songsRef = db.collection(`/accounts/${accountId}/songs`).where("deleted", "==", false);
 
   const accountRef = db.doc(`/accounts/${accountId}`);
@@ -10,10 +10,10 @@ export const countSongs = async (accountId) => {
   const songCountSnap = await songsRef.count().get();
 
   // Update the lyric count on the master song
-  accountRef.update({countOfSongs: songCountSnap.data().count});
+  accountRef.update({ countOfSongs: songCountSnap.data().count });
 };
 
-export const countTags = async (accountId) => {
+export const countTags = async accountId => {
   const tagssRef = db.collection(`/accounts/${accountId}/tags`);
 
   const accountRef = db.doc(`/accounts/${accountId}`);
@@ -22,7 +22,7 @@ export const countTags = async (accountId) => {
   const tagCountSnap = await tagssRef.count().get();
 
   // Update the lyric count on the master song
-  accountRef.update({countOfTags: tagCountSnap.data().count});
+  accountRef.update({ countOfTags: tagCountSnap.data().count });
 };
 
 // //////////////////////////////////////////////////////////////////////////////////////////
@@ -38,7 +38,7 @@ export async function updateSetlistStatistics(accountId: string, setlistId: stri
   const setlistSongCountSnap = await getSetlistSongsSnapshot(accountId, setlistId);
 
   // Loop through and update the songs.
-  setlistSongCountSnap.forEach((doc) => {
+  setlistSongCountSnap.forEach(doc => {
     const setlistSong = doc.data() as SetlistSong;
     // functions.logger.debug(`Setlist song sequence: ${setlistSong.sequenceNumber}`);
     if (setlistSong.isBreak === false) {
@@ -50,7 +50,7 @@ export async function updateSetlistStatistics(accountId: string, setlistId: stri
       breakCount++;
       // Update the song count before a break and the total time.
       const setlistBreakRef = db.doc(`/accounts/${accountId}/setlists/${setlistId}/songs/${doc.id}`);
-      setlistBreakRef.update({countOfSongs: songCountBeforeBreaks, totalTimeInSeconds: totalTimeInSecondsBeforeBreaks});
+      setlistBreakRef.update({ countOfSongs: songCountBeforeBreaks, totalTimeInSeconds: totalTimeInSecondsBeforeBreaks });
       // functions.logger.debug(`Updating setlist break with ${doc.id} countOfSongs:${songCountBeforeBreaks}, totalTimeInSeconds: ${totalTimeInSecondsBeforeBreaks}`);
       // Reset the counter
       songCountBeforeBreaks = 0;
@@ -65,7 +65,7 @@ export async function updateSetlistStatistics(accountId: string, setlistId: stri
   const res = await setlistDoc.get();
   const setlistToUpdate = res.data();
   if (setlistToUpdate) {
-    setlistDoc.update({countOfSongs: songCount, countOfBreaks: breakCount, totalTimeInSeconds: totalTimeInSeconds});
+    setlistDoc.update({ countOfSongs: songCount, countOfBreaks: breakCount, totalTimeInSeconds: totalTimeInSeconds });
   }
 }
 

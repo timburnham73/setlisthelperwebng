@@ -1,6 +1,6 @@
-import {Timestamp} from "firebase-admin/firestore";
-import {Song} from "./song";
-import {BaseUser, UserHelper} from "./user";
+import { Timestamp } from "firebase-admin/firestore";
+import { Song } from "./song";
+import { BaseUser, UserHelper } from "./user";
 
 export enum SongType {
   Song,

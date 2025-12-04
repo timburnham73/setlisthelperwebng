@@ -1,6 +1,6 @@
-import {Timestamp} from "firebase-admin/firestore";
-import {Base} from "./base";
-import {BaseUser} from "./user";
+import { Timestamp } from "firebase-admin/firestore";
+import { Base } from "./base";
+import { BaseUser } from "./user";
 
 export interface Artist extends Base {
   countOfSongs: number;

@@ -1,7 +1,7 @@
-import {Base} from "./base";
-import {BaseUser, UserHelper} from "./user";
-import {Timestamp} from "firebase-admin/firestore";
-import {SetlistSongRef} from "./setlist";
+import { Base } from "./base";
+import { BaseUser, UserHelper } from "./user";
+import { Timestamp } from "firebase-admin/firestore";
+import { SetlistSongRef } from "./setlist";
 
 export interface UserLyric {
   uid: string;
