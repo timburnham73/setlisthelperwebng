@@ -16,6 +16,7 @@ import { countSetlists } from "../setlists-trigger/setlist-util";
 import { Artist, ArtistHelper } from "../model/artist";
 import { Genre, GenreHelper } from "../model/genre";
 import { SetlistSongRef } from "../model/setlist";
+import { FileReference, FileType } from "../model/file-reference";
 
 interface SlhSongToFirebaseSongId {
   SongId: number;
@@ -255,16 +256,43 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
   await addAccountEvent("System", "Finished importing data.", accountImportEventRef);
 };
 
+async function createFileReference({
+  filePath,
+  fileType,
+  songId,
+  lyricId,
+  fileReferencesRef
+}: {
+  filePath: string;
+  fileType: FileType;
+  songId: string;
+  lyricId: string;
+  fileReferencesRef: FirebaseFirestore.CollectionReference<FirebaseFirestore.DocumentData>;
+}) {
+  const fileName = filePath.split("/").pop() || "";
+  const fileRef: FileReference = {
+    id: lyricId, // Using lyric ID as the file reference ID for 1:1 mapping
+    loweredFileName: fileName.toLowerCase(),
+    songId,
+    lyricId,
+    dbxFileVersion: "", // You might want to set this if you have version info
+    type: fileType
+  };
+  await fileReferencesRef.doc(lyricId).set(fileRef);
+  return fileRef;
+}
+
 async function addLyrics(slhSong: SLHSong, accountId: string, songId: string, convertedSong: Song, importingUser: BaseUser, songDetails: string[]) {
   if (slhSong.SongType === SongType.Song) {
     // Needed to updat the song with the default lyric
     const songUpdateRef = db.collection(`/accounts/${accountId}/songs`);
     const lyricsRef = db.collection(`/accounts/${accountId}/songs/${songId}/lyrics`);
-
+    const fileReferencesRef = db.collection(`/accounts/${accountId}/file_references`);
     let versionNumber = 1;
     let documentLyricCreated = false;
     if (slhSong.DocumentLocation) {
       const lyricName = `Version ${versionNumber++}`;
+      const audioLocation = slhSong.IosAudioLocation ? slhSong.IosAudioLocation : slhSong.SongLocation;
       const lyricDocument = {
         name: lyricName,
         key: convertedSong.key,
@@ -275,7 +303,7 @@ async function addLyrics(slhSong: SLHSong, accountId: string, songId: string, co
         youTubeUrl: convertedSong.youTubeUrl,
         songId: songId,
         lyrics: "",
-        audioLocation: slhSong.IosAudioLocation ? slhSong.IosAudioLocation : slhSong.SongLocation,
+        audioLocation: audioLocation,
       } as Partial<Lyric>;
 
       const addedLyricRef = lyricsRef.doc();
@@ -283,6 +311,26 @@ async function addLyrics(slhSong: SLHSong, accountId: string, songId: string, co
 
       convertedSong.defaultLyricForUser.push({ uid: importingUser.uid, lyricId: addedLyricRef.id });
       await songUpdateRef.doc(songId).update(convertedSong);
+
+      // Create file reference for the document
+      await createFileReference({
+        filePath: slhSong.DocumentLocation,
+        fileType: "document",
+        songId,
+        lyricId: addedLyricRef.id,
+        fileReferencesRef
+      });
+
+      // Create file reference for the audio
+      if (audioLocation && audioLocation.length > 0) {
+        await createFileReference({
+          filePath: audioLocation,
+          fileType: "audio",
+          songId,
+          lyricId: addedLyricRef.id,
+          fileReferencesRef
+        });
+      }
 
       songDetails.push(`Adding ${lyricName} lyrics for song with name ${slhSong.Name}`);
       documentLyricCreated = true;
