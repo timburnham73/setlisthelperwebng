@@ -1,5 +1,5 @@
 import { DatePipe, NgFor, NgIf } from '@angular/common';
-import { Component, Input, LOCALE_ID } from '@angular/core';
+import { Component, Input, LOCALE_ID, OnDestroy } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -36,7 +36,7 @@ import { Account } from 'src/app/core/model/account';
   templateUrl: './lyrics-print.component.html',
   styleUrl: './lyrics-print.component.scss'
 })
-export class LyricsPrintComponent {
+export class LyricsPrintComponent implements OnDestroy {
   currentUser: User;
   accountId: string;
   lyricsId: string;

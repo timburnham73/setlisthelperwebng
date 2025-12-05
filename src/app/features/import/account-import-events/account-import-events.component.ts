@@ -20,7 +20,7 @@ import { AccountImportEvent } from 'src/app/core/model/account-import-event';
 import { AccountImportService } from 'src/app/core/services/account-import.service';
 import { AuthenticationService } from 'src/app/core/services/auth.service';
 import { AccountState } from 'src/app/core/store/account.state';
-import { LOCALE_ID, Inject } from '@angular/core';
+import { LOCALE_ID, Inject, OnDestroy } from '@angular/core';
 
 @Component({
   selector: 'app-account-import-events',
@@ -29,7 +29,7 @@ import { LOCALE_ID, Inject } from '@angular/core';
   templateUrl: './account-import-events.component.html',
   styleUrl: './account-import-events.component.scss'
 })
-export class AccountImportEventsComponent implements OnInit {
+export class AccountImportEventsComponent implements OnInit, OnDestroy {
   currentUser: BaseUser;
   displayedColumns: string[] = ['eventType', 'message'];
   dataSource: AccountImportEvent[];

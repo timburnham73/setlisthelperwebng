@@ -1,5 +1,5 @@
 import { DatePipe, CommonModule } from '@angular/common';
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -61,7 +61,7 @@ import { Setlist } from 'src/app/core/model/setlist';
   templateUrl: './tag-songs.component.html',
   styleUrl: './tag-songs.component.scss'
 })
-export class TagSongsComponent {
+export class TagSongsComponent implements OnInit {
   selectedAccount$!: Observable<Account>;
   currentUser: BaseUser;
   displayedColumns: string[] = [ 'name', 'artist', 'genre', 'key', 'tempo', 'timeSignature', 'songLength', 'lyrics', 'setlists', 'remove'];

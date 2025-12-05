@@ -46,7 +46,7 @@ import { FlexLayoutModule, FlexModule } from "ngx-flexible-layout";
         FlexModule
     ],
 })
-export class LayoutNoSidebarChildViewComponent implements OnDestroy
+export class LayoutNoSidebarChildViewComponent implements OnDestroy, AfterViewInit
 {
   private _mobileQueryListener: () => void;
   mobileQuery: MediaQueryList;

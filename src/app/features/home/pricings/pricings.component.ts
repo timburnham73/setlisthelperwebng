@@ -19,11 +19,8 @@ import { FlexLayoutModule } from 'ngx-flexible-layout';
   templateUrl: './pricings.component.html',
   styleUrls: ['./pricings.component.scss']
 })
-export class PricingsComponent implements OnInit {
+export class PricingsComponent {
   isAnnualSelected: boolean = false;
   constructor() { }
-
-  ngOnInit() {
-  }
 
 }

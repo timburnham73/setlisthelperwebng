@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog as MatDialog } from '@angular/material/dialog';
 import { Title } from '@angular/platform-browser';
@@ -28,7 +28,7 @@ import { FlexLayoutModule } from 'ngx-flexible-layout';
     standalone: true,
     imports: [MatCardModule, MatToolbarModule, MatButtonModule, MatIconModule, FormsModule, ReactiveFormsModule, MatProgressSpinnerModule, NgIf, FlexLayoutModule]
 })
-export class LyricsEditComponent {
+export class LyricsEditComponent implements OnDestroy {
   @ViewChild('lyrics') lyricsInput: ElementRef;
   currentUser: BaseUser;
   accountId?: string;

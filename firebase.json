@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "dist/band-central/browser",
+    "public": "dist",
     "ignore": [
       "firebase.json",
       "**/.*",

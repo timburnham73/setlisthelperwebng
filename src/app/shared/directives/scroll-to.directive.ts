@@ -4,10 +4,8 @@ import { Directive, ElementRef, Attribute, OnInit, HostListener } from '@angular
   selector: '[scrollTo]',
   standalone: true, 
 })
-export class ScrollToDirective implements OnInit {
+export class ScrollToDirective {
   constructor( @Attribute('scrollTo') public elmID: string, private el: ElementRef) { }
-
-  ngOnInit() {}
 
   currentYPosition() {
     // Firefox, Chrome, Opera, Safari

@@ -155,7 +155,7 @@
               mat-row
               title="Double click the row to view the Setlist Songs."
               (dblclick)="onViewSetlistSongs($event, row)"
-              [ngClass]="{'selected': selectedSetlist?.id == row.id}"
+              [ngClass]="{'selected': selectedSetlist?.id === row.id}"
               *matRowDef="let row; columns: displayedColumns"
               class="setlist-row"
               (click)="selectRow(row)"
