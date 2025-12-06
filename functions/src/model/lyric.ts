@@ -13,7 +13,9 @@ export interface Lyric extends Base {
   lyrics: string;
   transpose: number;
   documentLocation: string;
+  dbxDocumentRev: string;
   audioLocation: string;
+  dbxAudioRev: string;
   defaultLyricForUser: string[];
   formatScope?: any;
   formatSettings?: any;
@@ -53,6 +55,8 @@ export class LyricHelper {
       documentLocation: data.documentLocation ?? "",
       audioLocation: data.audioLocation ?? "",
       transpose: data.transpose ?? 0,
+      dbxDocumentRev: data.dbxDocumentRev ?? "",
+      dbxAudioRev: data.dbxAudioRev ?? "",
     };
   }
 }

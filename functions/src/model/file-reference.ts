@@ -1,7 +1,6 @@
-export type FileType = "document" | "audio";
+export type FileType = "DOCUMENT" | "AUDIO";
 
 export interface FileReference {
-    id: string;
     loweredFileName: string;
     songId: string;
     lyricId: string;

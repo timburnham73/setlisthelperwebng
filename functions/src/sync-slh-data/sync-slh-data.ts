@@ -73,7 +73,7 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
   const slhTags: SLHTag[] = await getTags(jwtToken);
   const mapSLHSongIdToTagName: SlhSongIdToTagName[] = [];
   for (const slhTag of slhTags) {
-    if (!slhTag.Name) {
+    if (!slhTag.Name || slhTag.Deleted === true) {
       continue;// Do not add a tag with no name.
     }
 
@@ -110,8 +110,11 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
 
   await addAccountEvent("Setlists", "Processing setlists.", accountImportEventRef);
   for (const slhSetlist of slhSetlists) {
+    if (slhSetlist.Deleted === true) {
+      continue;
+    }
     const convertedSetlist = SLHSetlistHelper.slhSetlistToSetlist(slhSetlist, importingUser);
-
+    
     const addedSetlist = setlistsRef.doc();
     await addedSetlist.set(convertedSetlist);
 
@@ -152,6 +155,11 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
   for (const slhSong of slhSongs) {
     if (slhSong.SongType === 1) {
       songDetails.push(`Not Adding song with name ${slhSong.Name}`);
+      continue;
+    }
+
+    if (slhSong.Deleted === true) {
+      songDetails.push(`Song is deleted. Not Adding song with name ${slhSong.Name}`);
       continue;
     }
 
@@ -261,22 +269,23 @@ async function createFileReference({
   fileType,
   songId,
   lyricId,
-  fileReferencesRef
+  accountId
 }: {
   filePath: string;
   fileType: FileType;
   songId: string;
   lyricId: string;
-  fileReferencesRef: FirebaseFirestore.CollectionReference<FirebaseFirestore.DocumentData>;
+  accountId: string;
 }) {
+  const fileReferencesRef = db.collection(`/accounts/${accountId}/file_references`);
   const fileName = filePath.split("/").pop() || "";
+  const isDropboxPath = filePath.startsWith("[DROPBOX]");
   const fileRef: FileReference = {
-    id: lyricId, // Using lyric ID as the file reference ID for 1:1 mapping
     loweredFileName: fileName.toLowerCase(),
     songId,
     lyricId,
-    dbxFileVersion: "", // You might want to set this if you have version info
-    type: fileType
+    dbxFileVersion: isDropboxPath ? Math.random().toString(36).substring(2, 15) : "",
+    type: fileType,
   };
   await fileReferencesRef.doc(lyricId).set(fileRef);
   return fileRef;
@@ -287,12 +296,12 @@ async function addLyrics(slhSong: SLHSong, accountId: string, songId: string, co
     // Needed to updat the song with the default lyric
     const songUpdateRef = db.collection(`/accounts/${accountId}/songs`);
     const lyricsRef = db.collection(`/accounts/${accountId}/songs/${songId}/lyrics`);
-    const fileReferencesRef = db.collection(`/accounts/${accountId}/file_references`);
+    
     let versionNumber = 1;
     let documentLyricCreated = false;
+    const audioLocation = slhSong.IosAudioLocation ? slhSong.IosAudioLocation : slhSong.SongLocation;
     if (slhSong.DocumentLocation) {
       const lyricName = `Version ${versionNumber++}`;
-      const audioLocation = slhSong.IosAudioLocation ? slhSong.IosAudioLocation : slhSong.SongLocation;
       const lyricDocument = {
         name: lyricName,
         key: convertedSong.key,
@@ -304,6 +313,10 @@ async function addLyrics(slhSong: SLHSong, accountId: string, songId: string, co
         songId: songId,
         lyrics: "",
         audioLocation: audioLocation,
+        dbxAudioRev: audioLocation.startsWith("[DROPBOX]") ? Math.random().toString(36).substring(2, 15) : "",
+        documentLocation: slhSong.DocumentLocation,
+        dbxDocumentRev: slhSong.DocumentLocation.startsWith("[DROPBOX]") ? Math.random().toString(36).substring(2, 15) : "",
+        
       } as Partial<Lyric>;
 
       const addedLyricRef = lyricsRef.doc();
@@ -315,22 +328,11 @@ async function addLyrics(slhSong: SLHSong, accountId: string, songId: string, co
       // Create file reference for the document
       await createFileReference({
         filePath: slhSong.DocumentLocation,
-        fileType: "document",
+        fileType: "DOCUMENT",
         songId,
         lyricId: addedLyricRef.id,
-        fileReferencesRef
+        accountId
       });
-
-      // Create file reference for the audio
-      if (audioLocation && audioLocation.length > 0) {
-        await createFileReference({
-          filePath: audioLocation,
-          fileType: "audio",
-          songId,
-          lyricId: addedLyricRef.id,
-          fileReferencesRef
-        });
-      }
 
       songDetails.push(`Adding ${lyricName} lyrics for song with name ${slhSong.Name}`);
       documentLyricCreated = true;
@@ -349,13 +351,24 @@ async function addLyrics(slhSong: SLHSong, accountId: string, songId: string, co
         songId: songId,
         lyrics: slhSong.Lyrics,
         transpose: slhSong.Transpose,
-        audioLocation: slhSong.IosAudioLocation ? slhSong.IosAudioLocation : slhSong.SongLocation,
+        audioLocation: audioLocation,
+        dbxAudioRev: audioLocation.startsWith("[DROPBOX]") ? Math.random().toString(36).substring(2, 15) : "",
       } as Partial<Lyric>;
 
       const addedLyricRef = lyricsRef.doc();
       await addedLyricRef.set(LyricHelper.getForAdd(lyric, importingUser));
       songDetails.push(`Adding ${lyricName} lyrics for song with name ${slhSong.Name}`);
 
+      // Create file reference for the audio
+      if (audioLocation && audioLocation.length > 0) {
+        await createFileReference({
+          filePath: audioLocation,
+          fileType: "AUDIO",
+          songId,
+          lyricId: addedLyricRef.id,
+          accountId
+        });
+      }
       if (documentLyricCreated == false) {
         convertedSong.defaultLyricForUser.push({ uid: importingUser.uid, lyricId: addedLyricRef.id });
         await songUpdateRef.doc(songId).update(convertedSong);
