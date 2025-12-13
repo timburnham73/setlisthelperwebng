@@ -19,7 +19,7 @@ export class UserHelper {
     const baseUser = { 
       uid: data.uid ?? "", 
       displayName: data.displayName ?? "", 
-      email: data.email ?? "",
+      email: data.email.toLowerCase() ?? "",
       photoUrl: data.photoUrl ?? undefined,
       formatSettings: data.formatSettings ?? undefined,
       lastLoginDate: data.lastLoginDate ?? undefined

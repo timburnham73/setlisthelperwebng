@@ -21,14 +21,14 @@ const routes: Routes = [
     component: LayoutNoSidebarChildViewComponent,
     children: [
       { path: '', component: TagSongsComponent, canActivate: [AngularFireAuthGuard], },
+      {
+        path: ":songid/lyrics",
+        loadChildren: () =>
+          import("../lyrics/lyrics.module").then((m) => m.LyricsModule),
+        canActivate: [AngularFireAuthGuard],
+        data: { authGuardPipe: redirectUnauthorizedTo },
+      },
     ]
-  },
-  {
-    path: ":songid/lyrics",
-    loadChildren: () =>
-      import("../lyrics/lyrics.module").then((m) => m.LyricsModule),
-    canActivate: [AngularFireAuthGuard],
-    data: { authGuardPipe: redirectUnauthorizedTo },
   },
 ];
 

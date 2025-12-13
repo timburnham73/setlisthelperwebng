@@ -70,7 +70,7 @@ export class TagSongsComponent implements OnInit {
   subscription: Subscription;
   filteredSongs: Song[];
   allSongs: Song[];
-  selectedTag: Tag;
+  selectedTag?: Tag;
   songsLoading: Boolean = false;
   @ViewChild(MatSort, { static: true }) sort: MatSort = new MatSort;
   accountId?: string;
@@ -158,10 +158,11 @@ export class TagSongsComponent implements OnInit {
       });
 
       dialogRef.afterClosed().subscribe((songs) => {
-        
-        this.tagService.addTagsToSongs(songs, this.accountId!, [this.selectedTag.name], this.currentUser).subscribe((songs) => {
-          
-        });
+        if(this.selectedTag){
+          this.tagService.addTagsToSongs(songs, this.accountId!, [this.selectedTag.name], this.currentUser).subscribe((songs) => {
+            
+          });
+        }
         
       }); 
     }
@@ -201,8 +202,8 @@ export class TagSongsComponent implements OnInit {
 
   onRemoveTagFromSong($event, song){
     $event.preventDefault();
-    this.tagService.removeTagsToSongs([song], this.accountId!, [this.selectedTag.name], this.currentUser).subscribe((songs) => {
-      
-    });
+    if(this.selectedTag){
+      this.tagService.removeTagsToSongs([song], this.accountId!, [this.selectedTag.name], this.currentUser).subscribe((songs) => {});
+    }
   }
 }
