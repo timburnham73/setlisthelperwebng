@@ -15,7 +15,7 @@ import { FlexModule, FlexLayoutModule } from 'ngx-flexible-layout';
 import { SafeHtml } from 'src/app/shared/pipes/safe-html.pipe';
 import { Song } from 'src/app/core/model/song';
 import { ActivatedRoute, Router } from '@angular/router';
-import { switchMap, take, filter, tap } from 'rxjs';
+import { switchMap, combineLatest, filter, tap } from 'rxjs';
 import { AccountState } from 'src/app/core/store/account.state';
 import { SongService } from 'src/app/core/services/song.service';
 import { Store } from '@ngxs/store';
@@ -30,6 +30,7 @@ import { LyricFormat, LyricFormatWithScope, fonts, lyricParts } from 'src/app/co
 import { SetlistSongService } from 'src/app/core/services/setlist-songs.service';
 import { SetlistSong } from 'src/app/core/model/setlist-song';
 import { SwipeDirective } from 'src/app/shared/directives/swipe/swipe.directive';
+import { take, finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-lyric-view-wrapper',
@@ -98,7 +99,7 @@ export class LyricViewWrapperComponent {
         AccountState.selectedAccount
       );
       
-      this.loading = false;
+      this.loading = true;
 
       if(this.selectedAccount && this.selectedAccount.id){
         this.setlistId = this.activeRoute.snapshot.paramMap.get("setlistid") || undefined;
@@ -137,45 +138,56 @@ export class LyricViewWrapperComponent {
         });
   }
 
-  private initLyrics() {
-    this.loading = false;
-    const songId = this.activeRoute.snapshot.paramMap.get("songid");
-    this.lyricId = this.activeRoute.snapshot.paramMap.get("lyricsid") || undefined;
-    
-    if (this.accountId && songId) {
-      this.accountId = this.accountId;
-      
-      this.songService
-        .getSong(this.accountId, songId)
-        .pipe(take(1))
-        .subscribe((song) => {
+private initLyrics() {
+  this.loading = true;
+  const songId = this.activeRoute.snapshot.paramMap.get("songid");
+  this.lyricId = this.activeRoute.snapshot.paramMap.get("lyricsid") || undefined;
+  
+  if (this.accountId && songId) {
+    const song$ = this.songService.getSong(this.accountId, songId).pipe(take(1));
+    const lyrics$ = this.lyricsService.getSongLyrics(this.accountId, songId).pipe(take(1));
+    this.selectedLyric = undefined;
+    combineLatest([song$, lyrics$])
+      .pipe(
+        finalize(() => this.loading = false)
+      )
+      .subscribe({
+        next: ([song, lyrics]) => {
+          // Process song
           this.song = song;
-          this.defaultLyricId = this.getDefaultLyricId(); 
+          this.defaultLyricId = this.getDefaultLyricId();
           this.currentSongIndex = this.getCurrentSongIndex();
-        });
-    
-      this.lyricsService
-        .getSongLyrics(this.accountId, songId)
-        .pipe(take(1))
-        .subscribe((lyrics) => {
+
+          // Process lyrics
           this.lyrics = lyrics;
           this.isDefaultLyric = this.isDefaultLyricSelected();
-
           this.selectedLyric = this.getSelectedLyric(lyrics);
 
-          if(this.selectedLyric && this.selectedLyric.lyrics){
-            //Create a function to select 
-            this.lyricFormatWithScope = this.lyricsService.getLyricFormat(this.selectedAccount, this.currentUser, this.selectedLyric!.formatSettings);
+          if (this.selectedLyric?.lyrics) {
+            this.lyricFormatWithScope = this.lyricsService.getLyricFormat(
+              this.selectedAccount, 
+              this.currentUser, 
+              this.selectedLyric.formatSettings
+            );
             
-            const parser =  new ChordProParser(this.selectedLyric?.lyrics!, this.lyricFormatWithScope.lyricFormat, this.selectedLyric?.transpose!);
+            const parser = new ChordProParser(
+              this.selectedLyric.lyrics, 
+              this.lyricFormatWithScope.lyricFormat, 
+              this.selectedLyric.transpose
+            );
             this.parsedLyric = parser.parseChordPro();
           }
           
-          this.loading = false;
           this.lyricVersionValue = this.selectedLyric?.id || "add";
-        });
-    }
+        },
+        error: (error) => {
+          console.error('Error loading song or lyrics:', error);
+        }
+      });
+  } else {
+    this.loading = false;
   }
+}
 
   onPageLeft(){
     this.currentSongIndex = this.getCurrentSongIndex();

@@ -81,7 +81,7 @@ export class LyricsComponent {
   defaultLyricId: string | undefined;
 
   @Input()
-  selectedLyric?: Lyric;
+  selectedLyric: Lyric | undefined = undefined;
 
   @Input()
   parsedLyric?: string;
