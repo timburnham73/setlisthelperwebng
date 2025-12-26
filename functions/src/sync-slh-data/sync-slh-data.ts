@@ -158,11 +158,6 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
       continue;
     }
 
-    if (slhSong.Deleted === true) {
-      songDetails.push(`Song is deleted. Not Adding song with name ${slhSong.Name}`);
-      continue;
-    }
-
     const convertedSong = SLHSongHelper.slhSongToSong(slhSong, importingUser);
 
     const slhSongToTagNames = mapSLHSongIdToTagName.filter(slhSongIdToTagName => slhSongIdToTagName.SLHSongId === slhSong.SongId);
@@ -175,6 +170,12 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
     const slhSongSetlists = mapSLHSongIdToSetlists.find(m => m.SLHSongId === slhSong.SongId);
     if (slhSongSetlists) {
       convertedSong.setlists = slhSongSetlists.setlists;
+    }
+
+    //If the song is deleted but has setlists then we should still download it.
+    if (slhSong.Deleted === true && !convertedSong.setlists.length) {
+      songDetails.push(`Song is deleted. Not Adding song with name ${slhSong.Name}`);
+      continue;
     }
 
     if (convertedSong.artist) {

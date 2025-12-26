@@ -140,6 +140,8 @@ export class ChordProParser {
           this.inTab = false;
           break;
         }
+        case ChordproEnum.noprintcomment:
+          break;
         default:
           if (this.inTab === false) {
             if (_.size(lyricLine) === 0) {
@@ -333,7 +335,11 @@ export class ChordProParser {
           //After the chord is split there may be spaces after it. Add ; for every space.
           if (chordSplit.length === 2) {
             for (let i = 0; i < chordSplit[1].length; i++) {
-              chordSpacesAfter += '&nbsp;';
+              if (chordSplit[1].charAt(i) === ' ') {
+                chordSpacesAfter += '&nbsp;';
+              } else {
+                break;
+              }
             }
           }
         }
@@ -355,10 +361,18 @@ export class ChordProParser {
         chordRow += '<td>';
         if (chord.length !== 0) {
           // Chord
-          const chord1 = Chord.parse(chord);
+          const rawChord = chord;
+          const chordForParse = (rawChord ?? '').replace(/\|/g, '').trim();
+          const chord1 = chordForParse ? Chord.parse(chordForParse) : undefined;
           const chord2 = chord1?.transpose(this.transpose);
-          const chordStyle = this.lyricPartStyles.find(style => style.name === "chord")?.style ?? '';
-          chordRow += `<span style='display: inline;${chordStyle}' class='chord'>` + chord2?.toString() + `</span>${chordSpacesAfter}`;
+          const chordText = chord2?.toString() ?? '';
+          if (chordText) {
+            const chordStyle = this.lyricPartStyles.find(style => style.name === "chord")?.style ?? '';
+            chordRow += `<span style='display: inline;${chordStyle}' class='chord'>${chordText}</span>${chordSpacesAfter}`;
+          } else {
+            // no valid chord -> render nothing (prevents "undefined")
+            chordRow += `${chordSpacesAfter}`;
+          }
 
         }
         /*if(chordSplit.length == 2){

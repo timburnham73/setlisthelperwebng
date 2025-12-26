@@ -118,7 +118,7 @@ export class SetlistSongsListComponent {
     private router: Router,
     public dialog: MatDialog
   ) {
-    titleService.setTitle('Setlist Songs');
+    titleService.setTitle('Band Central');
     
     this.authService.user$.subscribe((user) => {
       if (user && user.uid) {

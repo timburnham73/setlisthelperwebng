@@ -46,7 +46,7 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
 @Component({
     selector: 'app-song-list',
     templateUrl: './song-list.component.html',
-    styleUrls: ['./song-list.component.css'],
+    styleUrls: ['./song-list.component.scss'],
     standalone: true,
     imports: [
       MatCardModule, 
@@ -71,7 +71,7 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
 export class SongListComponent implements OnInit {
   selectedAccount$: Observable<Account>;
   currentUser: any;
-  displayedColumns: string[] = [ 'name', 'artist', 'genre', 'key', 'tempo', 'timeSignature', 'songLength', 'lyrics', 'setlists', 'remove'];
+  displayedColumns: string[] = ['name', 'artist', 'genre', 'key', 'tempo', 'timeSignature', 'songLength', 'lyrics', 'setlists', 'remove'];
   songs$: Observable<Song[]>;
   loading$: Observable<boolean>;
   private searchTerm$ = new BehaviorSubject<string>('');
