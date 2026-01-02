@@ -5,7 +5,7 @@ import { SLHSong, SLHSongHelper, SongType } from "../model/SLHSong";
 import { Lyric, LyricHelper } from "../model/lyric";
 import { BaseUser } from "../model/user";
 import { AccountImportEvent } from "../model/account-import-event";
-import { Timestamp } from "firebase-admin/firestore";
+import { Timestamp, type DocumentData, type DocumentReference, type WriteBatch } from "firebase-admin/firestore";
 import { SLHSetlist, SLHSetlistHelper } from "../model/SLHSetlist";
 import { SetlistBreakHelper } from "../model/setlist-break";
 import { SetlistSong } from "../model/setlist-song";
@@ -33,29 +33,86 @@ interface SlhSongIdToSetlists {
   setlists: SetlistSongRef[];
 }
 
+class FirestoreBatcher {
+  private batch: WriteBatch = db.batch();
+  private opCount = 0;
+
+  constructor(private readonly maxOps = 450) {}
+
+  set(ref: DocumentReference, data: DocumentData) {
+    this.batch.set(ref, data);
+    this.opCount++;
+  }
+
+  update(ref: DocumentReference, data: FirebaseFirestore.UpdateData<FirebaseFirestore.DocumentData>) {
+    this.batch.update(ref, data);
+    this.opCount++;
+  }
+
+  private get isFull() {
+    return this.opCount >= this.maxOps;
+  }
+
+  async commitIfFull() {
+    if (!this.isFull) {
+      return 0;
+    }
+    const ops = this.opCount;
+    await this.batch.commit();
+    this.batch = db.batch();
+    this.opCount = 0;
+    return ops;
+  }
+
+  async flush() {
+    if (this.opCount === 0) {
+      return 0;
+    }
+    const ops = this.opCount;
+    await this.batch.commit();
+    this.batch = db.batch();
+    this.opCount = 0;
+    return ops;
+  }
+}
+
 // Entry point
 export default async (accountImportSnap, context) => {
   const accountImport = accountImportSnap.data() as AccountImport;
   const accountId = context.params.accountId;
+  const t0 = Date.now();
+
+  const importId = accountImportSnap.id;
+  const executionId = context.eventId;
+  const base = { accountId, importId, executionId };
+
+  const mark = (label: string, meta: Record<string, unknown> = {}) =>
+    functions.logger.info(label, { elapsedMs: Date.now() - t0, ...base, ...meta });
   functions.logger.debug(`Account jwtToken ${accountImport.jwtToken}`);
 
   const accountRef = db.doc(`/accounts/${accountId}`);
 
   await accountRef.update({ slhImportInProgress: true });
 
-  await startSync(accountImport.jwtToken, accountId, accountImportSnap.id, accountImport.createdByUser);
+  mark("Sync: start");
+  await startSync(accountImport.jwtToken, accountId, importId, accountImport.createdByUser, mark);
+  mark("Sync: startSync completed");
 
+  mark("Counting songs");
   await countSongs(accountId);
 
+  mark("Counting tags");
   await countTags(accountId);
 
+  mark("Counting setlists");
   await countSetlists(accountId);
 
   await accountRef.update({ slhImportInProgress: false });
+  mark("Sync: finished");
 };
 
 // Starting to Sync
-export const startSync = async (jwtToken: string, accountId: string, accountImportId: string, importingUser: BaseUser) => {
+export const startSync = async (jwtToken: string, accountId: string, accountImportId: string, importingUser: BaseUser, mark?: (label: string, meta?: Record<string, unknown>) => void) => {
   const songsRef = db.collection(`/accounts/${accountId}/songs`);
   const tagsRef = db.collection(`/accounts/${accountId}/tags`);
   const artistsRef = db.collection(`/accounts/${accountId}/artists`);
@@ -98,6 +155,11 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
   await addAccountEvent("Songs", "Downloading songs and lyrics.", accountImportEventRef);
   const slhSongs: SLHSong[] = await getSongs(jwtToken);
 
+  const slhSongById = new Map<number, SLHSong>();
+  for (const s of slhSongs) {
+    slhSongById.set(s.SongId, s);
+  }
+
   const accountRef = db.doc(`/accounts/${accountId}`);
   await accountRef.update({ slhImportInProgress: true });
 
@@ -109,13 +171,23 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
   const setlistContext: { slhSetlist: SLHSetlist; setlistId: string; precreatedSongRefs: { index: number; docRef: any }[] }[] = [];
 
   await addAccountEvent("Setlists", "Processing setlists.", accountImportEventRef);
-  for (const slhSetlist of slhSetlists) {
+  mark?.("Setlists: processing setlists", { totalSetlists: slhSetlists.length });
+  for (let setlistIndex = 0; setlistIndex < slhSetlists.length; setlistIndex++) {
+    const slhSetlist = slhSetlists[setlistIndex];
     if (slhSetlist.Deleted === true) {
       continue;
     }
+    
     const convertedSetlist = SLHSetlistHelper.slhSetlistToSetlist(slhSetlist, importingUser);
     
     const addedSetlist = setlistsRef.doc();
+    mark?.("Setlists: creating setlist", {
+      setlistIndex: setlistIndex + 1,
+      totalSetlists: slhSetlists.length,
+      setlistId: addedSetlist.id,
+      setlistName: convertedSetlist.name,
+      totalItemsInSetlist: slhSetlist.songs.length,
+    });
     await addedSetlist.set(convertedSetlist);
 
     setlistDetails.push(`Added setlist with name ${convertedSetlist.name}`);
@@ -124,7 +196,7 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
     const setlistSongsRef = db.collection(`/accounts/${accountId}/setlists/${addedSetlist.id}/songs`);
     for (let index = 0; index < slhSetlist.songs.length; index++) {
       const setlistSongId = slhSetlist.songs[index];
-      const setlistSLHSong = slhSongs.find(slhSong => slhSong.SongId === setlistSongId);
+      const setlistSLHSong = slhSongById.get(setlistSongId);
       if (setlistSLHSong && setlistSLHSong.SongType === SongType.Song) {
         // Pre-create the SetlistSong doc ref so we can use its id in Song.setlists
         const setlistSongDocRef = setlistSongsRef.doc();
@@ -146,10 +218,15 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
     }
 
     setlistContext.push({ slhSetlist, setlistId: addedSetlist.id, precreatedSongRefs });
+
+    if ((setlistIndex + 1) % 10 === 0) {
+      mark?.("Setlists: processed setlist metadata", { processed: setlistIndex + 1, totalSetlists: slhSetlists.length });
+    }
   }
 
   await addAccountEvent("Songs", "Processing Songs, Lyrics, and Tags.", accountImportEventRef);
   const mapSongIdToFirebaseSongId: SlhSongToFirebaseSongId[] = [];
+  const songIdToFirebaseSongId = new Map<number, string>();
   const artists: Artist[] = [];
   const genres: Genre[] = [];
   for (const slhSong of slhSongs) {
@@ -200,29 +277,49 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
     await docRef.set(convertedSong);
 
     mapSongIdToFirebaseSongId.push({ SongId: slhSong.SongId, FireBaseSongId: docRef.id });
+    songIdToFirebaseSongId.set(slhSong.SongId, docRef.id);
 
     await addLyrics(slhSong, accountId, docRef.id, convertedSong, importingUser, songDetails);
   }
 
   await addAccountEventWithDetails("Song", "Finished processing songs.", [...tagDetails, ...songDetails], accountImportEventRef);
 
+  const batcher = new FirestoreBatcher(450);
+
   for (const artist of artists) {
-    const docRef = await artistsRef.doc();
-    await docRef.set(artist);
+    const docRef = artistsRef.doc();
+    batcher.set(docRef, artist);
+    const committedOps = await batcher.commitIfFull();
+    if (committedOps) {
+      mark?.("Firestore: committed batch", { ops: committedOps, phase: "artists" });
+    }
   }
 
   for (const genre of genres) {
-    const docRef = await genresRef.doc();
-    await docRef.set(genre);
+    const docRef = genresRef.doc();
+    batcher.set(docRef, genre);
+    const committedOps = await batcher.commitIfFull();
+    if (committedOps) {
+      mark?.("Firestore: committed batch", { ops: committedOps, phase: "genres" });
+    }
   }
 
-  for (const context of setlistContext) {
+  mark?.("Setlists: writing setlist songs", { totalSetlists: setlistContext.length });
+  for (let ctxIndex = 0; ctxIndex < setlistContext.length; ctxIndex++) {
+    const context = setlistContext[ctxIndex];
     const setlistSongsRef = db.collection(`/accounts/${accountId}/setlists/${context.setlistId}/songs`);
+    mark?.("Setlists: start setlist songs", {
+      setlistIndex: ctxIndex + 1,
+      totalSetlists: setlistContext.length,
+      setlistId: context.setlistId,
+      totalItemsInSetlist: context.slhSetlist.songs.length,
+    });
 
     let sequenceNumber = 1;
+    let setlistItemsProcessed = 0;
     for (let index = 0; index < context.slhSetlist.songs.length; index++) {
       const setlistSongId = context.slhSetlist.songs[index];
-      const setlistSLHSong = slhSongs.find(slhSong => slhSong.SongId === setlistSongId);
+      const setlistSLHSong = slhSongById.get(setlistSongId);
       if (setlistSLHSong) {
         const convertedSong = SLHSongHelper.slhSongToSong(setlistSLHSong, importingUser);
         if (setlistSLHSong.SongType === 1) {
@@ -235,27 +332,57 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
           };
 
           const setBreak = SetlistBreakHelper.getSetlistBreakForAdd(setBreakPartial, importingUser);
-          await setlistSongsRef.doc().set(setBreak);
+          batcher.set(setlistSongsRef.doc(), setBreak);
+          const committedOps = await batcher.commitIfFull();
+          if (committedOps) {
+            mark?.("Firestore: committed batch", { ops: committedOps, phase: "setlist_songs", setlistId: context.setlistId });
+          }
 
           setlistDetails.push(`Added setlist break with name ${setBreak.name}`);
         } else {
-          const songIdMap = mapSongIdToFirebaseSongId.find(slhSongMap => slhSongMap.SongId === setlistSongId);
+          const firebaseSongId = songIdToFirebaseSongId.get(setlistSongId) || "";
           const setlistSong = {
             sequenceNumber: sequenceNumber,
             isBreak: false,
             updateOnlyThisSetlistSong: false,
-            songId: songIdMap ? songIdMap.FireBaseSongId : "",
+            songId: firebaseSongId,
             ...convertedSong,
           } as SetlistSong;
 
           const precreated = context.precreatedSongRefs.find(p => p.index === index);
           const setlistSongDocRef = precreated ? precreated.docRef : setlistSongsRef.doc();
-          await setlistSongDocRef.set(setlistSong);
+          batcher.set(setlistSongDocRef, setlistSong);
+          const committedOps = await batcher.commitIfFull();
+          if (committedOps) {
+            mark?.("Firestore: committed batch", { ops: committedOps, phase: "setlist_songs", setlistId: context.setlistId });
+          }
           setlistDetails.push(`Added setlist song with name ${setlistSong.name}`);
         }
         sequenceNumber++;
+        setlistItemsProcessed++;
+
+        if (setlistItemsProcessed % 100 === 0) {
+          mark?.("Setlists: progress", {
+            setlistId: context.setlistId,
+            processed: setlistItemsProcessed,
+            total: context.slhSetlist.songs.length,
+          });
+        }
       }
     }
+
+    mark?.("Setlists: finished setlist songs", {
+      setlistIndex: ctxIndex + 1,
+      totalSetlists: setlistContext.length,
+      setlistId: context.setlistId,
+      processed: setlistItemsProcessed,
+      total: context.slhSetlist.songs.length,
+    });
+  }
+
+  const flushedOps = await batcher.flush();
+  if (flushedOps) {
+    mark?.("Firestore: flushed batch", { ops: flushedOps });
   }
 
   await addAccountEventWithDetails("Setlists", "Finished processing setlists.", setlistDetails, accountImportEventRef);
@@ -386,7 +513,7 @@ async function addAccountEventWithDetails(eventType: string, message: string, de
   } as AccountImportEvent);
 
   const accountImportEventDetailsRef = db.collection(accountImportEvent.path + "/details");
-  accountImportEventDetailsRef.add({ details: details });
+  await accountImportEventDetailsRef.add({ details: details });
 }
 
 async function addAccountEvent(eventType: string, message: string, accountImportEventRef) {

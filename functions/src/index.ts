@@ -141,8 +141,8 @@ export const Setlist_onDelete_RemoveSetlistSongs =
 export const accoutImportOnAddStartSLHSync =
   functions
     .runWith({
-      timeoutSeconds: 300,
-      memory: "256MB",
+      timeoutSeconds: 540,
+      memory: "512MB",
     })
     .firestore.document("accounts/{accountId}/imports/{importId}")
     .onCreate(async (snap, context) => {

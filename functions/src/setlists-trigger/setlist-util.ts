@@ -9,5 +9,5 @@ export const countSetlists = async accountId => {
   const setlistCountSnap = await setlistsRef.count().get();
 
   // Update the lyric count on the master song
-  accountRef.update({ countOfSetlists: setlistCountSnap.data().count });
+  await accountRef.update({ countOfSetlists: setlistCountSnap.data().count });
 };

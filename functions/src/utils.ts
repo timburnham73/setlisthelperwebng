@@ -10,7 +10,7 @@ export const countSongs = async accountId => {
   const songCountSnap = await songsRef.count().get();
 
   // Update the lyric count on the master song
-  accountRef.update({ countOfSongs: songCountSnap.data().count });
+  await accountRef.update({ countOfSongs: songCountSnap.data().count });
 };
 
 export const countTags = async accountId => {
@@ -22,7 +22,7 @@ export const countTags = async accountId => {
   const tagCountSnap = await tagssRef.count().get();
 
   // Update the lyric count on the master song
-  accountRef.update({ countOfTags: tagCountSnap.data().count });
+  await accountRef.update({ countOfTags: tagCountSnap.data().count });
 };
 
 // //////////////////////////////////////////////////////////////////////////////////////////
