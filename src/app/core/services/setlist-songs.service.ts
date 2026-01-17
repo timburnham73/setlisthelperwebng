@@ -1,4 +1,5 @@
 import { Injectable } from "@angular/core";
+import { Timestamp } from "@angular/fire/firestore";
 import {
   AngularFirestore,
   AngularFirestoreCollection,
@@ -19,6 +20,22 @@ import { SetlistSongRef } from "functions/src/model/setlist";
 export class SetlistSongService {
   constructor(private db: AngularFirestore) { }
 
+  getOrderedSetlistSongs(accountId: string, setlistId: string): Observable<SetlistSong[]> {
+    const dbPath = `/accounts/${accountId}/setlists/${setlistId}/songs`;
+    const songsRef = this.db.collection(dbPath, (ref) =>
+      ref.orderBy("sequenceNumber")
+    );
+    return songsRef.snapshotChanges().pipe(
+      map((changes) =>
+        changes.map((c) => {
+          const song = c.payload.doc.data() as SetlistSong;
+          song.id = c.payload.doc.id;
+          return song;
+        })
+      )
+    );
+  }
+  
   getSetlistSongsBySongId(accountId: string, songId: string): Observable<SetlistSong[]> {
     return this.db.collectionGroup(`songs`,
       ref => ref.where("songId", "==", songId).where('accountId', '==', accountId)
@@ -58,6 +75,9 @@ export class SetlistSongService {
               ops.push(doc.ref.update(payload));
             }
           });
+          // Also update the setlist's lastEdit
+          const setlistDocRef = this.db.doc(`/accounts/${accountId}/setlists/${setlistRef.id}`).ref;
+          ops.push(setlistDocRef.update({ lastEdit: Timestamp.fromDate(new Date()) } as any));
           return from(Promise.all(ops));
         })
       );
@@ -96,7 +116,9 @@ export class SetlistSongService {
           const payload = { ...merged } as any;
           delete payload.id;
 
-          return from(doc.ref.update(payload));
+          return from(doc.ref.update(payload)).pipe(
+            switchMap(() => from(this.db.doc(`/accounts/${accountId}/setlists/${setlistRef.id}`).ref.update({ lastEdit: Timestamp.fromDate(new Date()) } as any)))
+          );
         })
       );
     });
@@ -106,22 +128,6 @@ export class SetlistSongService {
     }
 
     return forkJoin(updates$);
-  }
-
-  getOrderedSetlistSongs(accountId: string, setlistId: string): Observable<SetlistSong[]> {
-    const dbPath = `/accounts/${accountId}/setlists/${setlistId}/songs`;
-    const songsRef = this.db.collection(dbPath, (ref) =>
-      ref.orderBy("sequenceNumber")
-    );
-    return songsRef.snapshotChanges().pipe(
-      map((changes) =>
-        changes.map((c) => {
-          const song = c.payload.doc.data() as SetlistSong;
-          song.id = c.payload.doc.id;
-          return song;
-        })
-      )
-    );
   }
 
   addSetlistBreak(
@@ -134,7 +140,12 @@ export class SetlistSongService {
       SetlistBreakHelper.getSetlistBreakForAddOrUpdate(setlistBreak, editingUser);
     
     //return a concat observable with the increment and add combined.
-    return this.incrementSequenceOfSongs(breakForAdd.sequenceNumber, breakForAdd, accountId, setlist, editingUser);
+    return this.incrementSequenceOfSongs(breakForAdd.sequenceNumber, breakForAdd, accountId, setlist, editingUser).pipe(
+      tap(() => {
+        const setlistDoc = this.db.doc(`/accounts/${accountId}/setlists/${setlist.id}`);
+        setlistDoc.update({ lastEdit: Timestamp.fromDate(new Date()) } as any);
+      })
+    );
   }
 
   addSetlistSong(
@@ -147,13 +158,177 @@ export class SetlistSongService {
     
     if(setlist && setlist.id){
       //return a concat observable with the increment and add combined.
-      return this.incrementSequenceOfSongs(songForAdd.sequenceNumber, songForAdd, accountId, setlist, editingUser);
+      return this.incrementSequenceOfSongs(songForAdd.sequenceNumber, songForAdd, accountId, setlist, editingUser).pipe(
+        tap(() => {
+          const setlistDoc = this.db.doc(`/accounts/${accountId}/setlists/${setlist.id}`);
+          setlistDoc.update({ lastEdit: Timestamp.fromDate(new Date()) } as any);
+        })
+      );
     }
+  }
+
+  addSetlistSongs(
+    sequenceNumberToInsert: number,
+    songsToAdd: Song[],
+    accountId: string,
+    setlist: Setlist,
+    editingUser: BaseUser
+  ): any {
+    const setlistSongsForadd: SetlistSong[] = [];
+    let sequenceNumberForNewSongs = sequenceNumberToInsert;
+    for(const songToAdd of songsToAdd){
+      const setlistSongToAdd = {
+        sequenceNumber: sequenceNumberForNewSongs++,
+        ...songToAdd
+      } as SetlistSong;
+      const songForAdd = new SetlistSongFactory(editingUser).getForUpdate(setlistSongToAdd);
+      setlistSongsForadd.push(songForAdd);
+    }
+    
+    if(setlist && setlist.id){
+      //return a concat observable with the increment and add combined.
+      return this.incrementSequenceOfSongsBatch(sequenceNumberToInsert, setlistSongsForadd, accountId, setlist, editingUser).pipe(
+        tap(() => {
+          const setlistDoc = this.db.doc(`/accounts/${accountId}/setlists/${setlist.id}`);
+          setlistDoc.update({ lastEdit: Timestamp.fromDate(new Date()) } as any);
+        })
+      );
+    }
+  }
+
+  updateSetlistSong(
+    setlistSongId: string,
+    accountId: string,
+    setlistId: string,
+    setlistSong: SetlistSong,
+    editingUser: BaseUser
+  ): any {
+    const setlisSongForUpdate = new SetlistSongFactory(editingUser).getForUpdate(
+      setlistSong
+    );
+    const dbPath = `/accounts/${accountId}/setlists/${setlistId}/songs`;
+    const setlistSongsRef = this.db.collection(dbPath);
+
+    return from(setlistSongsRef.doc(setlistSongId).update(setlisSongForUpdate)).pipe(
+      tap(this.updateSetlistSongStatistics(accountId, setlistId!)),
+      tap(() => {
+        const setlistDoc = this.db.doc(`/accounts/${accountId}/setlists/${setlistId}`);
+        setlistDoc.update({ lastEdit: Timestamp.fromDate(new Date()) } as any);
+      })
+    );
+  }
+
+  removeSetlistSong(
+    setlistSongToDelete: SetlistSong,
+    accountId: string,
+    setlist: Setlist,
+    editingUser: BaseUser
+  ): any {
+    const dbPath = `/accounts/${accountId}/setlists/${setlist.id}/songs`;
+    const setlistSongsCollection = this.db.collection(dbPath);
+    //Reorder all the songs but the song we are deleting.
+    return this.getOrderedSetlistSongs(accountId, setlist.id!).pipe(
+      concatMap((results: SetlistSong[]) => {
+        const setlistSongs = results;
+        const batch = this.db.firestore.batch();
+        let startReorder = false; //Start to reorder when we found the song we are deleting.
+        setlistSongs.forEach((setlistSong, index) => {
+          if (startReorder) {
+            //Decrement the sequence since we are deleting one song. 
+            this.setSetlistSongSequenceNumberForBatch(
+              (setlistSong.sequenceNumber = setlistSong.sequenceNumber - 1),
+              setlistSongsCollection,
+              setlistSong,
+              editingUser,
+              batch
+            );
+          }
+          //Start reorder after we found the song we are deleting.
+          if (setlistSongToDelete.id === setlistSong.id) {
+            startReorder = true;
+          }
+        });
+
+        const deleteSongRef = setlistSongsCollection.doc(setlistSongToDelete.id).ref;
+        batch.delete(deleteSongRef);
+
+        return from(batch.commit()).pipe(
+          tap(this.updateSetlistSongStatistics(accountId,setlist.id!)),
+          tap(() => {
+            const setlistDoc = this.db.doc(`/accounts/${accountId}/setlists/${setlist.id}`);
+            setlistDoc.update({ lastEdit: Timestamp.fromDate(new Date()) } as any);
+          }),
+          tap(() => {
+            // Only remove setlist ref for songs, not breaks
+            if (!setlistSongToDelete.isBreak) {
+              this.removeSetlistRefInSong(accountId, setlistSongToDelete.songId, setlist).subscribe();
+            }
+          })
+        );
+      })
+    );
+  }
+
+  //When you move up a setlist songs all songs below need to be reordered.
+  moveSetlistSong(
+    setlistSongToInsert,
+    startingSequenceNumber: number,
+    accountId: string,
+    setlistId: string,
+    editingUser: BaseUser,
+    moveUp: Boolean = true
+  ): any {
+    const dbPath = `/accounts/${accountId}/setlists/${setlistId}/songs`;
+    const setlistSongsRef = this.db.collection(dbPath);
+    return this.getOrderedSetlistSongs(accountId, setlistId).pipe(
+      concatMap((results: SetlistSong[]) => {
+        const setlistSongs = moveUp ? results : results.reverse();
+        const batch = this.db.firestore.batch();
+        //Once the starting sequence number is found set this to true so the others can be incremented after.
+        let isUpdating = false;
+        let index = moveUp ? 1 : setlistSongs.length;
+        for (const setlistSong of setlistSongs) {
+          //Increment the sequence number if the sequenceNumber === startingSequenceNumber or it is updating.
+          if (
+            index === startingSequenceNumber ||
+            (isUpdating && setlistSong.id !== setlistSongToInsert.id)
+          ) {
+            this.setSetlistSongSequenceNumberForBatch(
+              (setlistSong.sequenceNumber = moveUp ? setlistSong.sequenceNumber + 1 : setlistSong.sequenceNumber - 1),
+              setlistSongsRef,
+              setlistSong,
+              editingUser,
+              batch
+            );
+
+            isUpdating = true;
+          } else if (isUpdating && setlistSong.id === setlistSongToInsert.id) {
+            this.setSetlistSongSequenceNumberForBatch(
+              (setlistSong.sequenceNumber = startingSequenceNumber),
+              setlistSongsRef,
+              setlistSong,
+              editingUser,
+              batch
+            );
+            break;
+          }
+          index = moveUp ? index + 1 : index - 1;
+        }
+        //Batch commit incrementing the setlist song sequence number.
+        return from(batch.commit()).pipe(
+          tap(this.updateSetlistSongStatistics(accountId,setlistId)),
+          tap(() => {
+            const setlistDoc = this.db.doc(`/accounts/${accountId}/setlists/${setlistId}`);
+            setlistDoc.update({ lastEdit: Timestamp.fromDate(new Date()) } as any);
+          })
+        );
+      })
+    );
   }
 
   //startingSequenceNumber is the currently selected song. All songs after the startingSequence should be incremented. 
   //The new songs sequece should be startingSequenceNumber + 1.
-  incrementSequenceOfSongs(startingSequenceNumber: number, songToAdd: SetlistSong | SetlistBreak, accountId: string, setlist: Setlist, editingUser: BaseUser) {
+  private incrementSequenceOfSongs(startingSequenceNumber: number, songToAdd: SetlistSong | SetlistBreak, accountId: string, setlist: Setlist, editingUser: BaseUser) {
     const dbPath = `/accounts/${accountId}/setlists/${setlist.id}/songs`;
     const setlistSongsRef = this.db.collection(dbPath);
     return this.getOrderedSetlistSongs(accountId, setlist.id!).pipe(
@@ -192,41 +367,20 @@ export class SetlistSongService {
           tap(
             this.updateSetlistSongStatistics(accountId,setlist.id!)
           ),
-          tap(
-            this.addSetlistRefInSong(accountId, songToAdd.songId, songToAdd.id!, setlist)
-          )
+          tap(() => {
+            // Only add setlist ref for songs, not breaks
+            if (!songToAdd.isBreak) {
+              this.addSetlistRefInSong(accountId, songToAdd.songId, songToAdd.id!, setlist).subscribe();
+            }
+          })
         );
       })
     );
   }
 
-  addSetlistSongs(
-    sequenceNumberToInsert: number,
-    songsToAdd: Song[],
-    accountId: string,
-    setlist: Setlist,
-    editingUser: BaseUser
-  ): any {
-    const setlistSongsForadd: SetlistSong[] = [];
-    let sequenceNumberForNewSongs = sequenceNumberToInsert;
-    for(const songToAdd of songsToAdd){
-      const setlistSongToAdd = {
-        sequenceNumber: sequenceNumberForNewSongs++,
-        ...songToAdd
-      } as SetlistSong;
-      const songForAdd = new SetlistSongFactory(editingUser).getForUpdate(setlistSongToAdd);
-      setlistSongsForadd.push(songForAdd);
-    }
-    
-    if(setlist && setlist.id){
-      //return a concat observable with the increment and add combined.
-      return this.incrementSequenceOfSongsBatch(sequenceNumberToInsert, setlistSongsForadd, accountId, setlist, editingUser);
-    }
-  }
-
   //startingSequenceNumber is the currently selected song. All songs after the startingSequence should be incremented. 
   //The new songs sequece should be startingSequenceNumber + 1.
-  incrementSequenceOfSongsBatch(startingSequenceNumber: number, songsToAdd: SetlistSong[], accountId: string, setlist: Setlist, editingUser: BaseUser) {
+  private incrementSequenceOfSongsBatch(startingSequenceNumber: number, songsToAdd: SetlistSong[], accountId: string, setlist: Setlist, editingUser: BaseUser) {
     const dbPath = `/accounts/${accountId}/setlists/${setlist.id}/songs`;
     const setlistSongsRef = this.db.collection(dbPath);
     const songsToAddLen = songsToAdd.length;
@@ -281,145 +435,7 @@ export class SetlistSongService {
     );
   }
 
-  updateSetlistSongFromSongByPath(
-    documentPath: string,
-    setlistSongId: string,
-    song: Song,
-    editingUser: BaseUser
-  ): any {
-    const setlisSongForUpdate = new SongFactory(editingUser).getForUpdate(song);
-
-    const splitPath = documentPath.split('/');
-    splitPath.pop();
-
-
-    const setlistSongsRef = this.db.collection(splitPath.join('/'));
-
-    return from(setlistSongsRef.doc(setlistSongId).update(setlisSongForUpdate));
-  }
-
-  updateSetlistSong(
-    setlistSongId: string,
-    accountId: string,
-    setlistId: string,
-    setlistSong: SetlistSong,
-    editingUser: BaseUser
-  ): any {
-    const setlisSongForUpdate = new SetlistSongFactory(editingUser).getForUpdate(
-      setlistSong
-    );
-    const dbPath = `/accounts/${accountId}/setlists/${setlistId}/songs`;
-    const setlistSongsRef = this.db.collection(dbPath);
-
-    return from(setlistSongsRef.doc(setlistSongId).update(setlisSongForUpdate)).pipe(
-      tap(
-        this.updateSetlistSongStatistics(accountId, setlistId!)
-      )
-    );
-  }
-
-  removeSetlistSong(
-    setlistSongToDelete: SetlistSong,
-    accountId: string,
-    setlist: Setlist,
-    editingUser: BaseUser
-  ): any {
-    const dbPath = `/accounts/${accountId}/setlists/${setlist.id}/songs`;
-    const setlistSongsCollection = this.db.collection(dbPath);
-    //Reorder all the songs but the song we are deleting.
-    return this.getOrderedSetlistSongs(accountId, setlist.id!).pipe(
-      concatMap((results: SetlistSong[]) => {
-        const setlistSongs = results;
-        const batch = this.db.firestore.batch();
-        let startReorder = false; //Start to reorder when we found the song we are deleting.
-        setlistSongs.forEach((setlistSong, index) => {
-          if (startReorder) {
-            //Decrement the sequence since we are deleting one song. 
-            this.setSetlistSongSequenceNumberForBatch(
-              (setlistSong.sequenceNumber = setlistSong.sequenceNumber - 1),
-              setlistSongsCollection,
-              setlistSong,
-              editingUser,
-              batch
-            );
-          }
-          //Start reorder after we found the song we are deleting.
-          if (setlistSongToDelete.id === setlistSong.id) {
-            startReorder = true;
-          }
-        });
-
-        const deleteSongRef = setlistSongsCollection.doc(setlistSongToDelete.id).ref;
-        batch.delete(deleteSongRef);
-
-        return from(batch.commit()).pipe(
-          tap(
-            this.updateSetlistSongStatistics(accountId,setlist.id!)
-          ),
-          tap(
-            this.removeSetlistRefInSong(accountId, setlistSongToDelete.songId, setlist)
-          )
-        );
-      })
-    );
-  }
-
-  //When you move up a setlist songs all songs below need to be reordered.
-  moveSetlistSong(
-    setlistSongToInsert,
-    startingSequenceNumber: number,
-    accountId: string,
-    setlistId: string,
-    editingUser: BaseUser,
-    moveUp: Boolean = true
-  ): any {
-    const dbPath = `/accounts/${accountId}/setlists/${setlistId}/songs`;
-    const setlistSongsRef = this.db.collection(dbPath);
-    return this.getOrderedSetlistSongs(accountId, setlistId).pipe(
-      concatMap((results: SetlistSong[]) => {
-        const setlistSongs = moveUp ? results : results.reverse();
-        const batch = this.db.firestore.batch();
-        //Once the starting sequence number is found set this to true so the others can be incremented after.
-        let isUpdating = false;
-        let index = moveUp ? 1 : setlistSongs.length;
-        for (const setlistSong of setlistSongs) {
-          //Increment the sequence number if the sequenceNumber === startingSequenceNumber or it is updating.
-          if (
-            index === startingSequenceNumber ||
-            (isUpdating && setlistSong.id !== setlistSongToInsert.id)
-          ) {
-            this.setSetlistSongSequenceNumberForBatch(
-              (setlistSong.sequenceNumber = moveUp ? setlistSong.sequenceNumber + 1 : setlistSong.sequenceNumber - 1),
-              setlistSongsRef,
-              setlistSong,
-              editingUser,
-              batch
-            );
-
-            isUpdating = true;
-          } else if (isUpdating && setlistSong.id === setlistSongToInsert.id) {
-            this.setSetlistSongSequenceNumberForBatch(
-              (setlistSong.sequenceNumber = startingSequenceNumber),
-              setlistSongsRef,
-              setlistSong,
-              editingUser,
-              batch
-            );
-            break;
-          }
-          index = moveUp ? index + 1 : index - 1;
-        }
-        //Batch commit incrementing the setlist song sequence number.
-        return from(batch.commit()).pipe(
-          tap(
-            this.updateSetlistSongStatistics(accountId,setlistId)
-          )
-        );
-      })
-    );
-  }
-
-  removeSetlistRefInSong(accountId: string, songId: string, setlist: Setlist) {
+  private removeSetlistRefInSong(accountId: string, songId: string, setlist: Setlist) {
     const songDoc = this.db.doc(`/accounts/${accountId}/songs/${songId}`);
 
     return songDoc.get().pipe(
@@ -451,7 +467,7 @@ export class SetlistSongService {
     );
   }
 
-  addSetlistRefInSong(accountId: string, songId: string, setlistSongId: string, setlist: Setlist) {
+  private addSetlistRefInSong(accountId: string, songId: string, setlistSongId: string, setlist: Setlist) {
     const songDoc = this.db.doc(`/accounts/${accountId}/songs/${songId}`);
 
     return songDoc.get().pipe(
@@ -471,7 +487,7 @@ export class SetlistSongService {
     );
   }
 
-  updateSetlistSongStatistics(accountId: string, setlistId: string) {
+  private updateSetlistSongStatistics(accountId: string, setlistId: string) {
     const dbPath = `/accounts/${accountId}/setlists/${setlistId}/songs`;
     const setlistSongsRef = this.db.collection(dbPath);
     return this.getOrderedSetlistSongs(accountId, setlistId).pipe(

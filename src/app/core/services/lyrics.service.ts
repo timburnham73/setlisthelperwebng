@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { AngularFirestore } from "@angular/fire/compat/firestore";
+import { Timestamp } from "@angular/fire/firestore";
 import {
   Observable,
   from,
@@ -92,7 +93,6 @@ export class LyricsService {
           id: result.id,
           ...lyric,
         };
-        //TODO: Make this better. Watch https://angular-university.io/lesson/angularfire-crud-create-part-3
         //Update the count of the lyrics.
         const songRef = this.db.doc(dbSongPath);
         songRef
@@ -101,6 +101,7 @@ export class LyricsService {
           .subscribe((result) => {
             const song = result as Song;
             songRef.update({
+              lastEdit: Timestamp.fromDate(new Date()),
               countOfLyrics: song.countOfLyrics ? song.countOfLyrics + 1 : 1,
               defaultLyric: rtnLyric.id,
             });
@@ -127,7 +128,16 @@ export class LyricsService {
     const dbPath = `/accounts/${accountId}/songs/${songId}/lyrics`;
     const lyricRef = this.db.collection(dbPath);
 
-    return from(lyricRef.doc(lyric.id).update(lyricForUpdate));
+    const songDocRef = this.db.doc(`/accounts/${accountId}/songs/${songId}`).ref;
+    const lyricDocRef = lyricRef.doc(lyric.id).ref;
+
+    const batch = this.db.firestore.batch();
+    batch.update(lyricDocRef, lyricForUpdate as any);
+    batch.update(songDocRef, {
+      lastEdit: Timestamp.fromDate(new Date())
+    } as any);
+
+    return from(batch.commit());
   }
 
   getLyricFormat(account: Account, user: User, lyricFormat?: LyricFormat) : LyricFormatWithScope {
