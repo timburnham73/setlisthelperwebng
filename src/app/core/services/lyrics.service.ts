@@ -13,6 +13,7 @@ import {
 } from "rxjs";
 import { FormatScope, Lyric, LyricHelper } from "../model/lyric";
 import { SongService } from "./song.service";
+import { SetlistSongService } from "./setlist-songs.service";
 import { increment } from "firebase/firestore";
 import { Song } from "../model/song";
 import { BaseUser, User } from "../model/user";
@@ -29,7 +30,11 @@ export enum PrintColumns {
   providedIn: "root",
 })
 export class LyricsService {
-  constructor(private db: AngularFirestore, private songService: SongService) {}
+  constructor(
+    private db: AngularFirestore,
+    private songService: SongService,
+    private setlistSongService: SetlistSongService
+  ) {}
 
   getSongLyrics(accountId: string, songId: string): Observable<any> {
     const dbPath = `/accounts/${accountId}/songs/${songId}/lyrics`;
@@ -81,34 +86,41 @@ export class LyricsService {
     editingUser: BaseUser
   ): Observable<any> {
     const lyricForAdd = LyricHelper.getForAdd(lyric, editingUser);
-    
+
     const dbPath = `/accounts/${accountId}/songs/${songId}/lyrics`;
     const dbSongPath = `/accounts/${accountId}/songs/${songId}`;
     const lyricsRef = this.db.collection(dbPath);
+    const songRef = this.db.doc(dbSongPath);
 
-    //Return the lyric
     return from(lyricsRef.add(lyricForAdd)).pipe(
-      map((result) => {
-        const rtnLyric = {
-          id: result.id,
-          ...lyric,
-        };
-        //Update the count of the lyrics.
-        const songRef = this.db.doc(dbSongPath);
-        songRef
-          .valueChanges()
-          .pipe(take(1))
-          .subscribe((result) => {
+      map((result) => ({
+        id: result.id,
+        ...lyric,
+      })),
+      switchMap((rtnLyric) =>
+        songRef.valueChanges().pipe(
+          take(1),
+          switchMap((result) => {
             const song = result as Song;
-            songRef.update({
+            const newCountOfLyrics = song.countOfLyrics ? song.countOfLyrics + 1 : 1;
+            return from(songRef.update({
               lastEdit: Timestamp.fromDate(new Date()),
-              countOfLyrics: song.countOfLyrics ? song.countOfLyrics + 1 : 1,
+              countOfLyrics: newCountOfLyrics,
               defaultLyric: rtnLyric.id,
-            });
-          });
-
-        return rtnLyric;
-      })
+            })).pipe(
+              switchMap(() =>
+                this.setlistSongService.updateSetlistSongsLyricMetadata(
+                  accountId,
+                  song,
+                  newCountOfLyrics,
+                  rtnLyric.id
+                )
+              ),
+              map(() => rtnLyric)
+            );
+          })
+        )
+      )
     );
   }
 

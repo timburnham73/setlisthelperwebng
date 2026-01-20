@@ -38,7 +38,7 @@ export class SetlistService {
     );
   }
 
-  getSetlists(accountId: string, sortField: string, sortOrder: OrderByDirection = 'asc'): Observable<any> {
+  getSetlists(accountId: string, sortField: string, sortOrder: OrderByDirection = 'desc'): Observable<any> {
     const dbPath = `/accounts/${accountId}/setlists`;
     const setlistsRef = this.db.collection(dbPath, ref => ref.orderBy(sortField, sortOrder));
     return setlistsRef.snapshotChanges().pipe(

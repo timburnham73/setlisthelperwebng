@@ -56,6 +56,31 @@ export class SetlistSongService {
       );
   }
 
+  updateSetlistSongsLyricMetadata(
+    accountId: string,
+    song: Song,
+    countOfLyrics: number,
+    defaultLyric: string
+  ): Observable<void> {
+    const setlists: SetlistSongRef[] = song.setlists || [];
+
+    if (setlists.length === 0) {
+      return of(void 0);
+    }
+
+    const batch = this.db.firestore.batch();
+    for (const setlistRef of setlists) {
+      const docPath = `/accounts/${accountId}/setlists/${setlistRef.id}/songs/${setlistRef.setlistSongId}`;
+      const docRef = this.db.doc(docPath).ref;
+      batch.update(docRef, {
+        countOfLyrics: countOfLyrics,
+        defaultLyric: defaultLyric,
+        lastEdit: Timestamp.fromDate(new Date()),
+      });
+    }
+    return from(batch.commit());
+  }
+
   updateSetlistSongsBySongId(accountId: string, songId: string, modifiedSong: Song, editingUser: BaseUser) {
     const setlists = modifiedSong.setlists || [];
 
