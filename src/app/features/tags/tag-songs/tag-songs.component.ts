@@ -17,6 +17,8 @@ import { FlexLayoutModule, FlexModule } from 'ngx-flexible-layout';
 import { ExpandIconComponent } from 'src/app/shared/icons/expand-icon/expand-icon.component';
 import { SongSelectorComponent } from '../../setlists/song-selector/song-selector.component';
 import { SongEditDialogComponent } from '../../songs/song-edit-dialog/song-edit-dialog.component';
+import { getSongLength as utilGetSongLength } from 'src/app/core/util/song.util';
+import { MatSidenav } from '@angular/material/sidenav';
 import { concatMap, finalize, Observable, Subscription, switchMap, take } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { Title } from '@angular/platform-browser';
@@ -56,7 +58,8 @@ import { Setlist } from 'src/app/core/model/setlist';
     ExpandIconComponent,
     MatSpinner,
     MatSelectionList,
-    MatListOption
+    MatListOption,
+    MatSidenav
   ],
   templateUrl: './tag-songs.component.html',
   styleUrl: './tag-songs.component.scss'
@@ -198,6 +201,10 @@ export class TagSongsComponent implements OnInit {
   onViewSetlists(event, row: any){
     event.preventDefault();
     this.router.navigate([`setlists`], { relativeTo: this.route });
+  }
+
+  getSongLength(song: Song): string {
+    return utilGetSongLength(song);
   }
 
   onRemoveTagFromSong($event, song){

@@ -377,8 +377,11 @@ export class LyricsComponent {
   }
 
   onBackToSong() {
-    if(this.lyricId){
-    this.router.navigate(["../../.."], { relativeTo: this.activeRoute, queryParams: {songid: this.song?.id} });
+    const tagId = this.activeRoute.snapshot.paramMap.get("tagid");
+    if (tagId) {
+      this.router.navigate(['/accounts', this.selectedAccount.id, 'tags']);
+    } else if(this.lyricId){
+      this.router.navigate(["../../.."], { relativeTo: this.activeRoute, queryParams: {songid: this.song?.id} });
     }
     else{
       this.router.navigate(["../.."], { relativeTo: this.activeRoute, queryParams: {songid: this.song?.id} });

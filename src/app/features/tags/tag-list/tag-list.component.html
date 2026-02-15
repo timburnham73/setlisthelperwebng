@@ -141,7 +141,19 @@
                 <!-- Name Column -->
                 <ng-container matColumnDef="name">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by Name"> Name </th>
-                  <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+                  <td mat-cell *matCellDef="let element">
+                    <div class="name-cell">
+                      <span class="song-name">{{ element.name }}</span>
+                      <button
+                        mat-icon-button
+                        class="edit-btn"
+                        aria-label="Edit Song"
+                        (click)="$event.stopPropagation(); onEditSong(element)"
+                      >
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                    </div>
+                  </td>
                 </ng-container>
     
                 <!-- Artist Column -->
@@ -217,7 +229,11 @@
                     </td>
                     }
                 <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-                <tr mat-row (dblclick)="onEditSong(song)" *matRowDef="let song; columns: displayedColumns;" [id]="song.id"></tr>
+                <tr mat-row class="song-row"
+                    (click)="onViewLyrics($event, song)"
+                    *matRowDef="let song; columns: displayedColumns;"
+                    [id]="song.id">
+                </tr>
               </table>
             </div>
           </mat-card-content>

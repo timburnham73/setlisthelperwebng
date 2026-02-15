@@ -167,7 +167,9 @@ export class TagListComponent implements OnInit {
 
   onViewLyrics(event, row: any){
     event.preventDefault();
-    this.router.navigate([row.id + `/lyrics`], { relativeTo: this.route });
+    if (this.selectedTags.length > 0) {
+      this.router.navigate([this.selectedTags[0].id, 'songs', row.id, 'lyrics'], { relativeTo: this.route });
+    }
   }
 
   onViewSetlists(event, row: any){

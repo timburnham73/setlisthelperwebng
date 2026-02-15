@@ -31,6 +31,7 @@ import { SetlistSongService } from 'src/app/core/services/setlist-songs.service'
 import { SetlistSong } from 'src/app/core/model/setlist-song';
 import { SwipeDirective } from 'src/app/shared/directives/swipe/swipe.directive';
 import { take, finalize } from 'rxjs/operators';
+import { TagService } from 'src/app/core/services/tag.service';
 
 @Component({
   selector: 'app-lyric-view-wrapper',
@@ -70,6 +71,7 @@ export class LyricViewWrapperComponent {
   songId?: string;
   lyricId?: string;
   setlistId?: string;
+  tagId?: string;
 
   lyricVersionValue = "add";
   lyrics: Lyric[];
@@ -93,7 +95,8 @@ export class LyricViewWrapperComponent {
     private authService: AuthenticationService,
     private lyricsService: LyricsService,
     private songService: SongService,
-    private setlistSongService: SetlistSongService
+    private setlistSongService: SetlistSongService,
+    private tagService: TagService
   ){
       this.selectedAccount = this.store.selectSnapshot(
         AccountState.selectedAccount
@@ -103,12 +106,23 @@ export class LyricViewWrapperComponent {
 
       if(this.selectedAccount && this.selectedAccount.id){
         this.setlistId = this.activeRoute.snapshot.paramMap.get("setlistid") || undefined;
+        this.tagId = this.activeRoute.snapshot.paramMap.get("tagid") || undefined;
         this.accountId = this.selectedAccount.id;
         if(this.setlistId){
           this.setlistSongService
             .getOrderedSetlistSongs(this.accountId!, this.setlistId)
             .subscribe((setlistSongs) => {
               this.allSongs = setlistSongs;
+            });
+        }
+        else if(this.tagId){
+          this.tagService.getTag(this.accountId, this.tagId)
+            .pipe(
+              take(1),
+              switchMap((tag) => this.songService.getSongsByTags(this.accountId, 'name', [tag.name]))
+            )
+            .subscribe((songs) => {
+              this.allSongs = songs;
             });
         }
         else{

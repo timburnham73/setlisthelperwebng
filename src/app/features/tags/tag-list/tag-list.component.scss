@@ -58,3 +58,36 @@ th.mat-sort-header-sorted {
 .menu-trigger {
     display: none;
 }
+
+.song-row {
+    cursor: pointer;
+}
+.song-row:hover .edit-btn {
+    opacity: 1;
+}
+
+.name-cell {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    min-width: 0;
+
+    .song-name {
+        flex: 1 1 auto;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .edit-btn {
+        flex: 0 0 auto;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+    }
+
+    &:hover .edit-btn {
+        opacity: 1;
+    }
+}
