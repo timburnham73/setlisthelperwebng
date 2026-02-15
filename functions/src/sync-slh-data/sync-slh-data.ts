@@ -421,10 +421,8 @@ async function createFileReference({
 
 async function addLyrics(slhSong: SLHSong, accountId: string, songId: string, convertedSong: Song, importingUser: BaseUser, songDetails: string[]) {
   if (slhSong.SongType === SongType.Song) {
-    // Needed to updat the song with the default lyric
-    const songUpdateRef = db.collection(`/accounts/${accountId}/songs`);
     const lyricsRef = db.collection(`/accounts/${accountId}/songs/${songId}/lyrics`);
-    
+
     let versionNumber = 1;
     let documentLyricCreated = false;
     const audioLocation = slhSong.IosAudioLocation ? slhSong.IosAudioLocation : slhSong.SongLocation;
@@ -440,18 +438,16 @@ async function addLyrics(slhSong: SLHSong, accountId: string, songId: string, co
         youTubeUrl: convertedSong.youTubeUrl,
         songId: songId,
         lyrics: "",
+        defaultLyricForUser: [importingUser.uid],
         audioLocation: audioLocation,
         dbxAudioRev: audioLocation.startsWith("[DROPBOX]") ? Math.random().toString(36).substring(2, 15) : "",
         documentLocation: slhSong.DocumentLocation,
         dbxDocumentRev: slhSong.DocumentLocation.startsWith("[DROPBOX]") ? Math.random().toString(36).substring(2, 15) : "",
-        
+
       } as Partial<Lyric>;
 
       const addedLyricRef = lyricsRef.doc();
       await addedLyricRef.set(LyricHelper.getForAdd(lyricDocument, importingUser));
-
-      convertedSong.defaultLyricForUser.push({ uid: importingUser.uid, lyricId: addedLyricRef.id });
-      await songUpdateRef.doc(songId).update(convertedSong);
 
       // Create file reference for the document
       await createFileReference({
@@ -481,6 +477,7 @@ async function addLyrics(slhSong: SLHSong, accountId: string, songId: string, co
         transpose: slhSong.Transpose,
         audioLocation: audioLocation,
         dbxAudioRev: audioLocation.startsWith("[DROPBOX]") ? Math.random().toString(36).substring(2, 15) : "",
+        ...(documentLyricCreated === false ? { defaultLyricForUser: [importingUser.uid] } : {}),
       } as Partial<Lyric>;
 
       const addedLyricRef = lyricsRef.doc();
@@ -496,10 +493,6 @@ async function addLyrics(slhSong: SLHSong, accountId: string, songId: string, co
           lyricId: addedLyricRef.id,
           accountId
         });
-      }
-      if (documentLyricCreated == false) {
-        convertedSong.defaultLyricForUser.push({ uid: importingUser.uid, lyricId: addedLyricRef.id });
-        await songUpdateRef.doc(songId).update(convertedSong);
       }
     }
   }

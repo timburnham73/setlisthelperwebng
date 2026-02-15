@@ -4,7 +4,6 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { Store } from "@ngxs/store";
 import { FormatScope, Lyric } from "src/app/core/model/lyric";
 import { LyricsService } from "src/app/core/services/lyrics.service";
-import { SongService } from "src/app/core/services/song.service";
 import { AccountState } from "src/app/core/store/account.state";
 import { LyricAddDialogComponent } from "../lyric-add-dialog/lyric-add-dialog.component";
 import { MatDialog as MatDialog } from "@angular/material/dialog";
@@ -122,7 +121,6 @@ export class LyricsComponent {
     private activeRoute: ActivatedRoute,
     private titleService: Title,
     private lyricsService: LyricsService,
-    private songService: SongService,
     private userService: UserService,
     private accountService: AccountService,
     private store: Store,
@@ -245,7 +243,13 @@ export class LyricsComponent {
 
   onSetDefaultUser(event: Event){
     this.defaultLyricId = this.selectedLyric?.id;
-    this.songService.setDefaultLyricForUser(this.selectedAccount.id!, this.song!, this.selectedLyric?.id!, this.currentUser);
+    this.lyricsService.setDefaultLyric(
+      this.selectedAccount.id!,
+      this.song?.id!,
+      this.lyrics,
+      this.selectedLyric?.id!,
+      this.currentUser
+    );
   }
 
   onSelectLyricPart(fontname: string) {
@@ -258,7 +262,7 @@ export class LyricsComponent {
   }
 
   onSelectFont(fontname: string) {
-    this.lyricFormatWithScope.lyricFormat.font = fontname;
+    this.lyricFormatWithScope.lyricFormat.fontFamily = fontname;
     const parser =  new ChordProParser(this.selectedLyric?.lyrics!, this.lyricFormatWithScope.lyricFormat, this.selectedLyric!.transpose);
     this.parsedLyric = parser.parseChordPro();
     this.saveFormatSettings();
@@ -266,7 +270,7 @@ export class LyricsComponent {
   
   //Bold, Italic, or Underline
   onFormatToggleStyle(selectedFontStyle){
-    const lyricPart = this.lyricFormatWithScope.lyricFormat.lyricPartFormat.find(lyricPart => this.selectedLyricPart === lyricPart.lyricPart);
+    const lyricPart = this.lyricFormatWithScope.lyricFormat.lyricPartFormat.find(lyricPart => this.selectedLyricPart === lyricPart.partType);
     if(lyricPart){
       lyricPart.isBold = selectedFontStyle.find(fontStyle => fontStyle === "bold") ? true : false;
       lyricPart.isItalic = selectedFontStyle.find(fontStyle => fontStyle === "italic") ? true : false;
@@ -280,7 +284,7 @@ export class LyricsComponent {
   }
 
   onSelectFontSize(fontSize: string) {
-    const lyricPart = this.lyricFormatWithScope.lyricFormat.lyricPartFormat.find(lyricPart => this.selectedLyricPart === lyricPart.lyricPart);
+    const lyricPart = this.lyricFormatWithScope.lyricFormat.lyricPartFormat.find(lyricPart => this.selectedLyricPart === lyricPart.partType);
     if(lyricPart){
       lyricPart.fontSize = fontSize;
     }
@@ -330,7 +334,7 @@ export class LyricsComponent {
 
   //When the lyric part changes in the dropdown this function will up date the state of the toolbar.
   private updateToolbarFromLyricFont() {
-    const selectedLyricPart = this.lyricFormatWithScope.lyricFormat.lyricPartFormat.find(lyricPart => lyricPart.lyricPart === this.selectedLyricPart);
+    const selectedLyricPart = this.lyricFormatWithScope.lyricFormat.lyricPartFormat.find(lyricPart => lyricPart.partType === this.selectedLyricPart);
     const newSelectedForntStyle: string[] = [];
     if (selectedLyricPart) {
       if(selectedLyricPart.isBold){
@@ -349,7 +353,7 @@ export class LyricsComponent {
     }
     
     //Global font name
-    this.selectedFont = this.lyricFormatWithScope.lyricFormat.font;
+    this.selectedFont = this.lyricFormatWithScope.lyricFormat.fontFamily;
   }
 
   onSelectLyric(value: string) {

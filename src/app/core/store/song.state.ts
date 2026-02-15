@@ -197,40 +197,6 @@ export class SongState {
     );
   }
 
-  @Action(SongActions.SetDefaultLyricForUser)
-  setDefaultLyricForUser(
-    { setState }: StateContext<SongStateModel>,
-    { accountId, song, lyricId, editingUser }: SongActions.SetDefaultLyricForUser
-  ): Observable<any> {
-    const userLyric = song.defaultLyricForUser?.find((ul) => ul.uid === editingUser.uid);
-    if (userLyric) {
-      userLyric.lyricId = lyricId;
-    } else {
-      if (!song.defaultLyricForUser || song.defaultLyricForUser?.length === 0) {
-        song.defaultLyricForUser = [{ uid: editingUser.uid, lyricId: lyricId }];
-      } else {
-        song.defaultLyricForUser.push({ uid: editingUser.uid, lyricId: lyricId });
-      }
-    }
-
-    const songForUpdate = new SongFactory(editingUser).getForUpdate(song);
-    const dbPath = `/accounts/${accountId}/songs`;
-    const songsRef = this.db.collection(dbPath);
-
-    return from(songsRef.doc(song.id!).update(songForUpdate)).pipe(
-      switchMap(() =>
-        this.setlistSongService.updateSetlistSongsBySongId(accountId, song.id!, song, editingUser)
-      ),
-      tap(() =>
-        setState((state) => {
-          const songs = state.songs.map((s) => (s.id === song.id ? song : s));
-          const selectedSong = state.selectedSong && state.selectedSong.id === song.id ? song : state.selectedSong;
-          return { ...state, songs, selectedSong };
-        })
-      )
-    );
-  }
-
   @Action(SongActions.RemoveSong)
   removeSong(
     { setState }: StateContext<SongStateModel>,

@@ -3,10 +3,6 @@ import { Base } from "./base";
 import { BaseUser } from "./user";
 import { SetlistRef, SetlistSongRef } from "functions/src/model/setlist";
 
-export interface UserLyric {
-  uid: string;
-  lyricId: string;
-}
 export interface Song extends Base {
   artist: string;
   artistLowered: string;
@@ -27,6 +23,5 @@ export interface Song extends Base {
   lengthSec: number;
   countOfLyrics: number;
   tags: string[];
-  defaultLyricForUser: UserLyric[];
   setlists: SetlistSongRef[];
 }

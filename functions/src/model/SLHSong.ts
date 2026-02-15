@@ -91,7 +91,6 @@ export class SLHSongHelper {
       lengthSec: songLenSplit.seconds ?? 0,
       lengthMin: songLenSplit.minutes ?? 3,
       tags: [],
-      defaultLyricForUser: [],
       setlists: [],
     };
   }

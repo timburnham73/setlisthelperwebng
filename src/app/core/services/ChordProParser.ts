@@ -37,7 +37,7 @@ export class ChordProParser {
   generateLyricPartStyle() {
     for(const lyricPart of this.lyricFormat.lyricPartFormat){
       const chordStyle = {
-        name: lyricPart.lyricPart,
+        name: lyricPart.partType,
         style: this.getStyleForLyricPart(lyricPart)
       }
       this.lyricPartStyles.push(chordStyle);
@@ -175,7 +175,7 @@ export class ChordProParser {
     if (_.size(parsedSong) > 0) {
       //parsedSong = this.GetLyricSegment(Lyrics, "", showChords, showLyrics ,printsettings));
     }
-    const lyricFontStyle = `font-family: ${this.lyricFormat.font};`;
+    const lyricFontStyle = `font-family: ${this.lyricFormat.fontFamily};`;
     return `<div style="${lyricFontStyle}">${parsedSong}</div>`;
   }
 

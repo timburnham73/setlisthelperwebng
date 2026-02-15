@@ -155,11 +155,11 @@ private initLyrics() {
         next: ([song, lyrics]) => {
           // Process song
           this.song = song;
-          this.defaultLyricId = this.getDefaultLyricId();
           this.currentSongIndex = this.getCurrentSongIndex();
 
           // Process lyrics
           this.lyrics = lyrics;
+          this.defaultLyricId = this.getDefaultLyricId();
           this.isDefaultLyric = this.isDefaultLyricSelected();
           this.selectedLyric = this.getSelectedLyric(lyrics);
 
@@ -235,8 +235,11 @@ private initLyrics() {
   }
 
   private getDefaultLyricId(){
-    if (this.song?.defaultLyricForUser) {
-      return this.song?.defaultLyricForUser.find((userLyric) => userLyric.uid === this.currentUser.uid)?.lyricId;
+    if (this.lyrics) {
+      const defaultLyric = this.lyrics.find(
+        (lyric) => lyric.defaultLyricForUser?.includes(this.currentUser.uid)
+      );
+      return defaultLyric?.id;
     }
     return undefined;
   }
@@ -246,17 +249,16 @@ private initLyrics() {
   }
   
   private getSelectedLyric(lyrics: any) {
-    //If the lyric id is NOT passed in on the url 
+    //If the lyric id is NOT passed in on the url
     if (!this.lyricId) {
-      if (this.song?.defaultLyricForUser) {
-        const userLyric = this.song?.defaultLyricForUser.find((userLyric) => userLyric.uid === this.currentUser.uid);
-        if (userLyric) {
-          const selecteLyric = lyrics.find((lyric) => lyric.id === userLyric.lyricId);
-          return selecteLyric ? selecteLyric : lyrics[0];
-        }
+      const defaultLyric = lyrics.find(
+        (lyric) => lyric.defaultLyricForUser?.includes(this.currentUser.uid)
+      );
+      if (defaultLyric) {
+        return defaultLyric;
       }
     } else {
-      //If the lyric is not passed in with the URL find the default lyrics or first lyric.
+      //If the lyric is passed in with the URL find that lyric or fall back to first lyric.
       const selectedLyric = lyrics.find((lyric) => lyric.id === this.lyricId);
       return selectedLyric ? selectedLyric : lyrics[0];
     }

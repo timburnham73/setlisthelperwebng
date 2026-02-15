@@ -59,8 +59,7 @@ export class SetlistSongService {
   updateSetlistSongsLyricMetadata(
     accountId: string,
     song: Song,
-    countOfLyrics: number,
-    defaultLyric: string
+    countOfLyrics: number
   ): Observable<void> {
     const setlists: SetlistSongRef[] = song.setlists || [];
 
@@ -74,7 +73,6 @@ export class SetlistSongService {
       const docRef = this.db.doc(docPath).ref;
       batch.update(docRef, {
         countOfLyrics: countOfLyrics,
-        defaultLyric: defaultLyric,
         lastEdit: Timestamp.fromDate(new Date()),
       });
     }

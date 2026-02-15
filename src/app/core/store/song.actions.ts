@@ -46,16 +46,6 @@ export namespace SongActions {
     ) {}
   }
 
-  export class SetDefaultLyricForUser {
-    public static readonly type = '[Songs] Set Default Lyric For User';
-    constructor(
-      public accountId: string,
-      public song: Song,
-      public lyricId: string,
-      public editingUser: BaseUser
-    ) {}
-  }
-
   export class RemoveSong {
     public static readonly type = '[Songs] Remove Song';
     constructor(

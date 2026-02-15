@@ -31,7 +31,7 @@ export const fontSizes = [
 
 
 export interface LyricFormat {
-    font: string;
+    fontFamily: string;
     lyricPartFormat: LyricFormatSongPart[];
 }
 
@@ -44,12 +44,12 @@ export interface LyricFormatWithScope {
 export class LyricFormatHelper {
     static getDefaultFormat(): LyricFormat {
         const lyricFormat = {
-            font: "Arial",
+            fontFamily: "Arial",
             lyricPartFormat: []
         } as LyricFormat;
 
         lyricFormat.lyricPartFormat.push({
-            lyricPart: "title",
+            partType: "title",
             fontSize: "x-large",
             isBold: true,
             isItalic: false,
@@ -58,7 +58,7 @@ export class LyricFormatHelper {
         });
 
         lyricFormat.lyricPartFormat.push({
-            lyricPart: "subtitle",
+            partType: "subtitle",
             fontSize: "large",
             isBold: true,
             isItalic: false,
@@ -67,7 +67,7 @@ export class LyricFormatHelper {
         });
 
         lyricFormat.lyricPartFormat.push({
-            lyricPart: "lyric",
+            partType: "lyric",
             fontSize: "medium",
             isBold: false,
             isItalic: false,
@@ -75,7 +75,7 @@ export class LyricFormatHelper {
             show: true
         });
         lyricFormat.lyricPartFormat.push({
-            lyricPart: "chord",
+            partType: "chord",
             fontSize: "medium",
             isBold: true,
             isItalic: false,
@@ -84,7 +84,7 @@ export class LyricFormatHelper {
         });
 
         lyricFormat.lyricPartFormat.push({
-            lyricPart: "song-part",
+            partType: "song-part",
             fontSize: "medium",
             isBold: true,
             isItalic: false,
@@ -93,7 +93,7 @@ export class LyricFormatHelper {
         });
 
         lyricFormat.lyricPartFormat.push({
-            lyricPart: "comment",
+            partType: "comment",
             fontSize: "small",
             isBold: false,
             isItalic: true,

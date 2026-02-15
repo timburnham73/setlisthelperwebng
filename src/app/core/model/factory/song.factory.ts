@@ -28,7 +28,6 @@ export class SongFactory extends BaseFactory<Song> {
       countOfLyrics: data.countOfLyrics ?? 0,
       lengthSec: data.lengthSec ?? 0,
       tags: data.tags ?? [],
-      defaultLyricForUser: data.defaultLyricForUser ?? [],
       setlists: data.setlists ?? []
     };
   }

@@ -281,29 +281,6 @@ export class SongService {
     return from(Promise.all(promises));
   }
 
-  setDefaultLyricForUser(accountId: string, song: Song, lyricId: string, editingUser: BaseUser): Observable<any> {
-    const userLyric = song.defaultLyricForUser?.find((userLyric) => userLyric.uid === editingUser.uid);
-    if(userLyric){
-      userLyric.lyricId = lyricId;
-    }
-    else{
-      if(!song.defaultLyricForUser || song.defaultLyricForUser?.length === 0) {
-        song.defaultLyricForUser = [{uid: editingUser.uid, lyricId: lyricId}]; 
-      }
-      else{
-        song.defaultLyricForUser.push({uid: editingUser.uid, lyricId: lyricId});
-      }
-    }
-    const songForUpdate = new SongFactory(editingUser).getForUpdate(song);
-    const dbPath = `/accounts/${accountId}/songs`;
-    const songsRef = this.db.collection(dbPath);
-    
-    return from(songsRef.doc(song.id).update(songForUpdate)).pipe(
-      switchMap(() => {
-        return this.setlistSongService.updateSetlistSongsBySongId(accountId, song.id!, song, editingUser);
-      }
-    ));
-  }
   getSongDetails(song){
     const songDetails: string[] = [];
 

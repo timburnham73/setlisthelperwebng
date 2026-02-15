@@ -3,11 +3,6 @@ import { BaseUser, UserHelper } from "./user";
 import { Timestamp } from "firebase-admin/firestore";
 import { SetlistSongRef } from "./setlist";
 
-export interface UserLyric {
-  uid: string;
-  lyricId: string;
-}
-
 export interface Song extends Base {
   artist: string;
   artistLowered: string;
@@ -28,7 +23,6 @@ export interface Song extends Base {
   lengthSec: number;
   countOfLyrics: number;
   tags: string[];
-  defaultLyricForUser: UserLyric[];
   setlists: SetlistSongRef[];
 }
 
@@ -68,7 +62,6 @@ export class SongHelper {
       countOfLyrics: data.countOfLyrics ?? 0,
       lengthSec: data.lengthSec ?? 0,
       tags: data.tags ?? [],
-      defaultLyricForUser: data.defaultLyricForUser ?? [],
       setlists: data.setlists ?? [],
     };
   }

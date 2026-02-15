@@ -15,8 +15,9 @@ import { FormatScope, Lyric, LyricHelper } from "../model/lyric";
 import { SongService } from "./song.service";
 import { SetlistSongService } from "./setlist-songs.service";
 import { increment } from "firebase/firestore";
+import firebase from 'firebase/compat/app';
 import { Song } from "../model/song";
-import { BaseUser, User } from "../model/user";
+import { BaseUser, User, UserHelper } from "../model/user";
 import { Account } from "../model/account";
 import { LyricFormat, LyricFormatHelper, LyricFormatWithScope } from "../model/lyric-format";
 
@@ -67,18 +68,6 @@ export class LyricsService {
     );
   }
 
-  setSongDefaultLyric(accountId: string, songId: string, lyricId: string) {
-    const dbSongPath = `/accounts/${accountId}/songs/${songId}`;
-    const songRef = this.db.doc(dbSongPath);
-    songRef
-      .valueChanges()
-      .pipe(take(1))
-      .subscribe((result) => {
-        const song = result as Song;
-        songRef.update({ defaultLyric: lyricId });
-      });
-  }
-
   addSongLyric(
     accountId: string,
     songId: string,
@@ -106,14 +95,12 @@ export class LyricsService {
             return from(songRef.update({
               lastEdit: Timestamp.fromDate(new Date()),
               countOfLyrics: newCountOfLyrics,
-              defaultLyric: rtnLyric.id,
             })).pipe(
               switchMap(() =>
                 this.setlistSongService.updateSetlistSongsLyricMetadata(
                   accountId,
                   song,
-                  newCountOfLyrics,
-                  rtnLyric.id
+                  newCountOfLyrics
                 )
               ),
               map(() => rtnLyric)
@@ -122,6 +109,45 @@ export class LyricsService {
         )
       )
     );
+  }
+
+  setDefaultLyric(
+    accountId: string,
+    songId: string,
+    lyrics: Lyric[],
+    newDefaultLyricId: string,
+    editingUser: BaseUser
+  ): Observable<void> {
+    const basePath = `/accounts/${accountId}/songs/${songId}/lyrics`;
+    const batch = this.db.firestore.batch();
+
+    // Remove userId from old default lyric's defaultLyricForUser
+    const oldDefault = lyrics.find(l =>
+      l.id !== newDefaultLyricId &&
+      l.defaultLyricForUser?.includes(editingUser.uid)
+    );
+
+    if (oldDefault?.id) {
+      const oldRef = this.db.doc(`${basePath}/${oldDefault.id}`).ref;
+      batch.update(oldRef, {
+        defaultLyricForUser: firebase.firestore.FieldValue.arrayRemove(editingUser.uid)
+      });
+    }
+
+    // Add userId to new default lyric's defaultLyricForUser
+    const newRef = this.db.doc(`${basePath}/${newDefaultLyricId}`).ref;
+    batch.update(newRef, {
+      defaultLyricForUser: firebase.firestore.FieldValue.arrayUnion(editingUser.uid)
+    });
+
+    // Update song's lastEdit and lastUpdatedByUser
+    const songRef = this.db.doc(`/accounts/${accountId}/songs/${songId}`).ref;
+    batch.update(songRef, {
+      lastEdit: Timestamp.fromDate(new Date()),
+      lastUpdatedByUser: UserHelper.getForUpdate(editingUser)
+    });
+
+    return from(batch.commit());
   }
 
   deleteFormatSettingsUser(accountId: string, songId: string, lyricId: string): any {

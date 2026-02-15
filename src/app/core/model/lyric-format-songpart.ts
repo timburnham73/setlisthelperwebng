@@ -1,6 +1,8 @@
 export interface LyricFormatSongPart{
-    lyricPart: string;
+    partType: string;
     fontSize: string;
+    fontColor?: string;
+    fontBackgroundColor?: string;
     isBold: boolean;
     isItalic: boolean;
     isUnderlined: boolean;

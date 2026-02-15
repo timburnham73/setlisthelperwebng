@@ -72,8 +72,8 @@ export class LyricsFormatDialogComponent {
   }
 
   private onChangeFormatScope() {
-    
-    this.selectedFont = this.lyricFormat.font;
+
+    this.selectedFont = this.lyricFormat.fontFamily;
     this.updateControlsFromLyricFormat();
   }
 
@@ -92,7 +92,7 @@ export class LyricsFormatDialogComponent {
 
   //When the lyric part changes in the dropdown this function will up date the state of the toolbar.
   private updateControlsFromLyricFormat() {
-    const selectedLyricPart = this.lyricFormat.lyricPartFormat.find(lyricPart => lyricPart.lyricPart === this.selectedLyricPart);
+    const selectedLyricPart = this.lyricFormat.lyricPartFormat.find(lyricPart => lyricPart.partType === this.selectedLyricPart);
     const newSelectedForntStyle: string[] = [];
     if (selectedLyricPart) {
       if(selectedLyricPart.isBold){
@@ -106,12 +106,12 @@ export class LyricsFormatDialogComponent {
       }
       //Setting bold, italic, and/or underline
       this.selectedFontStyle = newSelectedForntStyle;
-      //Font size for the lyric part. 
+      //Font size for the lyric part.
       this.selectedFontSize = selectedLyricPart.fontSize;
     }
-    
+
     //Global font name
-    this.selectedFont = this.lyricFormat.font;
+    this.selectedFont = this.lyricFormat.fontFamily;
   }
 
   onSelectLyricPart(fontname: string) {
@@ -123,12 +123,12 @@ export class LyricsFormatDialogComponent {
   }
 
   onSelectFont(fontname: string) {
-    this.lyricFormat.font = fontname;
+    this.lyricFormat.fontFamily = fontname;
   }
   
   //Bold, Italic, or Underline
   onFormatToggleStyle(selectedFontStyle){
-    const lyricPart = this.lyricFormat.lyricPartFormat.find(lyricPart => this.selectedLyricPart === lyricPart.lyricPart);
+    const lyricPart = this.lyricFormat.lyricPartFormat.find(lyricPart => this.selectedLyricPart === lyricPart.partType);
     if(lyricPart){
       lyricPart.isBold = selectedFontStyle.find(fontStyle => fontStyle === "bold") ? true : false;
       lyricPart.isItalic = selectedFontStyle.find(fontStyle => fontStyle === "italic") ? true : false;
@@ -137,7 +137,7 @@ export class LyricsFormatDialogComponent {
   }
 
   onSelectFontSize(fontSize: string) {
-    const lyricPart = this.lyricFormat.lyricPartFormat.find(lyricPart => this.selectedLyricPart === lyricPart.lyricPart);
+    const lyricPart = this.lyricFormat.lyricPartFormat.find(lyricPart => this.selectedLyricPart === lyricPart.partType);
     if(lyricPart){
       lyricPart.fontSize = fontSize;
     }
