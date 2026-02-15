@@ -345,5 +345,8 @@ firebase-debug.*.log
 .env
 .env.local
 
+# Claude Code
+.claude/
+
 # Node
 node_modules/
