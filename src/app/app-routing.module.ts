@@ -54,6 +54,13 @@ const appRoutes: Routes = [
     data: { authGuardPipe: redirectUnauthorizedToLogin },
   },
   {
+    path: "privacy-policy",
+    loadChildren: () =>
+      import("./features/privacy-policy/privacy-policy.module").then(
+        (m) => m.PrivacyPolicyModule
+      ),
+  },
+  {
     path: "**",
     redirectTo: "home",
     pathMatch: "full",
