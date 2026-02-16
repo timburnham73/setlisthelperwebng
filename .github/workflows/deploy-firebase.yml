@@ -32,10 +32,21 @@ jobs:
           npm install --legacy-peer-deps
 
       - name: Create environment files
+        env:
+          ENVIRONMENT_TS_B64: ${{ secrets.ENVIRONMENT_TS_B64 }}
+          ENVIRONMENT_PROD_TS_B64: ${{ secrets.ENVIRONMENT_PROD_TS_B64 }}
         run: |
           mkdir -p src/environments
-          echo '${{ secrets.ENVIRONMENT_TS }}' > src/environments/environment.ts
-          echo '${{ secrets.ENVIRONMENT_PROD_TS }}' > src/environments/environment.prod.ts
+          printf '%s' "$ENVIRONMENT_TS_B64" | base64 --decode > src/environments/environment.ts
+          printf '%s' "$ENVIRONMENT_PROD_TS_B64" | base64 --decode > src/environments/environment.prod.ts
+
+      - name: Verify environment files
+        run: |
+          echo "=== environment.ts ==="
+          head -3 src/environments/environment.ts
+          echo ""
+          echo "=== environment.prod.ts ==="
+          head -3 src/environments/environment.prod.ts
 
       - name: Build (production)
         if: ${{ github.event.inputs.configuration == 'production' }}
