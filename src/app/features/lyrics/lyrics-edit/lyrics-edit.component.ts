@@ -18,6 +18,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatDividerModule } from '@angular/material/divider';
 import { NgIf } from '@angular/common';
 import { FlexLayoutModule } from 'ngx-flexible-layout';
 
@@ -26,7 +28,7 @@ import { FlexLayoutModule } from 'ngx-flexible-layout';
     templateUrl: './lyrics-edit.component.html',
     styleUrls: ['./lyrics-edit.component.css'],
     standalone: true,
-    imports: [MatCardModule, MatToolbarModule, MatButtonModule, MatIconModule, FormsModule, ReactiveFormsModule, MatProgressSpinnerModule, NgIf, FlexLayoutModule]
+    imports: [MatCardModule, MatToolbarModule, MatButtonModule, MatIconModule, MatMenuModule, MatDividerModule, FormsModule, ReactiveFormsModule, MatProgressSpinnerModule, NgIf, FlexLayoutModule]
 })
 export class LyricsEditComponent implements OnDestroy {
   @ViewChild('lyrics') lyricsInput: ElementRef;
@@ -108,6 +110,51 @@ export class LyricsEditComponent implements OnDestroy {
     this.selectedLyric.lyrics = this.lyrics?.value;
     this.lyricsService.updateLyric(this.accountId!, this.songId!, this.selectedLyric, this.currentUser).subscribe((result) => {
       this.router.navigate([`../../../lyrics/${this.selectedLyric?.id}`], { relativeTo: this.activeRoute });
+    });
+  }
+
+  insertTitle() {
+    const name = this.song?.name || '';
+    this.insertChordProText(`{title:${name}}`, 7 + name.length);
+  }
+
+  insertArtist() {
+    const artist = this.song?.artist || '';
+    this.insertChordProText(`{subtitle:${artist}}`, 10 + artist.length);
+  }
+
+  insertKey() {
+    const key = this.selectedLyric?.key || '';
+    this.insertChordProText(`{key:${key}}`, 5 + key.length);
+  }
+
+  insertTempo() {
+    const tempo = this.selectedLyric?.tempo ? String(this.selectedLyric.tempo) : '';
+    this.insertChordProText(`{tempo:${tempo}}`, 7 + tempo.length);
+  }
+
+  insertChordProText(text: string, cursorOffset: number) {
+    // Try both textarea IDs (desktop and mobile)
+    const textarea = (document.getElementById('lyrics') || document.getElementById('lyrics-mobile')) as HTMLTextAreaElement;
+    const lyricsControl = this.lyricsForm.get('lyrics');
+    const currentValue = lyricsControl?.value || '';
+    const cursorPos = textarea?.selectionStart ?? currentValue.length;
+
+    const before = currentValue.substring(0, cursorPos);
+    const after = currentValue.substring(cursorPos);
+    const newValue = before + text + after;
+
+    lyricsControl?.setValue(newValue);
+    lyricsControl?.markAsDirty();
+
+    // Position cursor within the inserted text
+    const newCursorPos = cursorPos + cursorOffset;
+    setTimeout(() => {
+      if (textarea) {
+        textarea.focus();
+        textarea.selectionStart = newCursorPos;
+        textarea.selectionEnd = newCursorPos;
+      }
     });
   }
 
