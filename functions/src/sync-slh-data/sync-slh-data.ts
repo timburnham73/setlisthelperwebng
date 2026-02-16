@@ -1,4 +1,4 @@
-import * as functions from "firebase-functions";
+import { logger } from "firebase-functions/v2";
 import { db } from "../init";
 import { AccountImport } from "../model/account-import";
 import { SLHSong, SLHSongHelper, SongType } from "../model/SLHSong";
@@ -77,18 +77,19 @@ class FirestoreBatcher {
 }
 
 // Entry point
-export default async (accountImportSnap, context) => {
+export default async event => {
+  const accountImportSnap = event.data;
   const accountImport = accountImportSnap.data() as AccountImport;
-  const accountId = context.params.accountId;
+  const accountId = event.params.accountId;
   const t0 = Date.now();
 
   const importId = accountImportSnap.id;
-  const executionId = context.eventId;
+  const executionId = event.id;
   const base = { accountId, importId, executionId };
 
   const mark = (label: string, meta: Record<string, unknown> = {}) =>
-    functions.logger.info(label, { elapsedMs: Date.now() - t0, ...base, ...meta });
-  functions.logger.debug(`Account jwtToken ${accountImport.jwtToken}`);
+    logger.info(label, { elapsedMs: Date.now() - t0, ...base, ...meta });
+  logger.debug(`Account jwtToken ${accountImport.jwtToken}`);
 
   const accountRef = db.doc(`/accounts/${accountId}`);
 
@@ -387,7 +388,7 @@ export const startSync = async (jwtToken: string, accountId: string, accountImpo
 
   await addAccountEventWithDetails("Setlists", "Finished processing setlists.", setlistDetails, accountImportEventRef);
 
-  functions.logger.debug("Finished importing data");
+  logger.debug("Finished importing data");
 
   await addAccountEvent("System", "Finished importing data.", accountImportEventRef);
 };
