@@ -242,6 +242,7 @@ export class SongService {
       const countSnap = await songsColl
         .where(songField, '==', name)
         .where('deleted', '==', false)
+        .where('deactivated', '==', false)
         .get();
       const count = countSnap.size;
 

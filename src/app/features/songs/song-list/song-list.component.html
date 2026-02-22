@@ -118,7 +118,7 @@
                 Remove
               </th>
               <td mat-cell [hidden]="!showRemove" *matCellDef="let element">
-                <a href="#" (click)="onRemoveSong($event, element)"><mat-icon>delete</mat-icon></a>
+                <a href="#" (click)="$event.stopPropagation(); onRemoveSong($event, element)"><mat-icon>delete</mat-icon></a>
               </td>
             </ng-container>
 

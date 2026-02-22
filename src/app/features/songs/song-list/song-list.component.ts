@@ -177,41 +177,25 @@ export class SongListComponent implements OnInit {
 
   onRemoveSong(event, songToDelete: Song) {
     event.preventDefault();
-    let message = "Are you sure you want to delete this song?";
-    let message2 = "";
-    let hasSetlists = false;
-    if(songToDelete.setlists && songToDelete.setlists.length > 0){
-      hasSetlists = true;
-      const setlistNames = songToDelete.setlists.map((setlistRef) => setlistRef.name).join(', ');
-      message = `This song is contained in the following setlists ${setlistNames}.`
-      message2 = `This song can not be deleted. Do you want to deactivate the song?`
-    }
+    const message = "Are you sure you want to delete this song?";
 
-    
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: { title: "Delete", message: message, message2, okButtonText: "Yes", cancelButtonText: "Cancel"},
+      data: { title: "Delete", message: message, message2: "", okButtonText: "Yes", cancelButtonText: "Cancel"},
       panelClass: "dialog-responsive",
       width: '300px',
-      enterAnimationDuration: '200ms', 
+      enterAnimationDuration: '200ms',
       exitAnimationDuration: '200ms',
-      
+
     })
     .afterClosed().subscribe((data) => {
       if(data && data.result === CONFIRM_DIALOG_RESULT.OK){
-        if(!hasSetlists){
-          this.store.dispatch(new SongActions.RemoveSong(this.accountId!, songToDelete, this.currentUser))
-            .pipe(first())
-            .subscribe();
-        } else {
-          // Deactivate instead of delete
-          const updated = { ...songToDelete, deactivated: true } as Song;
-          this.store.dispatch(new SongActions.UpdateSong(this.accountId!, updated.id!, updated, this.currentUser))
-            .pipe(first())
-            .subscribe();
-        }
+        const updated = { ...songToDelete, deactivated: true } as Song;
+        this.store.dispatch(new SongActions.UpdateSong(this.accountId!, updated.id!, updated, this.currentUser))
+          .pipe(first())
+          .subscribe();
       }
     });
-    
+
   }
 
   onViewLyrics(event, row: any){
