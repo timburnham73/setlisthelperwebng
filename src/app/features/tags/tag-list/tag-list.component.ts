@@ -238,13 +238,30 @@ export class TagListComponent implements OnInit {
     })
     .afterClosed().subscribe((data) => {
       if(data && data.result === CONFIRM_DIALOG_RESULT.OK){
-        
+
           this.tagService
               .removeTag(tagToDelete, this.accountId!, this.currentUser)
               .pipe(first())
-              .subscribe(); 
+              .subscribe(() => {
+                const tagIndex = this.selectedTags.findIndex(tag => tag.id === tagToDelete.id);
+                if (tagIndex > -1) {
+                  this.selectedTags.splice(tagIndex, 1);
+                }
+                if (this.selectedTags.length === 0) {
+                  this.allSongs = this.filteredSongs = [];
+                } else {
+                  const tags = this.selectedTags.map(tag => tag.name.toLowerCase());
+                  if (this.subscription) {
+                    this.subscription.unsubscribe();
+                  }
+                  this.subscription = this.songService.getSongsByTags(this.accountId!, "name", tags)
+                    .subscribe((songs) => {
+                      this.allSongs = this.filteredSongs = songs;
+                    });
+                }
+              });
       }
-    }); 
+    });
   }
 
   onEditTag(tag){
