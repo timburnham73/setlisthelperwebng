@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { from, map, Observable, of, switchMap, take, tap } from "rxjs";
+import { forkJoin, from, map, Observable, of, switchMap, take, tap } from "rxjs";
 import { OrderByDirection, Timestamp } from "@angular/fire/firestore";
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
 import { Setlist, SetlistHelper } from '../model/setlist';
@@ -50,7 +50,8 @@ export class SetlistService {
             return setlist;
           }
         )
-      )
+      ),
+      map(setlists => setlists.filter(s => !s.deprecated && !(s as any).deleted))
     );
   }
 
@@ -96,20 +97,62 @@ export class SetlistService {
     accountId: string,
     editingUser: BaseUser
   ): any {
+    const setlistId = setlistToDelete.id!;
+    const songsPath = `/accounts/${accountId}/setlists/${setlistId}/songs`;
+    const printSettingsPath = `/accounts/${accountId}/setlists/${setlistId}/printsettings`;
+    const setlistDocRef = this.db.firestore.doc(`/accounts/${accountId}/setlists/${setlistId}`);
     const accountRef = this.db.doc(`/accounts/${accountId}`);
-    const dbPath = `/accounts/${accountId}/setlists`;
-    const songsCollection = this.db.collection(dbPath);
-    return from(songsCollection.doc(setlistToDelete.id).delete()).pipe(
-      switchMap((result) => {
-        return accountRef
-        .valueChanges()
-          .pipe(take(1));
+
+    const songs$ = from(this.db.firestore.collection(songsPath).get());
+    const printSettings$ = from(this.db.firestore.collection(printSettingsPath).get());
+
+    return forkJoin([songs$, printSettings$]).pipe(
+      switchMap(([songsSnap, printSettingsSnap]) => {
+        const batch = this.db.firestore.batch();
+
+        // Collect unique songIds that need setlist ref removal
+        const songIds = new Set<string>();
+        songsSnap.forEach((doc) => {
+          const setlistSong = doc.data();
+          if (!setlistSong['isBreak'] && setlistSong['songId']) {
+            songIds.add(setlistSong['songId']);
+          }
+          batch.delete(doc.ref);
+        });
+
+        // Delete print settings docs
+        printSettingsSnap.forEach((doc) => {
+          batch.delete(doc.ref);
+        });
+
+        // Delete the setlist doc
+        batch.delete(setlistDocRef);
+
+        // Remove setlist refs from master songs
+        const refUpdates = Array.from(songIds).map((songId) => {
+          const songDocRef = this.db.firestore.doc(`/accounts/${accountId}/songs/${songId}`);
+          return songDocRef.get().then((songSnap) => {
+            if (songSnap.exists) {
+              const song = songSnap.data() as any;
+              if (song.setlists && song.setlists.length > 0) {
+                const filtered = song.setlists.filter((ref: any) => ref.id !== setlistId);
+                return songDocRef.update({ setlists: filtered });
+              }
+            }
+            return Promise.resolve();
+          });
+        });
+
+        return from(Promise.all(refUpdates)).pipe(
+          switchMap(() => from(batch.commit()))
+        );
       }),
+      switchMap(() => accountRef.valueChanges().pipe(take(1))),
       tap((result) => {
         const account = result as Account;
-            accountRef.update({
-              countOfSetlists: account.countOfSetlists ? account.countOfSetlists - 1 : 0,
-            });
+        accountRef.update({
+          countOfSetlists: account.countOfSetlists ? account.countOfSetlists - 1 : 0,
+        });
       })
     );
   }

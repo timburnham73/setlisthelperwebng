@@ -50,6 +50,15 @@ th.mat-sort-header-sorted {
 }
 
 
+.empty-state {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+    color: rgba(0, 0, 0, 0.54);
+    text-align: center;
+}
+
 @media print {
 
 

@@ -58,6 +58,11 @@
       }
     </mat-toolbar>
     <div id="setlist-songs-mobile-container" class="mobile-card-container" cdkDropList (cdkDropListDropped)="onListDrop($event)">
+      @if(dsSetlistSongs.data.length === 0) {
+        <div class="empty-state">
+          <p>No songs in this setlist. Tap the + button to add songs.</p>
+        </div>
+      }
       <mat-card-content *ngFor="let song of dsSetlistSongs.data" (click)="onViewLyrics($event, song)" [cdkDragDisabled]="!showReorder" cdkDrag [cdkDragData]="song">
         
         <div class="grid b-b-1" [ngClass]="{ setbreak: song.isBreak }">
@@ -219,7 +224,10 @@
           </button>
           }
         </mat-toolbar>
-        <div class="table-container">
+        <div class="empty-state" *ngIf="dsSetlistSongs.data.length === 0">
+          <p>No songs in this setlist. Add songs from the catalog or create new ones.</p>
+        </div>
+        <div class="table-container" [class.hidden]="dsSetlistSongs.data.length === 0">
           <table mat-table cdkDropList (cdkDropListDropped)="onListDrop($event)" [dataSource]="dsSetlistSongs"
             #setlistSongList="cdkDropList">
             <ng-container matColumnDef="sequence">

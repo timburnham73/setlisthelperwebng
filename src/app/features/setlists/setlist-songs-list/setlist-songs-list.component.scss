@@ -61,3 +61,16 @@ th.mat-sort-header-sorted {
     height: calc(100vh - 54px);
     overflow-y: scroll;
 }
+
+.empty-state {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+    color: rgba(0, 0, 0, 0.54);
+    text-align: center;
+}
+
+.hidden {
+    display: none !important;
+}

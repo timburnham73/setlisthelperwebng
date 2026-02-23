@@ -193,6 +193,11 @@
     
     <mat-card id="setlist-songs">
       <mat-card-content class="setlist-songs-static">
+        @if(!setlistSongs || setlistSongs.length === 0) {
+          <div class="empty-state">
+            <p>No songs in this setlist.</p>
+          </div>
+        } @else {
         <ol class="two-columns">
           <li *ngFor="let song of setlistSongs; index as i;" [ngClass]="{'break': song.isBreak === true}" [value]="song.sequenceNumber">
             <div>
@@ -202,7 +207,8 @@
               {{song.artist}}
             </div>
           </li>
-        </ol>  
+        </ol>
+        }
       </mat-card-content>
     </mat-card>
   </div>
