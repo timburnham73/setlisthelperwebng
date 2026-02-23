@@ -51,6 +51,15 @@ th.mat-sort-header-sorted {
     font-size: 20px;
 }
 
+.empty-state {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+    color: rgba(0, 0, 0, 0.54);
+    text-align: center;
+}
+
 .more-column {
     width: 10% !important;
 }

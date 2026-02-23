@@ -1,5 +1,5 @@
 import { inject, Injectable } from "@angular/core";
-import { combineLatest, concatMap, first, from, map, Observable, of, pipe, switchMap, take, tap } from "rxjs";
+import { combineLatest, concatMap, forkJoin, first, from, map, Observable, of, pipe, switchMap, tap } from "rxjs";
 import { Tag, TagHelper } from "../model/tag";
 import { OrderByDirection, Timestamp } from "@angular/fire/firestore";
 
@@ -12,7 +12,6 @@ import { BaseUser, User, UserHelper } from "../model/user";
 import { SongService } from "./song.service";
 import { Song } from "../model/song";
 import { SongFactory } from "../model/factory/song.factory";
-import { Account } from "../model/account";
 
 //import OrderByDirection = firebase.firestore.OrderByDirection;
 
@@ -65,17 +64,17 @@ export class TagService {
     const dbPath = `/accounts/${accountId}/${this.collectionName}`;
     const tagsRef = this.db.collection(dbPath);
 
-    let save$: Observable<any>;
-    save$ = from(tagsRef.add(tagToAdd));
-    
-    return save$.pipe(
+    return from(tagsRef.add(tagToAdd)).pipe(
       map((res) => {
         const rtnTag = {
           id: res.id,
           ...tagToAdd,
         };
         return rtnTag;
-      })
+      }),
+      switchMap((rtnTag) => this.recomputeAccountTagCount(accountId).pipe(
+        map(() => rtnTag)
+      ))
     );
   }
 
@@ -112,11 +111,8 @@ export class TagService {
           }
         });
 
-        //Batch commit incrementing the tag song sequence number.
         return from(batch.commit()).pipe(
-          tap(
-            //TODO: Update the tag statisitcs 
-          )
+          switchMap(() => this.recomputeTagSongCounts(accountId, tags))
         );
       })
     );
@@ -170,24 +166,13 @@ export class TagService {
     accountId: string,
     editingUser: BaseUser
   ): any {
-    const accountRef = this.db.doc(`/accounts/${accountId}`);
     const dbPath = `/accounts/${accountId}/${this.collectionName}`;
     const songsCollection = this.db.collection(dbPath);
     return from(songsCollection.doc(tagToDelete.id).delete()).pipe(
-      switchMap(() => {
-        return accountRef
-                .valueChanges()
-                .pipe(take(1));
-      }),
-      tap((result) => {
-          const account = result as Account;
-          accountRef.update({
-            countOfTags: account.countOfTags ? account.countOfTags - 1 : 0,
-          });
-      }),
+      switchMap(() => this.recomputeAccountTagCount(accountId)),
       switchMap(() => this.songService.getSongsByTags(accountId, 'name', [tagToDelete.name])
                           .pipe(first())),
-      tap((results: Song[]) => {
+      switchMap((results: Song[]) => {
         const songs = results;
         const batch = this.db.firestore.batch();
         songs.forEach((song, index) => {
@@ -199,17 +184,12 @@ export class TagService {
             if(songToUpdate.tags.length !== 0 || tagIndex > -1){
               songToUpdate.tags.splice(tagIndex, 1);
             }
-          
+
             batch.update(songsRef.doc(song.id).ref, songToUpdate);
           }
         });
 
-        //Batch commit incrementing the tag song sequence number.
-        return from(batch.commit()).pipe(
-          tap(
-            //TODO: Update the tag statisitcs 
-          )
-        );
+        return from(batch.commit());
       })
     );
     
@@ -240,13 +220,47 @@ export class TagService {
           }
         });
 
-        //Batch commit incrementing the tag song sequence number.
         return from(batch.commit()).pipe(
-          tap(
-            //TODO: Update the tag statisitcs 
-          )
+          switchMap(() => this.recomputeTagSongCounts(accountId, tags))
         );
       })
+    );
+  }
+
+  private recomputeTagSongCounts(accountId: string, tagNames: string[]): Observable<void> {
+    if (tagNames.length === 0) return of(undefined as void);
+
+    const updates$ = tagNames.map(tagName => {
+      const songsPath = `/accounts/${accountId}/songs`;
+      const songsQuery = this.db.firestore.collection(songsPath)
+        .where('deleted', '==', false)
+        .where('tags', 'array-contains', tagName);
+
+      const tagsPath = `/accounts/${accountId}/${this.collectionName}`;
+      const tagQuery = this.db.firestore.collection(tagsPath)
+        .where('nameLowered', '==', tagName);
+
+      return from(Promise.all([songsQuery.get(), tagQuery.get()])).pipe(
+        tap(([songsSnap, tagSnap]) => {
+          const count = songsSnap.docs.filter(doc => {
+            const data = doc.data();
+            return !data['deactivated'];
+          }).length;
+          tagSnap.forEach(tagDoc => {
+            tagDoc.ref.update({ countOfSongs: count });
+          });
+        })
+      );
+    });
+
+    return forkJoin(updates$).pipe(map(() => undefined as void));
+  }
+
+  private recomputeAccountTagCount(accountId: string): Observable<void> {
+    const tagsPath = `/accounts/${accountId}/${this.collectionName}`;
+    const accountRef = this.db.doc(`/accounts/${accountId}`);
+    return from(this.db.firestore.collection(tagsPath).get()).pipe(
+      switchMap((snap) => from(accountRef.update({ countOfTags: snap.size })))
     );
   }
 }
