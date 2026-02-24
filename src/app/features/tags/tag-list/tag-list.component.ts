@@ -32,6 +32,7 @@ import { Tag } from 'src/app/core/model/tag';
 import { MatListOption, MatSelectionList } from '@angular/material/list';
 import { TagEditDialogComponent } from '../tag-edit-dialog/tag-edit-dialog.component';
 import { CONFIRM_DIALOG_RESULT, ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { NotificationService } from 'src/app/core/services/notification.service';
 import { user } from '@angular/fire/auth';
 import { Setlist } from 'src/app/core/model/setlist';
 import { BaseUser, UserHelper } from 'src/app/core/model/user';
@@ -87,6 +88,8 @@ export class TagListComponent implements OnInit {
   @ViewChild(MatSort, { static: true }) sort: MatSort = new MatSort;
   accountId?: string;
   
+  private selectedAccount: Account;
+
   constructor(
     private activeRoute: ActivatedRoute,
     private route: ActivatedRoute,
@@ -95,6 +98,7 @@ export class TagListComponent implements OnInit {
     public tagService: TagService,
     private store: Store,
     private authService: AuthenticationService,
+    private notificationService: NotificationService,
     private router: Router,
     public dialog: MatDialog
   ) {
@@ -105,7 +109,7 @@ export class TagListComponent implements OnInit {
       }
     });
 
-    const selectedAccount = this.store.selectSnapshot(
+    this.selectedAccount = this.store.selectSnapshot(
       AccountState.selectedAccount
     );
 
@@ -225,6 +229,10 @@ export class TagListComponent implements OnInit {
   }
 
   onDeleteTag(tagToDelete){
+    if (this.currentUser?.uid !== this.selectedAccount?.ownerUser?.uid) {
+      this.notificationService.openSnackBar(`Only the band owner, ${this.selectedAccount?.ownerUser?.displayName}, can delete this item.`);
+      return;
+    }
     let message = "Are you sure you want to delete this Tag?";
     let message2 = "";
     
@@ -309,6 +317,10 @@ export class TagListComponent implements OnInit {
 
   onRemoveTagFromSong($event, song){
     $event.preventDefault();
+    if (this.currentUser?.uid !== this.selectedAccount?.ownerUser?.uid) {
+      this.notificationService.openSnackBar(`Only the band owner, ${this.selectedAccount?.ownerUser?.displayName}, can delete this item.`);
+      return;
+    }
     this.tagService.removeTagsToSongs([song], this.accountId!, this.selectedTags.map(tag => tag.name.toLowerCase()), this.currentUser).subscribe((songs) => {
       console.log('Removed song');
     });

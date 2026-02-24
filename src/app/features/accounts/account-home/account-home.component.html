@@ -25,7 +25,8 @@
           <div (click)="onSelectAccount(account)">
           <mat-card-header>
             <mat-card-title>{{account.name}}</mat-card-title>
-            <mat-card-subtitle ><span class="padding-right">Songs: {{account.countOfSongs}}</span>  <span>Setlists: {{account.countOfSetlists}}</span></mat-card-subtitle>
+            <mat-card-subtitle><span class="padding-right">Owner: {{account.ownerUser?.displayName}}</span></mat-card-subtitle>
+            <mat-card-subtitle><span class="padding-right">Songs: {{account.countOfSongs}}</span>  <span>Setlists: {{account.countOfSetlists}}</span></mat-card-subtitle>
           </mat-card-header>
           <mat-card-content>
             <p *ngIf="!account.description">Songs, Setlists, Lyrics, Audio and Documents that are grouped for a band, worship group, or solo act. </p>

@@ -26,6 +26,7 @@ import { MatCardModule } from "@angular/material/card";
 import { FlexLayoutModule } from "ngx-flexible-layout";
 import { AuthenticationService } from "src/app/core/services/auth.service";
 import { CONFIRM_DIALOG_RESULT, ConfirmDialogComponent } from "src/app/shared/confirm-dialog/confirm-dialog.component";
+import { NotificationService } from "src/app/core/services/notification.service";
 
 @Component({
     selector: "app-setlist-list",
@@ -76,12 +77,15 @@ export class SetlistListComponent implements OnInit {
   @ViewChild(MatSort, { static: true })
   sort: MatSort = new MatSort();
 
+  private selectedAccount: Account;
+
   constructor(
     private route: ActivatedRoute,
     private titleService: Title,
     private setlistService: SetlistService,
     private setlistSongsService: SetlistSongService,
     private authService: AuthenticationService,
+    private notificationService: NotificationService,
     private store: Store,
     private router: Router,
     public dialog: MatDialog
@@ -93,7 +97,7 @@ export class SetlistListComponent implements OnInit {
       }
     });
 
-    const selectedAccount = this.store.selectSnapshot(
+    this.selectedAccount = this.store.selectSnapshot(
       AccountState.selectedAccount
     );
     
@@ -149,6 +153,10 @@ export class SetlistListComponent implements OnInit {
 
   onRemoveSetlist(event, setlistToDelete: Setlist) {
     event.preventDefault();
+    if (this.currentUser?.uid !== this.selectedAccount?.ownerUser?.uid) {
+      this.notificationService.openSnackBar(`Only the band owner, ${this.selectedAccount?.ownerUser?.displayName}, can delete this item.`);
+      return;
+    }
     let message = "Are you sure you want to delete this setlist?";
     let message2 = "";
     

@@ -40,6 +40,7 @@ import { Setlist } from "src/app/core/model/setlist";
 import { SetlistBreak } from "functions/src/model/setlist-break";
 import { SongSelectorComponent } from "../song-selector/song-selector.component";
 import { ExpandIconComponent } from "src/app/shared/icons/expand-icon/expand-icon.component";
+import { NotificationService } from "src/app/core/services/notification.service";
 
 @Component({
   selector: "app-setlist-songs-list",
@@ -106,6 +107,8 @@ export class SetlistSongsListComponent {
   //Use to select the row.
   selectedRowSequence = -1;
 
+  private selectedAccount: Account;
+
   constructor(
     private activeRoute: ActivatedRoute,
     private route: ActivatedRoute,
@@ -115,18 +118,19 @@ export class SetlistSongsListComponent {
     public songService: SongService,
     private store: Store,
     private authService: AuthenticationService,
+    private notificationService: NotificationService,
     private router: Router,
     public dialog: MatDialog
   ) {
     titleService.setTitle('Band Central');
-    
+
     this.authService.user$.subscribe((user) => {
       if (user && user.uid) {
         this.currentUser = UserHelper.getForUpdate(user);
       }
     });
 
-    const selectedAccount = this.store.selectSnapshot(
+    this.selectedAccount = this.store.selectSnapshot(
       AccountState.selectedAccount
     );
 
@@ -293,7 +297,10 @@ export class SetlistSongsListComponent {
 
   onRemoveSong(event, element) {
     event.preventDefault();
-    
+    if (this.currentUser?.uid !== this.selectedAccount?.ownerUser?.uid) {
+      this.notificationService.openSnackBar(`Only the band owner, ${this.selectedAccount?.ownerUser?.displayName}, can delete this item.`);
+      return;
+    }
     if(this.setlist && this.setlist.id){
       this.setlistSongsService
         .removeSetlistSong(element, this.accountId!, this.setlist, this.currentUser)

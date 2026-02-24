@@ -28,6 +28,7 @@ import { AuthenticationService } from 'src/app/core/services/auth.service';
 import { SongService } from 'src/app/core/services/song.service';
 import { TagService } from 'src/app/core/services/tag.service';
 import { AccountState } from 'src/app/core/store/account.state';
+import { NotificationService } from 'src/app/core/services/notification.service';
 import { BaseUser, UserHelper } from 'src/app/core/model/user';
 import { Account } from 'src/app/core/model/account';
 import { Song } from 'src/app/core/model/song';
@@ -79,6 +80,8 @@ export class TagSongsComponent implements OnInit {
   accountId?: string;
   tagId?: string;
 
+  private selectedAccount: Account;
+
   constructor(
     private activeRoute: ActivatedRoute,
     private route: ActivatedRoute,
@@ -87,6 +90,7 @@ export class TagSongsComponent implements OnInit {
     public tagService: TagService,
     private store: Store,
     private authService: AuthenticationService,
+    private notificationService: NotificationService,
     private router: Router,
     public dialog: MatDialog
   ) {
@@ -97,7 +101,7 @@ export class TagSongsComponent implements OnInit {
       }
     });
 
-    const selectedAccount = this.store.selectSnapshot(
+    this.selectedAccount = this.store.selectSnapshot(
       AccountState.selectedAccount
     );
 
@@ -209,6 +213,10 @@ export class TagSongsComponent implements OnInit {
 
   onRemoveTagFromSong($event, song){
     $event.preventDefault();
+    if (this.currentUser?.uid !== this.selectedAccount?.ownerUser?.uid) {
+      this.notificationService.openSnackBar(`Only the band owner, ${this.selectedAccount?.ownerUser?.displayName}, can delete this item.`);
+      return;
+    }
     if(this.selectedTag){
       this.tagService.removeTagsToSongs([song], this.accountId!, [this.selectedTag.name], this.currentUser).subscribe((songs) => {});
     }

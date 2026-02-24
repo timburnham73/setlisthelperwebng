@@ -81,18 +81,22 @@ export class SongListComponent implements OnInit {
   showFind = false;
   @ViewChild(MatSort, { static: true }) sort: MatSort = new MatSort;
 
+  private selectedAccount: Account;
+
   constructor(
     private route: ActivatedRoute,
     private titleService: Title,
     private store: Store,
     private authService: AuthenticationService,
+    private notificationService: NotificationService,
     private router: Router,
     public dialog: MatDialog
 
   ) {
     this.selectedAccount$ = this.store.select(AccountState.selectedAccount);
+    this.selectedAccount = this.store.selectSnapshot(AccountState.selectedAccount);
     this.songs$ = this.store.select(SongState.all);
-    this.loading$ = this.store.select(SongState.loading); 
+    this.loading$ = this.store.select(SongState.loading);
     this.authService.user$.subscribe((user) => {
       if(user && user.uid){
         this.currentUser = user;
@@ -177,6 +181,10 @@ export class SongListComponent implements OnInit {
 
   onRemoveSong(event, songToDelete: Song) {
     event.preventDefault();
+    if (this.currentUser?.uid !== this.selectedAccount?.ownerUser?.uid) {
+      this.notificationService.openSnackBar(`Only the band owner, ${this.selectedAccount?.ownerUser?.displayName}, can delete this item.`);
+      return;
+    }
     const message = "Are you sure you want to delete this song?";
 
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {

@@ -24,6 +24,7 @@ import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { ChordProParser } from "src/app/core/services/ChordProParser";
 import { SafeHtml } from "src/app/shared/pipes/safe-html.pipe";
 import { MatMenuModule } from "@angular/material/menu";
+import { NotificationService } from "src/app/core/services/notification.service";
 import { UserService } from "src/app/core/services/user.service";
 import { User, UserHelper } from "src/app/core/model/user";
 import { AccountService } from "src/app/core/services/account.service";
@@ -104,6 +105,10 @@ export class LyricsComponent {
     return this.defaultLyricId === this.selectedLyric?.id;
   }
 
+  get isOwner(): boolean {
+    return this.currentUser?.uid === this.selectedAccount?.ownerUser?.uid;
+  }
+
   get canEditOrDelete(): boolean {
     const uid = this.currentUser?.uid;
     if (!uid) return false;
@@ -132,6 +137,7 @@ export class LyricsComponent {
     private lyricsService: LyricsService,
     private userService: UserService,
     private accountService: AccountService,
+    private notificationService: NotificationService,
     private router: Router,
     public dialog: MatDialog,
     
@@ -258,6 +264,10 @@ export class LyricsComponent {
   }
 
   onDeleteLyric() {
+    if (!this.isOwner) {
+      this.notificationService.openSnackBar(`Only the band owner, ${this.selectedAccount?.ownerUser?.displayName}, can delete this item.`);
+      return;
+    }
     this.dialog.open(ConfirmDialogComponent, {
       data: { title: "Delete", message: "Are you sure you want to delete this lyric?", okButtonText: "Yes", cancelButtonText: "Cancel" },
       panelClass: "dialog-responsive",
