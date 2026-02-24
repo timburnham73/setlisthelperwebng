@@ -67,16 +67,30 @@ export class SetlistSongService {
       return of(void 0);
     }
 
-    const batch = this.db.firestore.batch();
-    for (const setlistRef of setlists) {
+    const docRefs = setlists.map(setlistRef => {
       const docPath = `/accounts/${accountId}/setlists/${setlistRef.id}/songs/${setlistRef.setlistSongId}`;
-      const docRef = this.db.doc(docPath).ref;
-      batch.update(docRef, {
-        countOfLyrics: countOfLyrics,
-        lastEdit: Timestamp.fromDate(new Date()),
-      });
-    }
-    return from(batch.commit());
+      return this.db.doc(docPath).ref;
+    });
+
+    return from(Promise.all(docRefs.map(ref => ref.get()))).pipe(
+      switchMap((snapshots) => {
+        const batch = this.db.firestore.batch();
+        let hasUpdates = false;
+        for (const snap of snapshots) {
+          if (snap.exists) {
+            batch.update(snap.ref, {
+              countOfLyrics: countOfLyrics,
+              lastEdit: Timestamp.fromDate(new Date()),
+            });
+            hasUpdates = true;
+          }
+        }
+        if (!hasUpdates) {
+          return of(void 0);
+        }
+        return from(batch.commit());
+      })
+    );
   }
 
   updateSetlistSongsBySongId(accountId: string, songId: string, modifiedSong: Song, editingUser: BaseUser) {

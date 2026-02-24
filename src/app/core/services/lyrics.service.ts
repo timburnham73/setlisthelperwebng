@@ -87,23 +87,27 @@ export class LyricsService {
         ...lyric,
       })),
       switchMap((rtnLyric) =>
-        songRef.valueChanges().pipe(
-          take(1),
-          switchMap((result) => {
-            const song = result as Song;
-            const newCountOfLyrics = song.countOfLyrics ? song.countOfLyrics + 1 : 1;
-            return from(songRef.update({
-              lastEdit: Timestamp.fromDate(new Date()),
-              countOfLyrics: newCountOfLyrics,
-            })).pipe(
-              switchMap(() =>
-                this.setlistSongService.updateSetlistSongsLyricMetadata(
-                  accountId,
-                  song,
-                  newCountOfLyrics
-                )
-              ),
-              map(() => rtnLyric)
+        from(lyricsRef.ref.get()).pipe(
+          switchMap((lyricsSnap) => {
+            const newCountOfLyrics = lyricsSnap.size;
+            return songRef.valueChanges().pipe(
+              take(1),
+              switchMap((result) => {
+                const song = result as Song;
+                return from(songRef.update({
+                  lastEdit: Timestamp.fromDate(new Date()),
+                  countOfLyrics: newCountOfLyrics,
+                })).pipe(
+                  switchMap(() =>
+                    this.setlistSongService.updateSetlistSongsLyricMetadata(
+                      accountId,
+                      song,
+                      newCountOfLyrics
+                    )
+                  ),
+                  map(() => rtnLyric)
+                );
+              })
             );
           })
         )
@@ -160,24 +164,30 @@ export class LyricsService {
     const lyricRef = this.db.doc(dbLyricPath);
     const songRef = this.db.doc(dbSongPath);
 
+    const lyricsCollectionRef = this.db.collection(`/accounts/${accountId}/songs/${songId}/lyrics`);
+
     return from(lyricRef.delete()).pipe(
       switchMap(() =>
-        songRef.valueChanges().pipe(
-          take(1),
-          switchMap((result) => {
-            const song = result as Song;
-            const newCountOfLyrics = song.countOfLyrics ? song.countOfLyrics - 1 : 0;
-            return from(songRef.update({
-              lastEdit: Timestamp.fromDate(new Date()),
-              countOfLyrics: newCountOfLyrics,
-            })).pipe(
-              switchMap(() =>
-                this.setlistSongService.updateSetlistSongsLyricMetadata(
-                  accountId,
-                  song,
-                  newCountOfLyrics
-                )
-              )
+        from(lyricsCollectionRef.ref.get()).pipe(
+          switchMap((lyricsSnap) => {
+            const newCountOfLyrics = lyricsSnap.size;
+            return songRef.valueChanges().pipe(
+              take(1),
+              switchMap((result) => {
+                const song = result as Song;
+                return from(songRef.update({
+                  lastEdit: Timestamp.fromDate(new Date()),
+                  countOfLyrics: newCountOfLyrics,
+                })).pipe(
+                  switchMap(() =>
+                    this.setlistSongService.updateSetlistSongsLyricMetadata(
+                      accountId,
+                      song,
+                      newCountOfLyrics
+                    )
+                  )
+                );
+              })
             );
           })
         )
