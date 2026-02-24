@@ -150,6 +150,41 @@ export class LyricsService {
     return from(batch.commit());
   }
 
+  deleteLyric(
+    accountId: string,
+    songId: string,
+    lyricId: string
+  ): Observable<any> {
+    const dbLyricPath = `/accounts/${accountId}/songs/${songId}/lyrics/${lyricId}`;
+    const dbSongPath = `/accounts/${accountId}/songs/${songId}`;
+    const lyricRef = this.db.doc(dbLyricPath);
+    const songRef = this.db.doc(dbSongPath);
+
+    return from(lyricRef.delete()).pipe(
+      switchMap(() =>
+        songRef.valueChanges().pipe(
+          take(1),
+          switchMap((result) => {
+            const song = result as Song;
+            const newCountOfLyrics = song.countOfLyrics ? song.countOfLyrics - 1 : 0;
+            return from(songRef.update({
+              lastEdit: Timestamp.fromDate(new Date()),
+              countOfLyrics: newCountOfLyrics,
+            })).pipe(
+              switchMap(() =>
+                this.setlistSongService.updateSetlistSongsLyricMetadata(
+                  accountId,
+                  song,
+                  newCountOfLyrics
+                )
+              )
+            );
+          })
+        )
+      )
+    );
+  }
+
   deleteFormatSettingsUser(accountId: string, songId: string, lyricId: string): any {
     const dbPath = `/accounts/${accountId}/songs/${songId}/lyrics`;
     const lyricRef = this.db.collection(dbPath);

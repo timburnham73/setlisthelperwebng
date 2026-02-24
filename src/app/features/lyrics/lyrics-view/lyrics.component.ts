@@ -1,10 +1,10 @@
 import { Component, Input, ViewChild, ViewEncapsulation } from "@angular/core";
+import { first } from "rxjs/operators";
+import { CONFIRM_DIALOG_RESULT, ConfirmDialogComponent } from "src/app/shared/confirm-dialog/confirm-dialog.component";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
-import { Store } from "@ngxs/store";
 import { FormatScope, Lyric } from "src/app/core/model/lyric";
 import { LyricsService } from "src/app/core/services/lyrics.service";
-import { AccountState } from "src/app/core/store/account.state";
 import { LyricAddDialogComponent } from "../lyric-add-dialog/lyric-add-dialog.component";
 import { MatDialog as MatDialog } from "@angular/material/dialog";
 import { Song } from "src/app/core/model/song";
@@ -61,7 +61,9 @@ export class LyricsComponent {
   @ViewChild('lyricSection') lyricSection;
   @ViewChild('toggleFontStyle') toggleFontStyle;
   
+  @Input()
   selectedAccount: Account;
+
   lyricId: string | undefined;
 
   @Input()
@@ -101,6 +103,13 @@ export class LyricsComponent {
   get isDefaultLyric(): boolean {
     return this.defaultLyricId === this.selectedLyric?.id;
   }
+
+  get canEditOrDelete(): boolean {
+    const uid = this.currentUser?.uid;
+    if (!uid) return false;
+    return uid === this.selectedAccount?.ownerUser?.uid
+        || uid === this.selectedLyric?.createdByUser?.uid;
+  }
   
   
   lyricVersionValue = "add";
@@ -123,16 +132,12 @@ export class LyricsComponent {
     private lyricsService: LyricsService,
     private userService: UserService,
     private accountService: AccountService,
-    private store: Store,
     private router: Router,
     public dialog: MatDialog,
     
     
   ) {
     this.lyricId = this.activeRoute.snapshot.paramMap.get("lyricsid") || undefined;
-    this.selectedAccount = this.store.selectSnapshot(
-      AccountState.selectedAccount
-    );
   }
 
   
@@ -250,6 +255,26 @@ export class LyricsComponent {
       this.selectedLyric?.id!,
       this.currentUser
     );
+  }
+
+  onDeleteLyric() {
+    this.dialog.open(ConfirmDialogComponent, {
+      data: { title: "Delete", message: "Are you sure you want to delete this lyric?", okButtonText: "Yes", cancelButtonText: "Cancel" },
+      panelClass: "dialog-responsive",
+      width: '300px',
+      enterAnimationDuration: '200ms',
+      exitAnimationDuration: '200ms',
+    })
+    .afterClosed().subscribe((data) => {
+      if (data && data.result === CONFIRM_DIALOG_RESULT.OK) {
+        this.lyricsService
+          .deleteLyric(this.selectedAccount.id!, this.song?.id!, this.selectedLyric?.id!)
+          .pipe(first())
+          .subscribe(() => {
+            this.onBackToSong();
+          });
+      }
+    });
   }
 
   onSelectLyricPart(fontname: string) {

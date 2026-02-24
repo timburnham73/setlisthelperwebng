@@ -86,12 +86,14 @@
         @if(selectedLyric){
         
         
+        @if(canEditOrDelete){
         <button mat-button aria-label="Edit Lyrics" title="Edit" (click)="onEditLyric()">
           <mat-icon>edit</mat-icon>
           <span fxShow fxHide.lt-md>
             Edit
           </span>
         </button>
+        }
         <button mat-button aria-label="Print Lyrics" title="Print" (click)="onPrintLyric()" >
           <mat-icon>print</mat-icon>
           <span fxShow fxHide.lt-md>
@@ -163,6 +165,16 @@
         <button mat-menu-item (click)="onSetDefaultUser($event)">
           <mat-icon>group</mat-icon>
           <span>Set as Default Lyric</span>
+        </button>
+        }
+        @if(canEditOrDelete){
+        <button mat-menu-item aria-label="Edit Lyrics" (click)="onEditLyric()">
+          <mat-icon>edit</mat-icon>
+          <span>Edit</span>
+        </button>
+        <button mat-menu-item aria-label="Delete Lyric" (click)="onDeleteLyric()">
+          <mat-icon>delete</mat-icon>
+          <span>Delete</span>
         </button>
         }
       </mat-menu>
