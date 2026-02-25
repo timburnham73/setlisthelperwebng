@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { NotificationService } from 'src/app/core/services/notification.service';
 import firebase from 'firebase/compat/app';
@@ -15,7 +15,7 @@ import { NgIf } from '@angular/common';
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.css'],
     standalone: true,
-    imports: [NgIf],
+    imports: [NgIf, RouterLink],
 })
 export class LoginComponent implements OnInit, OnDestroy {
     ui: firebaseui.auth.AuthUI | null = null;

@@ -22,6 +22,12 @@
   max-width: 600px;
 }
 
+.login-branding-link {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
 .login-logo {
   width: 140px;
   height: 140px;
