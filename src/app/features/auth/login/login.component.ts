@@ -1,8 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { UntypedFormControl, Validators, UntypedFormGroup } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
-import { AuthenticationService } from 'src/app/core/services/auth.service';
 import { NotificationService } from 'src/app/core/services/notification.service';
 import firebase from 'firebase/compat/app';
 import * as firebaseui from 'firebaseui'
@@ -10,66 +8,82 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import EmailAuthProvider = firebase.auth.EmailAuthProvider;
 import GoogleAuthProvider = firebase.auth.GoogleAuthProvider;
 import { UserService } from 'src/app/core/services/user.service';
+import { NgIf } from '@angular/common';
 
 @Component({
     selector: 'app-login',
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.css'],
     standalone: true,
+    imports: [NgIf],
 })
 export class LoginComponent implements OnInit, OnDestroy {
-    ui: firebaseui.auth.AuthUI;
-    loginForm!: UntypedFormGroup;
-    loading!: boolean;
+    ui: firebaseui.auth.AuthUI | null = null;
+    showEmailSignIn = false;
 
     constructor(private router: Router,
         private titleService: Title,
         private notificationService: NotificationService,
-        private authenticationService: AuthenticationService,
         private afAuth: AngularFireAuth,
         private userService: UserService) {
     }
 
     ngOnInit() {
-        this.afAuth.app.then(app => {
-            const uiConfig = {
-                signInOptions: [
-                    EmailAuthProvider.PROVIDER_ID,
-                    GoogleAuthProvider.PROVIDER_ID
-                ],
-                popupMode: true,
-                signInFlow: 'popup',
-                signInSuccessUrl: "accounts",
-                callbacks: {
-                    signInSuccessWithAuthResult: (authResult: any) => {
-                        this.onLoginSuccessful(authResult);
-                        return true;
-                      },
-                      
-                }
-            };
-            uiConfig.callbacks.signInSuccessWithAuthResult.bind(this);
-
-            this.ui = new firebaseui.auth.AuthUI(app.auth());
-
-            this.ui.start("#login-container", uiConfig);
-
-            this.ui.disableAutoSignIn();
-        });
-
         this.titleService.setTitle('Band Central - Login');
     }
 
     ngOnDestroy() {
-        this.ui.delete();
+        if (this.ui) {
+            this.ui.delete();
+        }
+    }
+
+    onGoogleSignIn() {
+        const provider = new GoogleAuthProvider();
+        this.afAuth.signInWithPopup(provider).then((result) => {
+            if (result.user) {
+                this.userService.setUser(result.user).subscribe();
+                this.router.navigateByUrl("/accounts");
+            }
+        }).catch(error => {
+            this.notificationService.openSnackBar('Google sign-in failed. Please try again.');
+        });
+    }
+
+    onEmailSignIn(event: Event) {
+        event.preventDefault();
+        this.showEmailSignIn = true;
+
+        setTimeout(() => {
+            this.afAuth.app.then(app => {
+                const uiConfig = {
+                    signInOptions: [EmailAuthProvider.PROVIDER_ID],
+                    signInFlow: 'popup',
+                    callbacks: {
+                        signInSuccessWithAuthResult: (authResult: any) => {
+                            this.onLoginSuccessful(authResult);
+                            return false;
+                        },
+                    }
+                };
+
+                this.ui = new firebaseui.auth.AuthUI(app.auth());
+                this.ui.start("#login-container", uiConfig);
+                this.ui.disableAutoSignIn();
+            });
+        });
+    }
+
+    onBackToButtons() {
+        this.showEmailSignIn = false;
+        if (this.ui) {
+            this.ui.delete();
+            this.ui = null;
+        }
     }
 
     onLoginSuccessful(authResult: any) {
         this.userService.setUser(authResult.user).subscribe();
         this.router.navigateByUrl("/accounts");
-    }
-
-    resetPassword() {
-        this.router.navigate(['/auth/password-reset-request']);
     }
 }

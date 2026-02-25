@@ -1,0 +1,152 @@
+:host {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.login-page {
+  min-height: 100vh;
+  padding: 24px 16px;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-branding {
+  text-align: center;
+  margin-bottom: 32px;
+  width: 100%;
+  max-width: 600px;
+}
+
+.login-logo {
+  width: 140px;
+  height: 140px;
+  border-radius: 28px;
+  margin-bottom: 16px;
+}
+
+.login-title {
+  margin: 0 0 16px 0;
+  font-size: 36px;
+  font-weight: 600;
+}
+
+.login-subtitle {
+  margin: 0 auto 24px auto;
+  font-size: 16px;
+  color: rgba(0, 0, 0, 0.55);
+  max-width: 600px;
+  line-height: 1.5;
+}
+
+.login-hint {
+  margin: 0 auto;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.4);
+  max-width: 500px;
+}
+
+/* Custom buttons section */
+.login-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 320px;
+}
+
+/* Google sign-in button */
+.google-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 24px;
+  background-color: #1a73e8;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  min-height: 44px;
+}
+
+.google-btn:hover {
+  background-color: #1567d3;
+}
+
+.google-icon-wrapper {
+  background-color: #fff;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.google-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.recommended-text {
+  margin: 12px 0 8px 0;
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.4);
+  text-align: center;
+}
+
+.or-divider {
+  width: 100%;
+  text-align: center;
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.35);
+  margin: 12px 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+  padding-top: 12px;
+}
+
+.email-link {
+  color: #1a73e8;
+  font-size: 15px;
+  text-decoration: none;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.email-link:hover {
+  text-decoration: underline;
+}
+
+/* Email sign-in section (FirebaseUI) */
+.email-signin-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 500px;
+}
+
+.back-link {
+  color: rgba(0, 0, 0, 0.5);
+  font-size: 14px;
+  text-decoration: none;
+  margin-bottom: 16px;
+  cursor: pointer;
+}
+
+.back-link:hover {
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.login-container {
+  width: 100%;
+}
