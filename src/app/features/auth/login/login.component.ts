@@ -45,8 +45,17 @@ export class LoginComponent implements OnInit, OnDestroy {
                 this.userService.setUser(result.user).subscribe();
                 this.router.navigateByUrl("/accounts");
             }
-        }).catch(error => {
-            this.notificationService.openSnackBar('Google sign-in failed. Please try again.');
+        }).catch(() => {
+            // COOP policy can cause a false error even when sign-in succeeds.
+            // Check if the user is actually signed in before showing an error.
+            this.afAuth.currentUser.then(user => {
+                if (user) {
+                    this.userService.setUser(user).subscribe();
+                    this.router.navigateByUrl("/accounts");
+                } else {
+                    this.notificationService.openSnackBar('Google sign-in failed. Please try again.');
+                }
+            });
         });
     }
 
