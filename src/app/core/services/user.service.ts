@@ -33,7 +33,7 @@ export class UserService {
       email: authUser.email ?? '',
       lastLoginDate: Timestamp.now()
     }
-    return this.db.collection(this.dbPath).doc(authUser.uid).set(userToAdd, {merge : true});
+    return from(this.db.collection(this.dbPath).doc(authUser.uid).set(userToAdd, {merge : true}));
   }
 
   deleteFormatSettingsUser(id: string): any {
