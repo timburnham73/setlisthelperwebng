@@ -1,0 +1,91 @@
+:host {
+  display: block;
+}
+
+.help-toolbar {
+  margin-bottom: 24px;
+}
+
+.help-toolbar a {
+  color: white;
+  text-decoration: none;
+}
+
+.landing-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 16px 48px;
+  text-align: center;
+}
+
+h1 {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  color: rgba(0, 0, 0, 0.54);
+  font-size: 16px;
+  margin-bottom: 32px;
+}
+
+.help-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 48px;
+}
+
+.help-card {
+  text-decoration: none;
+  color: inherit;
+}
+
+.help-card mat-card {
+  height: 100%;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+}
+
+.help-card mat-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.help-card mat-card-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 16px;
+}
+
+.card-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  color: #0A66C2;
+  margin-bottom: 12px;
+}
+
+.help-card h2 {
+  font-size: 18px;
+  margin: 0 0 8px;
+}
+
+.help-card p {
+  color: rgba(0, 0, 0, 0.54);
+  font-size: 14px;
+  margin: 0;
+}
+
+.landing-footer p {
+  color: rgba(0, 0, 0, 0.54);
+}
+
+.landing-footer a {
+  color: #0A66C2;
+  text-decoration: none;
+}
+
+.landing-footer a:hover {
+  text-decoration: underline;
+}

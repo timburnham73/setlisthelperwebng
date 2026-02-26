@@ -61,6 +61,11 @@ const appRoutes: Routes = [
       ),
   },
   {
+    path: "help",
+    loadChildren: () =>
+      import("./features/help/help.module").then((m) => m.HelpModule),
+  },
+  {
     path: "**",
     redirectTo: "home",
     pathMatch: "full",

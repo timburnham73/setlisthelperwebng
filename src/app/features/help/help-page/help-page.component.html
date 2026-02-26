@@ -1,0 +1,26 @@
+<mat-toolbar color="primary" class="help-toolbar">
+  <a routerLink="/home">Band Central</a>
+  <span class="toolbar-spacer"></span>
+  <a routerLink="/help" class="toolbar-link">All Help</a>
+</mat-toolbar>
+
+<article class="help-container">
+  <nav class="help-nav">
+    <a routerLink="/help/ios" [class.active]="platform === 'ios'">iOS</a>
+    <a routerLink="/help/android" [class.active]="platform === 'android'">Android</a>
+    <a routerLink="/help/web" [class.active]="platform === 'web'">Website</a>
+    <a routerLink="/help/migration">Migration Guide</a>
+  </nav>
+
+  <h1>{{content.title}}</h1>
+
+  @for (section of content.sections; track section.title) {
+    <app-help-section [section]="section"></app-help-section>
+  }
+
+  <footer class="help-footer">
+    <p>Can't find what you're looking for? Contact us at
+      <a href="mailto:support@bandcentral.com">support&#64;bandcentral.com</a>
+    </p>
+  </footer>
+</article>

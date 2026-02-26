@@ -1,0 +1,77 @@
+:host {
+  display: block;
+}
+
+.help-toolbar {
+  margin-bottom: 24px;
+}
+
+.help-toolbar a {
+  color: white;
+  text-decoration: none;
+}
+
+.toolbar-spacer {
+  flex: 1;
+}
+
+.toolbar-link {
+  font-size: 14px;
+}
+
+.help-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 16px 48px;
+}
+
+.help-nav {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.help-nav a {
+  color: #0A66C2;
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.help-nav a:hover {
+  background-color: rgba(10, 102, 194, 0.08);
+}
+
+.help-nav a.active {
+  background-color: #0A66C2;
+  color: white;
+}
+
+h1 {
+  font-size: 28px;
+  margin-bottom: 32px;
+}
+
+.help-footer {
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+  text-align: center;
+}
+
+.help-footer p {
+  color: rgba(0, 0, 0, 0.54);
+}
+
+.help-footer a {
+  color: #0A66C2;
+  text-decoration: none;
+}
+
+.help-footer a:hover {
+  text-decoration: underline;
+}

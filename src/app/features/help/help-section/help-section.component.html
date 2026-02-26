@@ -1,0 +1,16 @@
+<section class="help-section">
+  <h2>
+    <mat-icon class="section-icon">{{section.icon}}</mat-icon>
+    {{section.title}}
+  </h2>
+  <mat-accordion>
+    @for (topic of section.topics; track topic.question) {
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>{{topic.question}}</mat-panel-title>
+        </mat-expansion-panel-header>
+        <p [innerHTML]="topic.answer"></p>
+      </mat-expansion-panel>
+    }
+  </mat-accordion>
+</section>

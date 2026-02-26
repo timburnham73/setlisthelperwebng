@@ -1,0 +1,103 @@
+<mat-toolbar color="primary" class="help-toolbar">
+  <a routerLink="/home">Band Central</a>
+  <span class="toolbar-spacer"></span>
+  <a routerLink="/help" class="toolbar-link">All Help</a>
+</mat-toolbar>
+
+<article class="migration-container">
+  <nav class="help-nav">
+    <a routerLink="/help/ios">iOS</a>
+    <a routerLink="/help/android">Android</a>
+    <a routerLink="/help/web">Website</a>
+    <a routerLink="/help/migration" class="active">Migration Guide</a>
+  </nav>
+
+  <h1>
+    <mat-icon class="title-icon">swap_horiz</mat-icon>
+    Migrate from Setlist Helper to Band Central
+  </h1>
+
+  <mat-card class="intro-card">
+    <mat-card-content>
+      <p>
+        Band Central is the next generation of Setlist Helper, with cloud sync, band collaboration,
+        and a modern interface. This guide walks you through importing your existing Setlist Helper
+        data into Band Central.
+      </p>
+    </mat-card-content>
+  </mat-card>
+
+  <section>
+    <h2>
+      <mat-icon class="section-icon">checklist</mat-icon>
+      Before You Start
+    </h2>
+    <p>Before beginning the migration, make sure you have the following ready:</p>
+    <ul>
+      <li>A Dropbox account (free tier is fine)</li>
+      <li>If you have <strong>document or lyrics files</strong>: place them all in a single Dropbox folder</li>
+      <li>If you have <strong>audio files</strong> (backing tracks, rehearsal recordings): place them in the same Dropbox folder</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>
+      <mat-icon class="section-icon">format_list_numbered</mat-icon>
+      Step-by-Step Migration
+    </h2>
+    <ol class="steps">
+      <li>
+        <h3>Create an Account</h3>
+        <p>Sign up or log in at <a href="/auth/login">bandcentral.com</a> using your email or Google account.</p>
+      </li>
+      <li>
+        <h3>Create a Band</h3>
+        <p>From the dashboard, create a new band. This will be the workspace where your imported data lives.</p>
+      </li>
+      <li>
+        <h3>Import Your Data</h3>
+        <p>On the band card, tap the <strong>"Import"</strong> button. Follow the prompts to connect your Dropbox account and select the folder containing your files.</p>
+      </li>
+    </ol>
+    <mat-card class="note-card">
+      <mat-card-content>
+        <p>
+          <mat-icon class="inline-icon">info</mat-icon>
+          <strong>More detailed steps coming soon.</strong> We're working on expanding this guide with
+          screenshots and additional migration options. Check back for updates.
+        </p>
+      </mat-card-content>
+    </mat-card>
+  </section>
+
+  <section>
+    <h2>
+      <mat-icon class="section-icon">verified</mat-icon>
+      After Migration
+    </h2>
+    <ul>
+      <li>Verify that all your songs and setlists appear in Band Central</li>
+      <li>Check that lyrics and documents are attached to the correct songs</li>
+      <li>Confirm audio files are playable</li>
+      <li>Invite your band members to join using the band code</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>
+      <mat-icon class="section-icon">build</mat-icon>
+      Troubleshooting
+    </h2>
+    <ul>
+      <li><strong>Import button not showing?</strong> Make sure you are the band owner. Only band owners can import data.</li>
+      <li><strong>Files not importing?</strong> Verify that all files are in a single Dropbox folder and that you've granted Band Central access to Dropbox.</li>
+      <li><strong>Missing songs or setlists?</strong> Try running the import again. If the issue persists, contact support.</li>
+    </ul>
+  </section>
+
+  <footer class="migration-footer">
+    <p>Need help with migration? Contact us at
+      <a href="mailto:support@bandcentral.com">support&#64;bandcentral.com</a>
+    </p>
+  </footer>
+</article>

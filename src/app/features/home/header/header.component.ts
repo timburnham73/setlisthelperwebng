@@ -5,6 +5,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { FlexLayoutModule } from 'ngx-flexible-layout';
 import { ScrollToDirective } from 'src/app/shared/directives/scroll-to.directive';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -24,7 +25,8 @@ export class HeaderComponent {
   isFixed;
   constructor(
     @Inject(DOCUMENT) private document: Document,
-    @Inject(WINDOW) private window: Window
+    @Inject(WINDOW) private window: Window,
+    private router: Router
   ) { }
 
   @HostListener("window:scroll", [])
@@ -41,6 +43,11 @@ export class HeaderComponent {
 
   toggleMenu() {
     this.menuOpened = !this.menuOpened
+  }
+
+  navigateToHelp() {
+    this.menuOpened = false;
+    this.router.navigate(['/help']);
   }
 
   buyAngland() {
