@@ -18,6 +18,7 @@ export interface Lyric extends Base {
   audioLocation: string;
   dbxAudioRev: string;
   defaultLyricForUser: string[];
+  pdfScale?: { scale: number; x: number };
   formatScope?: any;
   formatSettings?: any;
 }
@@ -59,6 +60,7 @@ export class LyricHelper {
       scrollSpeed: data.scrollSpeed ?? 0,
       dbxDocumentRev: data.dbxDocumentRev ?? "",
       dbxAudioRev: data.dbxAudioRev ?? "",
+      ...(data.pdfScale ? { pdfScale: data.pdfScale } : {}),
     };
   }
 }

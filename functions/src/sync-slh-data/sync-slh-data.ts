@@ -427,6 +427,12 @@ async function addLyrics(slhSong: SLHSong, accountId: string, songId: string, co
   if (slhSong.SongType === SongType.Song) {
     const lyricsRef = db.collection(`/accounts/${accountId}/songs/${songId}/lyrics`);
 
+    const scaleMatch = slhSong.Blob?.match(/(?:^|,)scale:(\d+)/);
+    const xMatch = slhSong.Blob?.match(/(?:^|,)x:([\d.]+)/);
+    const pdfScale = scaleMatch ?
+      { scale: parseInt(scaleMatch[1], 10), x: xMatch ? parseFloat(xMatch[1]) : 0 } :
+      undefined;
+
     let versionNumber = 1;
     let documentLyricCreated = false;
     const audioLocation = slhSong.IosAudioLocation ? slhSong.IosAudioLocation : slhSong.SongLocation;
@@ -447,7 +453,7 @@ async function addLyrics(slhSong: SLHSong, accountId: string, songId: string, co
         dbxAudioRev: audioLocation.startsWith("[DROPBOX]") ? Math.random().toString(36).substring(2, 15) : "",
         documentLocation: slhSong.DocumentLocation,
         dbxDocumentRev: slhSong.DocumentLocation.startsWith("[DROPBOX]") ? Math.random().toString(36).substring(2, 15) : "",
-
+        ...(pdfScale ? { pdfScale } : {}),
       } as Partial<Lyric>;
 
       const addedLyricRef = lyricsRef.doc();
@@ -484,6 +490,7 @@ async function addLyrics(slhSong: SLHSong, accountId: string, songId: string, co
         scrollSpeed: scrollSpeed,
         audioLocation: audioLocation,
         dbxAudioRev: audioLocation.startsWith("[DROPBOX]") ? Math.random().toString(36).substring(2, 15) : "",
+        ...(pdfScale ? { pdfScale } : {}),
         ...(documentLyricCreated === false ? { defaultLyricForUser: [importingUser.uid] } : {}),
       } as Partial<Lyric>;
 
