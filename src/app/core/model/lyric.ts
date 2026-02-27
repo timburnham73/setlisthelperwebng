@@ -23,6 +23,7 @@ export interface Lyric extends Base {
   documentLocation: string;
   audioLocation: string;
   transpose: number;
+  scrollSpeed: number;
   formatScope?: FormatScope;
   formatSettings?: LyricFormat;
 }
@@ -61,6 +62,7 @@ export class LyricHelper {
       documentLocation: data.documentLocation ?? "",
       audioLocation: data.audioLocation ?? "", 
       transpose: data.transpose ?? 0,
+      scrollSpeed: data.scrollSpeed ?? 0,
       formatScope: data.formatScope ?? FormatScope.ACCOUNT,
       formatSettings: data.formatSettings ?? undefined
 

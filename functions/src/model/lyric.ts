@@ -12,6 +12,7 @@ export interface Lyric extends Base {
   songId: string;
   lyrics: string;
   transpose: number;
+  scrollSpeed: number;
   documentLocation: string;
   dbxDocumentRev: string;
   audioLocation: string;
@@ -55,6 +56,7 @@ export class LyricHelper {
       documentLocation: data.documentLocation ?? "",
       audioLocation: data.audioLocation ?? "",
       transpose: data.transpose ?? 0,
+      scrollSpeed: data.scrollSpeed ?? 0,
       dbxDocumentRev: data.dbxDocumentRev ?? "",
       dbxAudioRev: data.dbxAudioRev ?? "",
     };

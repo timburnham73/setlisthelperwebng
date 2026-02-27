@@ -113,7 +113,10 @@ export default async event => {
 };
 
 // Starting to Sync
-export const startSync = async (jwtToken: string, accountId: string, accountImportId: string, importingUser: BaseUser, mark?: (label: string, meta?: Record<string, unknown>) => void) => {
+export const startSync = async (
+  jwtToken: string, accountId: string, accountImportId: string,
+  importingUser: BaseUser, mark?: (label: string, meta?: Record<string, unknown>) => void,
+) => {
   const songsRef = db.collection(`/accounts/${accountId}/songs`);
   const tagsRef = db.collection(`/accounts/${accountId}/tags`);
   const artistsRef = db.collection(`/accounts/${accountId}/artists`);
@@ -465,6 +468,8 @@ async function addLyrics(slhSong: SLHSong, accountId: string, songId: string, co
 
     if (slhSong.Lyrics) {
       const lyricName = `Version ${versionNumber}`;
+      const scrollSpeedMatch = slhSong.Lyrics.match(/{scrollspeed:\s*(\d+)\s*}/i);
+      const scrollSpeed = scrollSpeedMatch ? parseInt(scrollSpeedMatch[1], 10) : 0;
       const lyric = {
         name: lyricName,
         key: convertedSong.key,
@@ -476,6 +481,7 @@ async function addLyrics(slhSong: SLHSong, accountId: string, songId: string, co
         songId: songId,
         lyrics: slhSong.Lyrics,
         transpose: slhSong.Transpose,
+        scrollSpeed: scrollSpeed,
         audioLocation: audioLocation,
         dbxAudioRev: audioLocation.startsWith("[DROPBOX]") ? Math.random().toString(36).substring(2, 15) : "",
         ...(documentLyricCreated === false ? { defaultLyricForUser: [importingUser.uid] } : {}),
