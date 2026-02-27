@@ -256,7 +256,7 @@ export const HELP_CONTENT: Record<string, HelpPageContent> = {
           },
           {
             question: 'How do I contact support?',
-            answer: 'Email us at <a href="mailto:support@bandcentral.com">support@bandcentral.com</a> with a description of your issue. Please include your device model and iOS version to help us troubleshoot.'
+            answer: 'Visit our <a href="/contact">contact page</a> to submit a support request. Please include your device model and iOS version to help us troubleshoot.'
           }
         ]
       }
@@ -502,7 +502,7 @@ export const HELP_CONTENT: Record<string, HelpPageContent> = {
           },
           {
             question: 'How do I contact support?',
-            answer: 'Email us at <a href="mailto:support@bandcentral.com">support@bandcentral.com</a> with a description of your issue. Please include your device model and Android version to help us troubleshoot.'
+            answer: 'Visit our <a href="/contact">contact page</a> to submit a support request. Please include your device model and Android version to help us troubleshoot.'
           }
         ]
       }
@@ -634,7 +634,7 @@ export const HELP_CONTENT: Record<string, HelpPageContent> = {
           },
           {
             question: 'How do I contact support?',
-            answer: 'Email us at <a href="mailto:support@bandcentral.com">support@bandcentral.com</a> with a description of your issue. Please include your browser name and version to help us troubleshoot.'
+            answer: 'Visit our <a href="/contact">contact page</a> to submit a support request. Please include your browser name and version to help us troubleshoot.'
           }
         ]
       }

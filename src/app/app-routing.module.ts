@@ -66,6 +66,13 @@ const appRoutes: Routes = [
       import("./features/help/help.module").then((m) => m.HelpModule),
   },
   {
+    path: "contact",
+    loadChildren: () =>
+      import("./features/contact/contact.module").then(
+        (m) => m.ContactModule
+      ),
+  },
+  {
     path: "**",
     redirectTo: "home",
     pathMatch: "full",

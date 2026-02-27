@@ -7,6 +7,7 @@
  */
 
 import { onDocumentCreated } from "firebase-functions/v2/firestore";
+// import { defineSecret } from "firebase-functions/params";
 
 // ////////////////////////////////////////////////
 // Lyrics
@@ -48,6 +49,32 @@ export const Setlist_onAdd_UpdateSetlistCount =
         .default(event);
     });
 */
+
+// ////////////////////////////////
+// Contact Request functions
+/* const SMTP_HOST = defineSecret("SMTP_HOST");
+const SMTP_PORT = defineSecret("SMTP_PORT");
+const SMTP_USER = defineSecret("SMTP_USER");
+const SMTP_PASS = defineSecret("SMTP_PASS");
+
+// eslint-disable-next-line camelcase
+export const ContactRequest_OnCreate_SendEmail =
+  onDocumentCreated(
+    {
+      document: "contactRequests/{contactRequestId}",
+      secrets: [SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS],
+    },
+    async event => {
+      await (
+        await import("./contact-request/on-create-contact-request"))
+        .default(
+          event,
+          SMTP_HOST.value(),
+          SMTP_PORT.value(),
+          SMTP_USER.value(),
+          SMTP_PASS.value(),
+        );
+    }); */
 
 // ////////////////////////////////
 // Sync functions

@@ -34,6 +34,10 @@ import {
   AngularFireFunctionsModule,
   USE_EMULATOR as USE_FUNCTIONS_EMULATOR,
 } from "@angular/fire/compat/functions";
+import {
+  AngularFireStorageModule,
+  USE_EMULATOR as USE_STORAGE_EMULATOR,
+} from "@angular/fire/compat/storage";
 import { AngularFireAuthGuardModule } from "@angular/fire/compat/auth-guard";
 
 import { NgxsModule } from "@ngxs/store";
@@ -104,6 +108,7 @@ bootstrapApplication(AppComponent, {
       AngularFireAuthGuardModule,
       AngularFireAnalyticsModule,
       AngularFireFunctionsModule,
+      AngularFireStorageModule,
       // provide modular style for AppCheck, see app.browser/server
 
     ),
@@ -117,7 +122,7 @@ bootstrapApplication(AppComponent, {
     { provide: USE_AUTH_EMULATOR, useValue: environment.useEmulators ? ['http://localhost:9099'] : undefined },
     { provide: USE_FIRESTORE_EMULATOR, useValue: environment.useEmulators ? ['localhost', 8080] : undefined },
     { provide: USE_FUNCTIONS_EMULATOR, useValue: environment.useEmulators ? ['localhost', 5001] : undefined },
-    //{ provide: USE_STORAGE_EMULATOR, useValue: environment.useEmulators ? ['localhost', 9199] : undefined },
+    { provide: USE_STORAGE_EMULATOR, useValue: environment.useEmulators ? ['localhost', 9199] : undefined },
     { provide: FIRESTORE_SETTINGS, useValue: { ignoreUndefinedProperties: true } },
     { provide: ANALYTICS_DEBUG_MODE, useValue: true },
     { provide: COLLECTION_ENABLED, useValue: true },

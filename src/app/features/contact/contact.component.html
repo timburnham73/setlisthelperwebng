@@ -1,0 +1,127 @@
+<mat-toolbar color="primary" class="contact-toolbar">
+  <a routerLink="/home">Band Central</a>
+</mat-toolbar>
+
+<div class="contact-container">
+  <mat-card>
+    <mat-card-content>
+
+      <div class="success-container" [hidden]="!submitted">
+        <mat-icon>check_circle</mat-icon>
+        <h2>Message Sent</h2>
+        <p>Thank you for contacting us. We'll get back to you as soon as possible.</p>
+        <button mat-raised-button color="primary" (click)="sendAnother()">
+          Send Another Message
+        </button>
+      </div>
+
+      <div [hidden]="submitted">
+        <h1>Contact Support</h1>
+        <p class="subtitle">Have a question or need help? Fill out the form below and we'll get back to you.</p>
+
+        <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
+
+          <!-- Support Type -->
+          <div style="margin-bottom: 16px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 500;">Support Type *</label>
+            <mat-radio-group formControlName="supportType">
+              <mat-radio-button value="billing" style="margin-right: 24px;">Purchase / Billing</mat-radio-button>
+              <mat-radio-button value="technical">Technical</mat-radio-button>
+            </mat-radio-group>
+          </div>
+
+          <!-- Platform -->
+          <mat-form-field appearance="outline" class="form-field-full-width">
+            <mat-label>Platform</mat-label>
+            <mat-select formControlName="platform">
+              <mat-option value="ios">iOS</mat-option>
+              <mat-option value="android">Android</mat-option>
+              <mat-option value="web">Web</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <!-- Name & Email -->
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Name</mat-label>
+              <input matInput formControlName="name" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Email</mat-label>
+              <input matInput formControlName="email" type="email" />
+              @if (contactForm.controls.email.hasError('email') && !contactForm.controls.email.hasError('required')) {
+                <mat-error>Please enter a valid email address</mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          <!-- Subject -->
+          <mat-form-field appearance="outline" class="form-field-full-width">
+            <mat-label>Subject</mat-label>
+            <input matInput formControlName="subject" />
+          </mat-form-field>
+
+          <!-- Conditional: App Version & Device Info -->
+          <div class="form-row" [hidden]="!showDeviceFields">
+            <mat-form-field appearance="outline">
+              <mat-label>App Version</mat-label>
+              <input matInput formControlName="appVersion" placeholder="e.g. 2.1.0" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Device Info / OS Version</mat-label>
+              <input matInput formControlName="deviceInfo" placeholder="e.g. iPhone 15, iOS 18.2" />
+            </mat-form-field>
+          </div>
+
+          <!-- Band Name (optional) -->
+          <mat-form-field appearance="outline" class="form-field-full-width">
+            <mat-label>Band Name (optional)</mat-label>
+            <input matInput formControlName="bandName" />
+          </mat-form-field>
+
+          <!-- Description -->
+          <mat-form-field appearance="outline" class="form-field-full-width">
+            <mat-label>Description</mat-label>
+            <textarea matInput formControlName="description" rows="6"
+                      placeholder="Please describe your issue or question in detail."></textarea>
+          </mat-form-field>
+
+          <!-- Screenshot Upload -->
+          <div class="file-upload-area">
+            <label style="display: block; margin-bottom: 8px; font-weight: 500;">Screenshot (optional)</label>
+            <div class="file-upload-button">
+              <button mat-stroked-button type="button" (click)="fileInput.click()">
+                <mat-icon>attach_file</mat-icon>
+                Choose File
+              </button>
+              <input #fileInput type="file" accept="image/*" hidden (change)="onFileSelected($event)" />
+            </div>
+            @if (selectedFile) {
+              <div class="file-info">
+                <mat-icon>image</mat-icon>
+                <span>{{ selectedFile.name }}</span>
+                <button mat-button color="warn" type="button" (click)="removeFile()">Remove</button>
+              </div>
+            }
+          </div>
+
+          <!-- Submit -->
+          <div class="submit-area">
+            <button mat-raised-button color="primary" type="submit"
+                    [disabled]="contactForm.invalid || submitting">
+              @if (submitting) {
+                <mat-spinner diameter="20" color="accent"></mat-spinner>
+              } @else {
+                Send Message
+              }
+            </button>
+          </div>
+
+        </form>
+      </div>
+
+    </mat-card-content>
+  </mat-card>
+</div>

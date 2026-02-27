@@ -50,6 +50,11 @@ export class HeaderComponent {
     this.router.navigate(['/help']);
   }
 
+  navigateToContact() {
+    this.menuOpened = false;
+    this.router.navigate(['/contact']);
+  }
+
   buyAngland() {
     this.window.open('');
   }

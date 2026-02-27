@@ -10,7 +10,6 @@
     "watch": "ng build --watch --configuration development",
     "lint": "ng lint",
     "test": "ng test",
-
     "build-production": "ng build --configuration=production --base-href=/setlist-helper/",
     "build-debug": "ng build --configuration=development",
     "deploy-debug": "npm run build-debug && firebase deploy --only hosting"
@@ -35,6 +34,7 @@
     "chordsheetjs": "^9.0.3",
     "firebase": "^10.5.2",
     "firebase-admin": "^12.5.0",
+    "firebase-functions": "^7.0.6",
     "firebase-tools": "^13.0.0",
     "firebaseui": "^6.1.0",
     "jwt-decode": "^3.1.2",

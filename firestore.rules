@@ -17,6 +17,12 @@ service cloud.firestore {
         if request.auth.uid in get(/databases/$(database)/documents/accounts/$(accountId)).data.users;
     }
 
+    // Contact Requests (public create, no read/update/delete)
+    match /contactRequests/{requestId} {
+      allow create: if true;
+      allow read, update, delete: if false;
+    }
+
     // Users (read-only to authed users; self-managed writes)
     match /users/{uid} {
       allow read: if request.auth != null;

@@ -1,0 +1,95 @@
+:host {
+  display: block;
+}
+
+.contact-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.contact-toolbar {
+  margin-bottom: 24px;
+}
+
+.contact-toolbar a {
+  color: white;
+  text-decoration: none;
+}
+
+h1 {
+  font-size: 28px;
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  color: rgba(0, 0, 0, 0.54);
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+.form-field-full-width {
+  width: 100%;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.form-row mat-form-field {
+  flex: 1;
+}
+
+.file-upload-area {
+  margin: 8px 0 16px;
+}
+
+.file-upload-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 14px;
+}
+
+.file-info button {
+  min-width: auto;
+  padding: 0 8px;
+}
+
+.submit-area {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.success-container {
+  text-align: center;
+  padding: 48px 16px;
+}
+
+.success-container mat-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  color: #4caf50;
+}
+
+.success-container h2 {
+  margin-top: 16px;
+  font-size: 24px;
+}
+
+.success-container p {
+  color: rgba(0, 0, 0, 0.6);
+  margin-bottom: 24px;
+}
