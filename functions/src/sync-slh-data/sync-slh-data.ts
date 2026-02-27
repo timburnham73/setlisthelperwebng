@@ -430,7 +430,7 @@ async function addLyrics(slhSong: SLHSong, accountId: string, songId: string, co
     const scaleMatch = slhSong.Blob?.match(/(?:^|,)scale:(\d+)/);
     const xMatch = slhSong.Blob?.match(/(?:^|,)x:([\d.]+)/);
     const pdfScale = scaleMatch ?
-      { scale: parseInt(scaleMatch[1], 10), x: xMatch ? parseFloat(xMatch[1]) : 0 } :
+      { scale: parseInt(scaleMatch[1], 10) / 10000, x: xMatch ? parseFloat(xMatch[1]) : 0 } :
       undefined;
 
     let versionNumber = 1;
