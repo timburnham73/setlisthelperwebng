@@ -20,7 +20,8 @@ export class ScrollToDirective {
 
   elmYPosition(eID) {
     var elm = document.getElementById(eID);
-    var y = elm?.offsetTop;
+    if (!elm) return 0;
+    var y = elm.offsetTop;
     var node: any = elm;
     while (node.offsetParent && node.offsetParent != document.body) {
       node = node.offsetParent;
