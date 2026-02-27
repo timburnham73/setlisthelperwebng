@@ -12,6 +12,7 @@ export interface Account extends Base{
     countOfSongs: number;
     countOfTags: number;
     formatSettings: LyricFormat;
+    entitlementLevel?: string;
 }
 
 export class AccountHelper{
@@ -39,7 +40,8 @@ export class AccountHelper{
           countOfSetlists: data.countOfSetlists ?? 0,
           countOfTags: data.countOfTags ?? 0,
           countOfSongs: data.countOfSongs ?? 0,
-          formatSettings: data.formatSettings ?? 0
+          formatSettings: data.formatSettings ?? 0,
+          entitlementLevel: data.entitlementLevel ?? 'free'
         };
       }
 }

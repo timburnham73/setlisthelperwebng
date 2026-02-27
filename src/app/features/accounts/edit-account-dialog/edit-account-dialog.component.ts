@@ -7,6 +7,7 @@ import { ADMIN } from 'src/app/core/model/roles';
 import { BaseUser, User, UserHelper } from 'src/app/core/model/user';
 import { AccountService } from 'src/app/core/services/account.service';
 import { AuthenticationService } from 'src/app/core/services/auth.service';
+import { UserService } from 'src/app/core/services/user.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -25,6 +26,7 @@ export class EditAccountDialogComponent {
   saving = false;
   isNew = true;
   currentUser: BaseUser;
+  private entitlementLevel: string = 'free';
   accountForm = new FormGroup({
     id: new FormControl(this.data.id),
     name: new FormControl(this.data.name, Validators.required),
@@ -37,6 +39,7 @@ export class EditAccountDialogComponent {
     public dialogRef: MatDialogRef<EditAccountDialogComponent>,
     private accountService: AccountService,
     private authService: AuthenticationService,
+    private userService: UserService,
     private afs: AngularFirestore,
     @Inject(MAT_DIALOG_DATA) public data: Account,
   ) {
@@ -46,6 +49,9 @@ export class EditAccountDialogComponent {
     this.authService.user$.subscribe((user) => {
       if(user && user.uid){
         this.currentUser = UserHelper.getForUpdate(user);
+        this.userService.getUserById(user.uid).subscribe((firestoreUser) => {
+          this.entitlementLevel = firestoreUser?.entitlementLevel ?? 'free';
+        });
       }
     });
   }
@@ -63,6 +69,7 @@ export class EditAccountDialogComponent {
       //Adding Account
       const accountUser = {role: ADMIN, ...this.currentUser};
       modifiedAccount.users = [this.currentUser.uid];
+      modifiedAccount.entitlementLevel = this.entitlementLevel;
       this.accountService.addAccount(modifiedAccount, this.currentUser, accountUser).subscribe();
 
     }

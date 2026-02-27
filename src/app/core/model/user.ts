@@ -8,6 +8,7 @@ export interface BaseUser {
   photoUrl?: string;
   formatSettings?: LyricFormat;
   lastLoginDate?: Timestamp;
+  entitlementLevel?: string;
 }
 
 export interface  User extends BaseUser {
