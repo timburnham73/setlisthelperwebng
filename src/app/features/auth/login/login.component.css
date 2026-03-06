@@ -87,6 +87,34 @@
   background-color: #1567d3;
 }
 
+/* Apple sign-in button */
+.apple-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 24px;
+  background-color: #000;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  min-height: 44px;
+  margin-top: 10px;
+}
+
+.apple-btn:hover {
+  background-color: #333;
+}
+
+.apple-icon {
+  width: 20px;
+  height: 20px;
+}
+
 .google-icon-wrapper {
   background-color: #fff;
   border-radius: 50%;

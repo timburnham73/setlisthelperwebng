@@ -59,6 +59,25 @@ export class LoginComponent implements OnInit, OnDestroy {
         });
     }
 
+    onAppleSignIn() {
+        const provider = new firebase.auth.OAuthProvider('apple.com');
+        this.afAuth.signInWithPopup(provider).then((result) => {
+            if (result.user) {
+                this.userService.setUser(result.user).subscribe();
+                this.router.navigateByUrl("/accounts");
+            }
+        }).catch(() => {
+            this.afAuth.currentUser.then(user => {
+                if (user) {
+                    this.userService.setUser(user).subscribe();
+                    this.router.navigateByUrl("/accounts");
+                } else {
+                    this.notificationService.openSnackBar('Apple sign-in failed. Please try again.');
+                }
+            });
+        });
+    }
+
     onEmailSignIn(event: Event) {
         event.preventDefault();
         this.showEmailSignIn = true;
