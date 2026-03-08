@@ -1,8 +1,9 @@
 .home-intro-section {
-  padding: 180px 0;
+  padding: 180px 0 100px;
   color: #ffffff;
-  overflow: hidden
+  overflow: hidden;
 }
+
 .home-intro-title {
   margin: 0 0 24px;
   font-size: 48px;
@@ -10,57 +11,84 @@
   line-height: 52px;
   text-shadow: 0 4px 4px rgba(0, 0, 0, 0.22);
 }
+
 .home-intro-desc {
   margin: 0 0 40px;
   font-size: 22px;
   font-weight: 400;
   line-height: 32px;
 }
+
 .intro-list {
   margin: 0 0 40px;
 }
-.intro-product {
-  position: relative;
-  top: 100px;
-  left: 20px;
+
+.hero-illustration {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 420px;
+  margin: 0 auto;
+
+  svg {
+    width: 100%;
+    height: auto;
+  }
 }
-.intro-product-link {
-  position: absolute;
-  top: -110px;
-  left: -45px;
-  text-align: center;
-  display: block;
-  width: 160px;
-  height: 160px;
+
+#frontend-btn {
+  background: #ffffff;
+  color: #0A66C2;
+  border-radius: 30px;
+  padding: 8px 40px;
+  font-size: 16px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  }
+}
+
+// Features section
+#feature-section {
+  background: #f8f9fa;
+}
+
+.section-divider {
+  width: 60px;
+  height: 4px;
+  background: #0A66C2;
+  margin: 16px auto 24px;
+  border-radius: 2px;
+}
+
+.feature-icon-circle {
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
-  background: #fff;
-  color: rgba(0, 0, 0, .87);
-  padding: 37px 20px;
-  box-sizing: border-box;
-  overflow: hidden;
-  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.2);
-  transition: all .3s ease;
-}
-.intro-product-link:hover {
-  box-shadow: 0 19px 32px rgba(0, 0, 0, 0.4);
-}
-.intro-product-link .price {
-  font-size: 32px;
-  font-weight: 700;
-}
-.intro-product-link .price-text {
-  font-size: 14px;
+  background: #0A66C2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+
+  i {
+    color: #ffffff;
+    font-size: 36px;
+  }
 }
 
 @media (max-width: 767px) {
-    .intro-product {
-      top: 80px;
-      left: 20px;
-      margin-bottom: 4rem;
-    }
+  .hero-illustration {
+    max-width: 280px;
+    margin-top: 40px;
+  }
+
   .home-intro-section {
     padding: 100px 0 60px;
   }
+
   .home-intro-title {
     margin: 0 0 30px;
     font-size: 32px;
@@ -68,18 +96,11 @@
     line-height: 38px;
     text-shadow: 0 4px 4px rgba(0, 0, 0, 0.22);
   }
+
   .home-intro-desc {
     margin: 0 0 40px;
     font-size: 18px;
     font-weight: 400;
     line-height: 27px;
   }
-  
-  .intro-product-link {
-      top: -80px;
-      transform: scale(.5);
-  }
 }
-
-
-

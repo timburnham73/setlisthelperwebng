@@ -55,8 +55,4 @@ export class HeaderComponent {
     this.router.navigate(['/contact']);
   }
 
-  buyAngland() {
-    this.window.open('');
-  }
-
 }

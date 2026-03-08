@@ -1,13 +1,54 @@
-.plan-pricing .mat-list-item ::ng-deep .mat-list-item-content {
-    display: inline-flex !important;
-    text-align: center;
-    font-size: .875rem !important;
+#pricings-section { padding: 80px 0; }
+.pricing-subtitle { font-size: 18px; color: #666; max-width: 600px; margin: 0 auto; }
+.section-divider { width: 60px; height: 4px; background: #0A66C2; margin: 16px auto 24px; border-radius: 2px; }
+.pricing-cards { max-width: 1200px; margin: 0 auto; }
+.pricing-card-wrapper { padding: 10px; }
+
+.pricing-card {
+  background: #fff; border: 1px solid #e0e0e0; border-radius: 16px;
+  padding: 32px 20px; text-align: center; position: relative;
+  transition: transform 0.3s, box-shadow 0.3s;
+  height: 100%; display: flex; flex-direction: column;
+  &:hover { transform: translateY(-8px); box-shadow: 0 12px 40px rgba(0,0,0,.12); }
+  &.featured {
+    border: 2px solid #0A66C2; box-shadow: 0 8px 30px rgba(10,102,194,.2);
+    &:hover { box-shadow: 0 16px 48px rgba(10,102,194,.25); }
+  }
 }
 
-.plan-pricing {
-    background: #0A66C2;
-    color: #fff;
-    p {
-        color: #fff;
-    }
+.popular-badge {
+  position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+  background: #0A66C2; color: #fff; padding: 6px 20px;
+  border-radius: 20px; font-size: 12px; font-weight: 600;
+}
+
+.pricing-card-header { margin-bottom: 16px; }
+.pricing-icon { font-size: 40px; color: #0A66C2; }
+.plan-name { font-size: 20px; font-weight: 700; margin: 8px 0 4px; }
+.plan-desc { font-size: 13px; color: #888; margin: 0; }
+.pricing-card-price { margin: 12px 0 20px; display: flex; align-items: flex-start; justify-content: center; }
+.currency, .cents { font-size: 20px; font-weight: 600; color: #333; margin-top: 6px; }
+.amount { font-size: 48px; font-weight: 800; line-height: 1; }
+.period { font-size: 14px; color: #888; align-self: flex-end; margin: 0 0 4px 4px; }
+
+.feature-list {
+  list-style: none; padding: 0; margin: 0 0 24px; text-align: left; flex: 1;
+  li { padding: 6px 0; font-size: 14px; color: #444; display: flex; align-items: center; gap: 8px; }
+  .check { color: #4CAF50; font-size: 18px; }
+}
+
+.subscribe-btn {
+  width: 100%; padding: 10px; border-radius: 30px; font-weight: 600; font-size: 14px;
+  background: #f0f0f0; color: #333;
+  &:hover { background: #e0e0e0; }
+  &.featured-btn { background: #0A66C2; color: #fff;
+    &:hover { background: #094da1; }
+  }
+}
+
+.store-note { margin-top: 40px; font-size: 14px; color: #888; }
+
+@media (max-width: 959px) {
+  .pricing-card-wrapper { max-width: 400px; margin: 0 auto; }
+  .pricing-card.featured { order: -1; }
 }

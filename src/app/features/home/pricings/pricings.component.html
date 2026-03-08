@@ -1,79 +1,138 @@
 <section id="pricings-section" class="gap">
     <div class="container">
-        <div fxLayout='column' class="text-center mb-5 white-color">
-            <div fxFlex.gt-md="60%">
-                <h2 class="title-page">Prices</h2>
-                <p class="lead w-60"> All prices are in USD. They include the full features of the app. This includes create multiple bands, 
-                    create multiple lyrics per song, create setlists, organize your songs with tags, auto-scroll, transpose, and more. </p>
+        <div class="text-center mb-5">
+            <h2 class="title-page">Simple, Transparent Pricing</h2>
+            <div class="section-divider"></div>
+            <p class="pricing-subtitle">All plans include the full features of the app. Choose the plan that fits your group size.</p>
+        </div>
+        <div class="pricing-cards" fxLayout="row wrap" fxLayoutAlign="center stretch">
+            <!-- Solo/Duo -->
+            <div fxFlex="100" fxFlex.gt-xs="50" fxFlex.gt-md="20" class="pricing-card-wrapper">
+                <div class="pricing-card">
+                    <div class="pricing-card-header">
+                        <i class="material-icons pricing-icon">person</i>
+                        <h3 class="plan-name">Solo/Duo</h3>
+                        <p class="plan-desc">For soloists and duos</p>
+                    </div>
+                    <div class="pricing-card-price">
+                        <span class="currency">$</span>
+                        <span class="amount">14</span>
+                        <span class="cents">.99</span>
+                        <span class="period">/ year</span>
+                    </div>
+                    <ul class="feature-list">
+                        <li><i class="material-icons check">check_circle</i> Up to 2 members</li>
+                        <li><i class="material-icons check">check_circle</i> Up to 3 bands</li>
+                        <li><i class="material-icons check">check_circle</i> Unlimited songs</li>
+                        <li><i class="material-icons check">check_circle</i> Unlimited setlists</li>
+                        <li><i class="material-icons check">check_circle</i> Chord Pro &amp; PDF</li>
+                        <li><i class="material-icons check">check_circle</i> Auto-scroll &amp; transpose</li>
+                    </ul>
+                    <button mat-raised-button class="subscribe-btn">Subscribe in App</button>
+                </div>
+            </div>
+            <!-- Small Band -->
+            <div fxFlex="100" fxFlex.gt-xs="50" fxFlex.gt-md="20" class="pricing-card-wrapper">
+                <div class="pricing-card">
+                    <div class="pricing-card-header">
+                        <i class="material-icons pricing-icon">group</i>
+                        <h3 class="plan-name">Small Band</h3>
+                        <p class="plan-desc">For bands up to 5</p>
+                    </div>
+                    <div class="pricing-card-price">
+                        <span class="currency">$</span>
+                        <span class="amount">29</span>
+                        <span class="cents">.99</span>
+                        <span class="period">/ year</span>
+                    </div>
+                    <ul class="feature-list">
+                        <li><i class="material-icons check">check_circle</i> Up to 5 members</li>
+                        <li><i class="material-icons check">check_circle</i> Up to 5 bands</li>
+                        <li><i class="material-icons check">check_circle</i> Unlimited songs</li>
+                        <li><i class="material-icons check">check_circle</i> Unlimited setlists</li>
+                        <li><i class="material-icons check">check_circle</i> Chord Pro &amp; PDF</li>
+                        <li><i class="material-icons check">check_circle</i> Auto-scroll &amp; transpose</li>
+                    </ul>
+                    <button mat-raised-button class="subscribe-btn">Subscribe in App</button>
+                </div>
+            </div>
+            <!-- Medium Band (Featured) -->
+            <div fxFlex="100" fxFlex.gt-xs="50" fxFlex.gt-md="20" class="pricing-card-wrapper">
+                <div class="pricing-card featured">
+                    <div class="popular-badge">Most Popular</div>
+                    <div class="pricing-card-header">
+                        <i class="material-icons pricing-icon">groups</i>
+                        <h3 class="plan-name">Medium Band</h3>
+                        <p class="plan-desc">For groups up to 20</p>
+                    </div>
+                    <div class="pricing-card-price">
+                        <span class="currency">$</span>
+                        <span class="amount">59</span>
+                        <span class="cents">.99</span>
+                        <span class="period">/ year</span>
+                    </div>
+                    <ul class="feature-list">
+                        <li><i class="material-icons check">check_circle</i> Up to 20 members</li>
+                        <li><i class="material-icons check">check_circle</i> Up to 10 bands</li>
+                        <li><i class="material-icons check">check_circle</i> Unlimited songs</li>
+                        <li><i class="material-icons check">check_circle</i> Unlimited setlists</li>
+                        <li><i class="material-icons check">check_circle</i> Chord Pro &amp; PDF</li>
+                        <li><i class="material-icons check">check_circle</i> Auto-scroll &amp; transpose</li>
+                    </ul>
+                    <button mat-raised-button class="subscribe-btn featured-btn">Subscribe in App</button>
+                </div>
+            </div>
+            <!-- Large Band -->
+            <div fxFlex="100" fxFlex.gt-xs="50" fxFlex.gt-md="20" class="pricing-card-wrapper">
+                <div class="pricing-card">
+                    <div class="pricing-card-header">
+                        <i class="material-icons pricing-icon">groups_2</i>
+                        <h3 class="plan-name">Large Band</h3>
+                        <p class="plan-desc">For groups up to 100</p>
+                    </div>
+                    <div class="pricing-card-price">
+                        <span class="currency">$</span>
+                        <span class="amount">79</span>
+                        <span class="cents">.99</span>
+                        <span class="period">/ year</span>
+                    </div>
+                    <ul class="feature-list">
+                        <li><i class="material-icons check">check_circle</i> Up to 100 members</li>
+                        <li><i class="material-icons check">check_circle</i> Unlimited bands</li>
+                        <li><i class="material-icons check">check_circle</i> Unlimited songs</li>
+                        <li><i class="material-icons check">check_circle</i> Unlimited setlists</li>
+                        <li><i class="material-icons check">check_circle</i> Chord Pro &amp; PDF</li>
+                        <li><i class="material-icons check">check_circle</i> Auto-scroll &amp; transpose</li>
+                    </ul>
+                    <button mat-raised-button class="subscribe-btn">Subscribe in App</button>
+                </div>
+            </div>
+            <!-- Extra Large Band -->
+            <div fxFlex="100" fxFlex.gt-xs="50" fxFlex.gt-md="20" class="pricing-card-wrapper">
+                <div class="pricing-card">
+                    <div class="pricing-card-header">
+                        <i class="material-icons pricing-icon">diversity_3</i>
+                        <h3 class="plan-name">Extra Large</h3>
+                        <p class="plan-desc">For groups up to 500</p>
+                    </div>
+                    <div class="pricing-card-price">
+                        <span class="currency">$</span>
+                        <span class="amount">99</span>
+                        <span class="cents">.99</span>
+                        <span class="period">/ year</span>
+                    </div>
+                    <ul class="feature-list">
+                        <li><i class="material-icons check">check_circle</i> Up to 500 members</li>
+                        <li><i class="material-icons check">check_circle</i> Unlimited bands</li>
+                        <li><i class="material-icons check">check_circle</i> Unlimited songs</li>
+                        <li><i class="material-icons check">check_circle</i> Unlimited setlists</li>
+                        <li><i class="material-icons check">check_circle</i> Chord Pro &amp; PDF</li>
+                        <li><i class="material-icons check">check_circle</i> Auto-scroll &amp; transpose</li>
+                    </ul>
+                    <button mat-raised-button class="subscribe-btn">Subscribe in App</button>
+                </div>
             </div>
         </div>
-        <div fxLayout="row wrap">
-            <!-- Pricing box -->
-            <div fxFlex="100" fxFlex.gt-sm="33.33" fxFlex.sm="33.33">
-                <mat-card class="plan-pricing text-center p-0">
-                    <mat-card-title class="accent-bg">
-                        <div class="card-title-text">
-                            <h1><strong>Solo/Duo</strong></h1>
-                            <div class="text-sm text-muted">
-                                <p>$ 14.99 / year</p>
-                            </div>
-                        </div>
-                        <mat-divider></mat-divider>
-                    </mat-card-title>
-                    <mat-card-content>
-                        <mat-list class="mb-1">
-                            <mat-list-item>
-                                <p> For soloists and duos </p>
-                            </mat-list-item>
-                        </mat-list>
-                        <button mat-raised-button class="mat-accent">Buy</button>
-                    </mat-card-content>
-                </mat-card>
-            </div>
-            <!-- Pricing box -->
-            <div fxFlex="100" fxFlex.gt-sm="33.33" fxFlex.sm="33.33">
-                <mat-card class="plan-pricing text-center p-0">
-                    <mat-card-title class="accent-bg">
-                        <div class="card-title-text">
-                            <h1><strong>Band</strong></h1>
-                            <div class="text-sm text-muted">
-                                <p> 29.99 / year</p>
-                            </div>
-                        </div>
-                        <mat-divider></mat-divider>
-                    </mat-card-title>
-                    <mat-card-content>
-                        <mat-list class="mb-1">
-                            <mat-list-item>
-                                <p> 1 to 5 members </p>
-                            </mat-list-item>
-                        </mat-list>
-                        <button mat-raised-button class="mat-accent">Buy</button>
-                    </mat-card-content>
-                </mat-card>
-            </div>
-            <!-- Pricing box -->
-            <div fxFlex="100" fxFlex.gt-sm="33.33" fxFlex.sm="33.33">
-                <mat-card class="plan-pricing text-center p-0">
-                    <mat-card-title class="accent-bg">
-                        <div class="card-title-text">
-                            <h1><strong>Large Band</strong></h1>
-                            <div class="text-sm text-muted">
-                                <p> $ 49.99 / year</p>
-                            </div>
-                        </div>
-                        <mat-divider></mat-divider>
-                    </mat-card-title>
-                    <mat-card-content>
-                        <mat-list class="mb-1">
-                            <mat-list-item>
-                                <p> 1 to 20 members </p>
-                            </mat-list-item>
-                        </mat-list>
-                        <button mat-raised-button class="mat-accent">Buy</button>
-                    </mat-card-content>
-                </mat-card>
-            </div>
-        </div>
+        <p class="store-note text-center">Subscriptions are managed through the iOS App Store and Google Play Store.</p>
     </div>
 </section>
