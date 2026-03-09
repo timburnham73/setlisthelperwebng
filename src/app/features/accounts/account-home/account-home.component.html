@@ -38,7 +38,7 @@
             <button mat-button (click)="onAddOrRemoveAccountUsers(account)">Users</button>
             <button mat-button (click)="onEditAccount(account)">Edit</button>
             <button mat-button (click)="onSelectAccount(account)">View</button>
-            <button mat-button (click)="onImportAccount(account)">Import</button>
+            <button mat-button (click)="onImportAccount(account)" *ngIf="!account.slhImportCompleted">Import</button>
           </mat-card-actions>
           
         </mat-card>

@@ -13,6 +13,7 @@ export interface Account extends Base{
     countOfTags: number;
     formatSettings: LyricFormat;
     entitlementLevel?: string;
+    slhImportCompleted?: boolean;
 }
 
 export class AccountHelper{

@@ -14,8 +14,11 @@ export interface Lyric extends Base {
   transpose: number;
   scrollSpeed: number;
   documentLocation: string;
+  documentFileName: string;
+  isDocument: boolean;
   dbxDocumentRev: string;
   audioLocation: string;
+  audioFileName: string;
   dbxAudioRev: string;
   defaultLyricForUser: string[];
   pdfScale?: { scale: number; x: number };
@@ -55,7 +58,10 @@ export class LyricHelper {
       dateCreated: data.dateCreated ?? Timestamp.now(),
       lastUpdatedByUser: editingUser,
       documentLocation: data.documentLocation ?? "",
+      documentFileName: data.documentFileName ?? "",
+      isDocument: data.isDocument ?? false,
       audioLocation: data.audioLocation ?? "",
+      audioFileName: data.audioFileName ?? "",
       transpose: data.transpose ?? 0,
       scrollSpeed: data.scrollSpeed ?? 0,
       dbxDocumentRev: data.dbxDocumentRev ?? "",

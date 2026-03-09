@@ -108,7 +108,7 @@ export default async event => {
   mark("Counting setlists");
   await countSetlists(accountId);
 
-  await accountRef.update({ slhImportInProgress: false });
+  await accountRef.update({ slhImportInProgress: false, slhImportCompleted: true });
   mark("Sync: finished");
 };
 
@@ -411,9 +411,10 @@ async function createFileReference({
 }) {
   const fileReferencesRef = db.collection(`/accounts/${accountId}/file_references`);
   const fileName = filePath.split("/").pop() || "";
-  const isDropboxPath = filePath.startsWith("[DROPBOX]");
+  const isDropboxPath = filePath.toUpperCase().startsWith("[DROPBOX]");
   const fileRef: FileReference = {
     loweredFileName: fileName.toLowerCase(),
+    filePath: filePath,
     songId,
     lyricId,
     dbxFileVersion: isDropboxPath ? Math.random().toString(36).substring(2, 15) : "",
@@ -438,6 +439,8 @@ async function addLyrics(slhSong: SLHSong, accountId: string, songId: string, co
     const audioLocation = slhSong.IosAudioLocation ? slhSong.IosAudioLocation : slhSong.SongLocation;
     if (slhSong.DocumentLocation) {
       const lyricName = `Version ${versionNumber++}`;
+      const docFileName = (slhSong.DocumentLocation.split("/").pop() || "").toLowerCase();
+      const audioFileName = audioLocation ? (audioLocation.split("/").pop() || "").toLowerCase() : "";
       const lyricDocument = {
         name: lyricName,
         key: convertedSong.key,
@@ -450,9 +453,12 @@ async function addLyrics(slhSong: SLHSong, accountId: string, songId: string, co
         lyrics: "",
         defaultLyricForUser: [importingUser.uid],
         audioLocation: audioLocation,
-        dbxAudioRev: audioLocation.startsWith("[DROPBOX]") ? Math.random().toString(36).substring(2, 15) : "",
+        audioFileName: audioFileName,
+        dbxAudioRev: audioLocation.toUpperCase().startsWith("[DROPBOX]") ? Math.random().toString(36).substring(2, 15) : "",
         documentLocation: slhSong.DocumentLocation,
-        dbxDocumentRev: slhSong.DocumentLocation.startsWith("[DROPBOX]") ? Math.random().toString(36).substring(2, 15) : "",
+        documentFileName: docFileName,
+        isDocument: true,
+        dbxDocumentRev: slhSong.DocumentLocation.toUpperCase().startsWith("[DROPBOX]") ? Math.random().toString(36).substring(2, 15) : "",
         ...(pdfScale ? { pdfScale } : {}),
       } as Partial<Lyric>;
 
@@ -476,6 +482,7 @@ async function addLyrics(slhSong: SLHSong, accountId: string, songId: string, co
       const lyricName = `Version ${versionNumber}`;
       const scrollSpeedMatch = slhSong.Lyrics.match(/{scrollspeed:\s*(\d+)\s*}/i);
       const scrollSpeed = scrollSpeedMatch ? parseInt(scrollSpeedMatch[1], 10) : 0;
+      const lyricsAudioFileName = audioLocation ? (audioLocation.split("/").pop() || "").toLowerCase() : "";
       const lyric = {
         name: lyricName,
         key: convertedSong.key,
@@ -489,7 +496,8 @@ async function addLyrics(slhSong: SLHSong, accountId: string, songId: string, co
         transpose: slhSong.Transpose,
         scrollSpeed: scrollSpeed,
         audioLocation: audioLocation,
-        dbxAudioRev: audioLocation.startsWith("[DROPBOX]") ? Math.random().toString(36).substring(2, 15) : "",
+        audioFileName: lyricsAudioFileName,
+        dbxAudioRev: audioLocation.toUpperCase().startsWith("[DROPBOX]") ? Math.random().toString(36).substring(2, 15) : "",
         ...(pdfScale ? { pdfScale } : {}),
         ...(documentLyricCreated === false ? { defaultLyricForUser: [importingUser.uid] } : {}),
       } as Partial<Lyric>;

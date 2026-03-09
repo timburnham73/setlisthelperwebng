@@ -21,7 +21,10 @@ export interface Lyric extends Base {
   lyrics: string;
   defaultLyricForUser: string[];
   documentLocation: string;
+  documentFileName: string;
+  isDocument: boolean;
   audioLocation: string;
+  audioFileName: string;
   transpose: number;
   scrollSpeed: number;
   pdfScale?: { scale: number; x: number };
@@ -61,7 +64,10 @@ export class LyricHelper {
       dateCreated: data.dateCreated ?? Timestamp.now(),
       lastUpdatedByUser : UserHelper.getForUpdate(editingUser),
       documentLocation: data.documentLocation ?? "",
-      audioLocation: data.audioLocation ?? "", 
+      documentFileName: data.documentFileName ?? "",
+      isDocument: data.isDocument ?? false,
+      audioLocation: data.audioLocation ?? "",
+      audioFileName: data.audioFileName ?? "",
       transpose: data.transpose ?? 0,
       scrollSpeed: data.scrollSpeed ?? 0,
       pdfScale: data.pdfScale ?? undefined,
