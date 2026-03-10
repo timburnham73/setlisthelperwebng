@@ -125,23 +125,23 @@ export class LyricsService {
     const basePath = `/accounts/${accountId}/songs/${songId}/lyrics`;
     const batch = this.db.firestore.batch();
 
-    // Remove userId from old default lyric's defaultLyricForUser
+    // Remove userId from old default lyric's defaultForUsers
     const oldDefault = lyrics.find(l =>
       l.id !== newDefaultLyricId &&
-      l.defaultLyricForUser?.includes(editingUser.uid)
+      l.defaultForUsers?.includes(editingUser.uid)
     );
 
     if (oldDefault?.id) {
       const oldRef = this.db.doc(`${basePath}/${oldDefault.id}`).ref;
       batch.update(oldRef, {
-        defaultLyricForUser: firebase.firestore.FieldValue.arrayRemove(editingUser.uid)
+        defaultForUsers: firebase.firestore.FieldValue.arrayRemove(editingUser.uid)
       });
     }
 
-    // Add userId to new default lyric's defaultLyricForUser
+    // Add userId to new default lyric's defaultForUsers
     const newRef = this.db.doc(`${basePath}/${newDefaultLyricId}`).ref;
     batch.update(newRef, {
-      defaultLyricForUser: firebase.firestore.FieldValue.arrayUnion(editingUser.uid)
+      defaultForUsers: firebase.firestore.FieldValue.arrayUnion(editingUser.uid)
     });
 
     // Update song's lastEdit and lastUpdatedByUser

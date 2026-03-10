@@ -397,24 +397,23 @@ export const startSync = async (
 };
 
 async function createFileReference({
-  filePath,
+  path,
   fileType,
   songId,
   lyricId,
   accountId
 }: {
-  filePath: string;
+  path: string;
   fileType: FileType;
   songId: string;
   lyricId: string;
   accountId: string;
 }) {
   const fileReferencesRef = db.collection(`/accounts/${accountId}/file_references`);
-  const fileName = filePath.split("/").pop() || "";
-  const isDropboxPath = filePath.toUpperCase().startsWith("[DROPBOX]");
+  const fileName = path.split("/").pop() || "";
+  const isDropboxPath = path.toUpperCase().startsWith("[DROPBOX]");
   const fileRef: FileReference = {
     loweredFileName: fileName.toLowerCase(),
-    filePath: filePath,
     songId,
     lyricId,
     dbxFileVersion: isDropboxPath ? Math.random().toString(36).substring(2, 15) : "",
@@ -434,15 +433,16 @@ async function addLyrics(slhSong: SLHSong, accountId: string, songId: string, co
       { scale: parseInt(scaleMatch[1], 10) / 10000, x: xMatch ? parseFloat(xMatch[1]) : 0 } :
       undefined;
 
-    let versionNumber = 1;
-    let documentLyricCreated = false;
     const audioLocation = slhSong.IosAudioLocation ? slhSong.IosAudioLocation : slhSong.SongLocation;
+    const audioFileName = audioLocation ? (audioLocation.split("/").pop() || "").toLowerCase() : "";
+    const scrollSpeedMatch = slhSong.Lyrics?.match(/{scrollspeed:\s*(\d+)\s*}/i);
+    const scrollSpeed = scrollSpeedMatch ? parseInt(scrollSpeedMatch[1], 10) : 0;
+
     if (slhSong.DocumentLocation) {
-      const lyricName = `Version ${versionNumber++}`;
+      // Single lyric with document — include lyrics text if present
       const docFileName = (slhSong.DocumentLocation.split("/").pop() || "").toLowerCase();
-      const audioFileName = audioLocation ? (audioLocation.split("/").pop() || "").toLowerCase() : "";
       const lyricDocument = {
-        name: lyricName,
+        name: "Version 1",
         key: convertedSong.key,
         tempo: convertedSong.tempo,
         notes: "",
@@ -450,8 +450,10 @@ async function addLyrics(slhSong: SLHSong, accountId: string, songId: string, co
         beatValue: convertedSong.beatValue,
         youTubeUrl: convertedSong.youTubeUrl,
         songId: songId,
-        lyrics: "",
-        defaultLyricForUser: [importingUser.uid],
+        lyrics: slhSong.Lyrics ?? "",
+        transpose: slhSong.Transpose ?? 0,
+        scrollSpeed: scrollSpeed,
+        defaultForUsers: [importingUser.uid],
         audioLocation: audioLocation,
         audioFileName: audioFileName,
         dbxAudioRev: audioLocation.toUpperCase().startsWith("[DROPBOX]") ? Math.random().toString(36).substring(2, 15) : "",
@@ -467,24 +469,29 @@ async function addLyrics(slhSong: SLHSong, accountId: string, songId: string, co
 
       // Create file reference for the document
       await createFileReference({
-        filePath: slhSong.DocumentLocation,
+        path: slhSong.DocumentLocation,
         fileType: "DOCUMENT",
         songId,
         lyricId: addedLyricRef.id,
         accountId
       });
 
-      songDetails.push(`Adding ${lyricName} lyrics for song with name ${slhSong.Name}`);
-      documentLyricCreated = true;
-    }
+      // Create file reference for the audio
+      if (audioLocation && audioLocation.length > 0) {
+        await createFileReference({
+          path: audioLocation,
+          fileType: "AUDIO",
+          songId,
+          lyricId: addedLyricRef.id,
+          accountId
+        });
+      }
 
-    if (slhSong.Lyrics) {
-      const lyricName = `Version ${versionNumber}`;
-      const scrollSpeedMatch = slhSong.Lyrics.match(/{scrollspeed:\s*(\d+)\s*}/i);
-      const scrollSpeed = scrollSpeedMatch ? parseInt(scrollSpeedMatch[1], 10) : 0;
-      const lyricsAudioFileName = audioLocation ? (audioLocation.split("/").pop() || "").toLowerCase() : "";
+      songDetails.push(`Adding Version 1 lyrics (with document) for song with name ${slhSong.Name}`);
+    } else if (slhSong.Lyrics) {
+      // Lyrics only — no document
       const lyric = {
-        name: lyricName,
+        name: "Version 1",
         key: convertedSong.key,
         tempo: convertedSong.tempo,
         notes: "",
@@ -496,20 +503,20 @@ async function addLyrics(slhSong: SLHSong, accountId: string, songId: string, co
         transpose: slhSong.Transpose,
         scrollSpeed: scrollSpeed,
         audioLocation: audioLocation,
-        audioFileName: lyricsAudioFileName,
+        audioFileName: audioFileName,
         dbxAudioRev: audioLocation.toUpperCase().startsWith("[DROPBOX]") ? Math.random().toString(36).substring(2, 15) : "",
+        defaultForUsers: [importingUser.uid],
         ...(pdfScale ? { pdfScale } : {}),
-        ...(documentLyricCreated === false ? { defaultLyricForUser: [importingUser.uid] } : {}),
       } as Partial<Lyric>;
 
       const addedLyricRef = lyricsRef.doc();
       await addedLyricRef.set(LyricHelper.getForAdd(lyric, importingUser));
-      songDetails.push(`Adding ${lyricName} lyrics for song with name ${slhSong.Name}`);
+      songDetails.push(`Adding Version 1 lyrics for song with name ${slhSong.Name}`);
 
       // Create file reference for the audio
       if (audioLocation && audioLocation.length > 0) {
         await createFileReference({
-          filePath: audioLocation,
+          path: audioLocation,
           fileType: "AUDIO",
           songId,
           lyricId: addedLyricRef.id,

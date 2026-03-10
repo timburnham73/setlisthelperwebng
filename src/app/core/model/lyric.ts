@@ -19,7 +19,7 @@ export interface Lyric extends Base {
   youTubeUrl: string;
   songId: string;
   lyrics: string;
-  defaultLyricForUser: string[];
+  defaultForUsers: string[];
   documentLocation: string;
   documentFileName: string;
   isDocument: boolean;
@@ -59,7 +59,7 @@ export class LyricHelper {
       beatValue: data.beatValue ?? 0,
       youTubeUrl: data.youTubeUrl ?? "",
       songId: data.songId ?? "",
-      defaultLyricForUser: data.defaultLyricForUser ?? [],
+      defaultForUsers: data.defaultForUsers ?? [],
       createdByUser: data.createdByUser ?? editingUser,
       dateCreated: data.dateCreated ?? Timestamp.now(),
       lastUpdatedByUser : UserHelper.getForUpdate(editingUser),

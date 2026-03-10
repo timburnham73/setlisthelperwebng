@@ -20,7 +20,7 @@ export interface Lyric extends Base {
   audioLocation: string;
   audioFileName: string;
   dbxAudioRev: string;
-  defaultLyricForUser: string[];
+  defaultForUsers: string[];
   pdfScale?: { scale: number; x: number };
   formatScope?: any;
   formatSettings?: any;
@@ -53,7 +53,7 @@ export class LyricHelper {
       beatValue: data.beatValue ?? 0,
       youTubeUrl: data.youTubeUrl ?? "",
       songId: data.songId ?? "",
-      defaultLyricForUser: data.defaultLyricForUser ?? [],
+      defaultForUsers: data.defaultForUsers ?? [],
       createdByUser: data.createdByUser ?? editingUser,
       dateCreated: data.dateCreated ?? Timestamp.now(),
       lastUpdatedByUser: editingUser,

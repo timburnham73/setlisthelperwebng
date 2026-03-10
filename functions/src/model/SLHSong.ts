@@ -60,11 +60,10 @@ export class SLHSongHelper {
   static slhSongToSong(slhSong: SLHSong, editingUser: BaseUser): Song {
     const nowTimestamp = Timestamp.now();
     const songLenSplit = this.getSongLengthMinSec(slhSong.SongLength);
-    // If there is a lyrics field and a document location then the lyricCount is 2.
-    let lyricCount = slhSong.Lyrics && slhSong.Lyrics.trim().length > 0 ? 1 : 0;
-    if (slhSong.DocumentLocation && slhSong.DocumentLocation.trim().length > 0) {
-      lyricCount += 1;
-    }
+    // Count is 1 if either lyrics or document exists (they are merged into a single lyric)
+    const hasLyrics = slhSong.Lyrics && slhSong.Lyrics.trim().length > 0;
+    const hasDocument = slhSong.DocumentLocation && slhSong.DocumentLocation.trim().length > 0;
+    const lyricCount = (hasLyrics || hasDocument) ? 1 : 0;
     return {
       name: slhSong.Name ?? "",
       nameLowered: slhSong.Name.toLowerCase() ?? "",

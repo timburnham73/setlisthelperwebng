@@ -251,7 +251,7 @@ private initLyrics() {
   private getDefaultLyricId(){
     if (this.lyrics) {
       const defaultLyric = this.lyrics.find(
-        (lyric) => lyric.defaultLyricForUser?.includes(this.currentUser.uid)
+        (lyric) => lyric.defaultForUsers?.includes(this.currentUser.uid)
       );
       return defaultLyric?.id;
     }
@@ -266,7 +266,7 @@ private initLyrics() {
     //If the lyric id is NOT passed in on the url
     if (!this.lyricId) {
       const defaultLyric = lyrics.find(
-        (lyric) => lyric.defaultLyricForUser?.includes(this.currentUser.uid)
+        (lyric) => lyric.defaultForUsers?.includes(this.currentUser.uid)
       );
       if (defaultLyric) {
         return defaultLyric;

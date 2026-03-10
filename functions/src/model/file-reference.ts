@@ -2,7 +2,6 @@ export type FileType = "DOCUMENT" | "AUDIO";
 
 export interface FileReference {
     loweredFileName: string;
-    filePath: string;
     songId: string;
     lyricId: string;
     dbxFileVersion: string;
