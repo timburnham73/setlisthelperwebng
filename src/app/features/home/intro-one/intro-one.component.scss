@@ -9,32 +9,20 @@
   &::after {
     content: '';
     position: absolute;
-    top: 20%;
+    top: 0;
     left: 0;
     right: 0;
     bottom: 0;
     background: url('/assets/images/hero-band.png') no-repeat bottom center;
     background-size: 110% auto;
-    opacity: 0.6;
-    pointer-events: none;
-  }
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 20%;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(to bottom, #ffffff 0%, transparent 15%);
-    z-index: 1;
+    opacity: 0.4;
     pointer-events: none;
   }
 }
 
 .container {
   position: relative;
-  z-index: 2;
+  z-index: 1;
 }
 
 .hero-content {
