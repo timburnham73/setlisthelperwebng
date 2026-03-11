@@ -43,7 +43,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.afAuth.signInWithPopup(provider).then((result) => {
             if (result.user) {
                 this.userService.setUser(result.user).subscribe();
-                this.router.navigateByUrl("/accounts");
+                this.router.navigateByUrl("/bands");
             }
         }).catch(() => {
             // COOP policy can cause a false error even when sign-in succeeds.
@@ -51,7 +51,7 @@ export class LoginComponent implements OnInit, OnDestroy {
             this.afAuth.currentUser.then(user => {
                 if (user) {
                     this.userService.setUser(user).subscribe();
-                    this.router.navigateByUrl("/accounts");
+                    this.router.navigateByUrl("/bands");
                 } else {
                     this.notificationService.openSnackBar('Google sign-in failed. Please try again.');
                 }
@@ -64,13 +64,13 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.afAuth.signInWithPopup(provider).then((result) => {
             if (result.user) {
                 this.userService.setUser(result.user).subscribe();
-                this.router.navigateByUrl("/accounts");
+                this.router.navigateByUrl("/bands");
             }
         }).catch(() => {
             this.afAuth.currentUser.then(user => {
                 if (user) {
                     this.userService.setUser(user).subscribe();
-                    this.router.navigateByUrl("/accounts");
+                    this.router.navigateByUrl("/bands");
                 } else {
                     this.notificationService.openSnackBar('Apple sign-in failed. Please try again.');
                 }
@@ -112,6 +112,6 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     onLoginSuccessful(authResult: any) {
         this.userService.setUser(authResult.user).subscribe();
-        this.router.navigateByUrl("/accounts");
+        this.router.navigateByUrl("/bands");
     }
 }

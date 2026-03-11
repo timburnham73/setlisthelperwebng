@@ -1,52 +1,89 @@
 .home-intro-section {
-  padding: 180px 0 100px;
-  color: #ffffff;
+  min-height: 100vh;
+  background: #ffffff;
   overflow: hidden;
-}
-
-.home-intro-title {
-  margin: 0 0 24px;
-  font-size: 48px;
-  font-weight: 900;
-  line-height: 52px;
-  text-shadow: 0 4px 4px rgba(0, 0, 0, 0.22);
-}
-
-.home-intro-desc {
-  margin: 0 0 40px;
-  font-size: 22px;
-  font-weight: 400;
-  line-height: 32px;
-}
-
-.intro-list {
-  margin: 0 0 40px;
-}
-
-.hero-illustration {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  max-width: 420px;
-  margin: 0 auto;
+  align-items: flex-start;
+  position: relative;
 
-  svg {
-    width: 100%;
-    height: auto;
+  &::after {
+    content: '';
+    position: absolute;
+    top: 20%;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('/assets/images/hero-band.png') no-repeat bottom center;
+    background-size: 110% auto;
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 20%;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, #ffffff 0%, transparent 15%);
+    z-index: 1;
+    pointer-events: none;
   }
 }
 
-#frontend-btn {
-  background: #ffffff;
+.container {
+  position: relative;
+  z-index: 2;
+}
+
+.hero-content {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 80px 16px 40vh;
+}
+
+.home-intro-title {
+  margin: 0 0 20px;
+  font-size: 40px;
+  font-weight: 800;
+  line-height: 1.2;
   color: #0A66C2;
+}
+
+.home-intro-subtitle {
+  margin: 0 0 16px;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.home-intro-desc {
+  margin: 0 auto 32px;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.7;
+  color: rgba(0, 0, 0, 0.6);
+  max-width: 720px;
+}
+
+.hero-cta {
+  margin-bottom: 0;
+}
+
+#frontend-btn {
+  background: #0A66C2;
+  color: #ffffff;
   border-radius: 30px;
-  padding: 8px 40px;
+  padding: 10px 48px;
   font-size: 16px;
   font-weight: 600;
   transition: all 0.3s ease;
 
   &:hover {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    background: #084e96;
+    box-shadow: 0 8px 24px rgba(10, 102, 194, 0.3);
   }
 }
 
@@ -80,27 +117,25 @@
 }
 
 @media (max-width: 767px) {
-  .hero-illustration {
-    max-width: 280px;
-    margin-top: 40px;
+  .home-intro-section {
+    padding: 80px 0 0;
+    min-height: 80vh;
   }
 
-  .home-intro-section {
-    padding: 100px 0 60px;
+  .hero-content {
+    padding-bottom: 30vh;
   }
 
   .home-intro-title {
-    margin: 0 0 30px;
-    font-size: 32px;
-    font-weight: 900;
-    line-height: 38px;
-    text-shadow: 0 4px 4px rgba(0, 0, 0, 0.22);
+    font-size: 28px;
+    line-height: 1.25;
+  }
+
+  .home-intro-subtitle {
+    font-size: 18px;
   }
 
   .home-intro-desc {
-    margin: 0 0 40px;
-    font-size: 18px;
-    font-weight: 400;
-    line-height: 27px;
+    font-size: 15px;
   }
 }

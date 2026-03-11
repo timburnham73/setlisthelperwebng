@@ -107,7 +107,7 @@ export class AccountImportEventsComponent implements OnInit, OnDestroy {
     if(this.eventSubscription){
       this.eventSubscription.unsubscribe();
     }
-    this.router.navigate([`/accounts`], {});
+    this.router.navigate([`/bands`], {});
   }
 
   unsubscribe(){

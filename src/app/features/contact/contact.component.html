@@ -22,13 +22,15 @@
         <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
 
           <!-- Support Type -->
-          <div style="margin-bottom: 16px;">
-            <label style="display: block; margin-bottom: 8px; font-weight: 500;">Support Type *</label>
-            <mat-radio-group formControlName="supportType">
-              <mat-radio-button value="billing" style="margin-right: 24px;">Purchase / Billing</mat-radio-button>
-              <mat-radio-button value="technical">Technical</mat-radio-button>
-            </mat-radio-group>
-          </div>
+          <mat-form-field appearance="outline" class="form-field-full-width">
+            <mat-label>Support Type</mat-label>
+            <mat-select formControlName="supportType">
+              <mat-option value="billing">Purchase / Billing</mat-option>
+              <mat-option value="technical">Technical</mat-option>
+              <mat-option value="migration">Setlist Helper to Band Central Migration</mat-option>
+              <mat-option value="account">Account Help (Username / Password)</mat-option>
+            </mat-select>
+          </mat-form-field>
 
           <!-- Platform -->
           <mat-form-field appearance="outline" class="form-field-full-width">

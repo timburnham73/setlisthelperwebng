@@ -22,4 +22,11 @@ export class HelpMigrationComponent implements OnInit {
     this.titleService.setTitle('Band Central - Migrate from Setlist Helper');
     this.meta.updateTag({ name: 'description', content: 'Step-by-step guide to migrate your songs, setlists, and data from Setlist Helper to Band Central. Import your existing data easily.' });
   }
+
+  scrollTo(elementId: string): void {
+    const element = document.getElementById(elementId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
 }

@@ -31,7 +31,7 @@ const appRoutes: Routes = [
       import("./features/auth/auth.module").then((m) => m.AuthModule),
   },
   {
-    path: "accounts",
+    path: "bands",
     loadChildren: () =>
       import("./features/accounts/account.module").then(
         (m) => m.AccountsModule

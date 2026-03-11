@@ -5,12 +5,14 @@
     top: 0;
     left: 0;
     right: 0;
-    padding: 22px 0;
+    padding: 12px 0;
     transition: padding 0.3s linear;
     -webkit-transition: padding 0.3s linear;
     z-index: 999;
     .mat-mdc-button {
-        color: #fff;
+        color: rgba(0, 0, 0, 0.75);
+        font-size: 15px;
+        font-weight: 600;
     }
 }
 
@@ -23,8 +25,8 @@
 }
 
 #main-header:not(.header-fixed) .hometop-btn ::ng-deep .mat-button-ripple {
-    top: -22px;
-    bottom: -22px;
+    top: -12px;
+    bottom: -12px;
 }
 
 #main-header.header-fixed {
@@ -37,13 +39,7 @@
     box-shadow: 0 0 4px rgba(0, 0, 0, .14), 0 4px 8px rgba(0, 0, 0, .28);
     animation: .6s slideDown forwards;
     .mat-mdc-button {
-        color: #000000;
-    }
-    .home-logo {
-        h2 {
-            color: #000;
-            margin: 0;
-        }
+        color: rgba(0, 0, 0, 0.75);
     }
 }
 
@@ -59,10 +55,13 @@
     display: flex;
     align-items: center;
     a {
-        display: inherit;
+        display: flex;
+        align-items: center;
+        text-decoration: none;
     }
-    h2 {
-        color: #fff;
+    .logo-wordmark {
+        height: 32px;
+        width: auto;
     }
 }
 
@@ -86,7 +85,7 @@
             color: #000;
         }
         #menu-toggle {
-            color: #ffffff;
+            color: #333;
         }
     }
     #main-header.header-fixed {

@@ -414,7 +414,7 @@ export class LyricsComponent {
   onBackToSong() {
     const tagId = this.activeRoute.snapshot.paramMap.get("tagid");
     if (tagId) {
-      this.router.navigate(['/accounts', this.selectedAccount.id, 'tags']);
+      this.router.navigate(['/bands', this.selectedAccount.id, 'tags']);
     } else if(this.lyricId){
       this.router.navigate(["../../.."], { relativeTo: this.activeRoute, queryParams: {songid: this.song?.id} });
     }

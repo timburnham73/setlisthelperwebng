@@ -1,117 +1,13 @@
-<section id="intro-one-section" class="home-intro-section primary-bg">
-    <div class="container" fxLayout="row wrap" fxLayoutAlign="start center">
-        <div fxFlex.xs="100" fxFlex.sm="100" fxFlex.md="50" fxFlex.lg="50" fxFlex.xl="50">
+<section id="intro-one-section" class="home-intro-section">
+    <div class="container">
+        <div class="hero-content text-center">
             <h1 class="home-intro-title">Organize Your Songs and Lyrics. Create, Collaborate, and Perform with Ease.</h1>
-            <h2>Streamline your performances with the ultimate song management platform</h2>
+            <h2 class="home-intro-subtitle">Streamline your performances with the ultimate song management platform</h2>
             <div class="home-intro-desc">
                 Build your perfect song library and share it effortlessly with your band. Invite members to collaborate, create personalized lyrics, and keep everyone in sync for every performance.
             </div>
-            <div fxLayout="row" fxLayout.lt-sm="column">
-                <button mat-raised-button mat-lg-button id="frontend-btn" [routerLink]="['/auth/login']">Login</button>
-            </div>
-        </div>
-        <div fxFlex.xs="100" fxFlex.sm="100" fxFlex.md="50" fxFlex.lg="50" fxFlex.xl="50">
-            <div class="hero-illustration">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 380" fill="none">
-                    <!-- Central music staff circle -->
-                    <circle cx="200" cy="175" r="130" stroke="rgba(255,255,255,0.12)" stroke-width="1.5" fill="rgba(255,255,255,0.04)"/>
-                    <circle cx="200" cy="175" r="100" stroke="rgba(255,255,255,0.08)" stroke-width="1" fill="none"/>
-
-                    <!-- Headphones -->
-                    <g stroke="white" stroke-width="2.5" stroke-linecap="round">
-                        <!-- Headband -->
-                        <path d="M120 175 Q120 95, 200 80 Q280 95, 280 175" fill="none" stroke-width="3"/>
-                        <!-- Left ear cup -->
-                        <rect x="106" y="165" width="28" height="42" rx="10" fill="rgba(255,255,255,0.15)" stroke="white"/>
-                        <rect x="112" y="172" width="16" height="28" rx="6" fill="rgba(255,255,255,0.1)" stroke="white" stroke-width="1.5"/>
-                        <!-- Right ear cup -->
-                        <rect x="266" y="165" width="28" height="42" rx="10" fill="rgba(255,255,255,0.15)" stroke="white"/>
-                        <rect x="272" y="172" width="16" height="28" rx="6" fill="rgba(255,255,255,0.1)" stroke="white" stroke-width="1.5"/>
-                    </g>
-
-                    <!-- Music staff lines inside circle -->
-                    <g stroke="rgba(255,255,255,0.2)" stroke-width="1">
-                        <line x1="130" y1="140" x2="270" y2="140"/>
-                        <line x1="130" y1="152" x2="270" y2="152"/>
-                        <line x1="130" y1="164" x2="270" y2="164"/>
-                        <line x1="130" y1="176" x2="270" y2="176"/>
-                        <line x1="130" y1="188" x2="270" y2="188"/>
-                    </g>
-
-                    <!-- Quarter notes on the staff -->
-                    <g fill="white" stroke="none">
-                        <!-- Note on E line -->
-                        <ellipse cx="158" cy="188" rx="7" ry="5.5" transform="rotate(-15 158 188)"/>
-                        <rect x="163.5" y="150" width="2.5" height="38"/>
-                        <!-- Note on B space -->
-                        <ellipse cx="190" cy="170" rx="7" ry="5.5" transform="rotate(-15 190 170)"/>
-                        <rect x="195.5" y="132" width="2.5" height="38"/>
-                        <!-- Note on G line -->
-                        <ellipse cx="222" cy="164" rx="7" ry="5.5" transform="rotate(-15 222 164)"/>
-                        <rect x="227.5" y="126" width="2.5" height="38"/>
-                        <!-- Note on D space -->
-                        <ellipse cx="250" cy="146" rx="7" ry="5.5" transform="rotate(-15 250 146)"/>
-                        <rect x="255.5" y="108" width="2.5" height="38"/>
-                    </g>
-
-                    <!-- Equalizer bars below -->
-                    <g opacity="0.5">
-                        <rect x="148" y="230" width="8" height="28" rx="4" fill="white"/>
-                        <rect x="164" y="220" width="8" height="38" rx="4" fill="white"/>
-                        <rect x="180" y="225" width="8" height="33" rx="4" fill="white"/>
-                        <rect x="196" y="215" width="8" height="43" rx="4" fill="white"/>
-                        <rect x="212" y="222" width="8" height="36" rx="4" fill="white"/>
-                        <rect x="228" y="218" width="8" height="40" rx="4" fill="white"/>
-                        <rect x="244" y="228" width="8" height="30" rx="4" fill="white"/>
-                    </g>
-
-                    <!-- Floating quarter note - top left -->
-                    <g fill="white" stroke="none" opacity="0.6" transform="translate(60, 80)">
-                        <ellipse cx="0" cy="0" rx="9" ry="7" transform="rotate(-15)"/>
-                        <rect x="7.5" y="-40" width="3" height="40"/>
-                        <path d="M10.5 -40 Q22 -36, 19 -28 Q16 -22, 10.5 -26" fill="white"/>
-                    </g>
-
-                    <!-- Floating eighth note - top right -->
-                    <g fill="white" stroke="none" opacity="0.45" transform="translate(330, 60)">
-                        <ellipse cx="0" cy="0" rx="8" ry="6" transform="rotate(-15)"/>
-                        <rect x="6.5" y="-35" width="2.5" height="35"/>
-                        <path d="M9 -35 Q20 -31, 17 -24 Q14 -19, 9 -22" fill="white"/>
-                    </g>
-
-                    <!-- Beamed eighth notes - bottom left -->
-                    <g fill="white" stroke="none" opacity="0.35" transform="translate(55, 280)">
-                        <ellipse cx="0" cy="0" rx="7" ry="5.5" transform="rotate(-15)"/>
-                        <rect x="6" y="-32" width="2.5" height="32"/>
-                        <ellipse cx="26" cy="-4" rx="7" ry="5.5" transform="rotate(-15 26 -4)"/>
-                        <rect x="32" y="-36" width="2.5" height="32"/>
-                        <rect x="8.5" y="-35" width="26" height="3" rx="1"/>
-                    </g>
-
-                    <!-- Small floating note - right side -->
-                    <g fill="white" stroke="none" opacity="0.3" transform="translate(345, 230)">
-                        <ellipse cx="0" cy="0" rx="6" ry="4.5" transform="rotate(-15)"/>
-                        <rect x="5" y="-26" width="2" height="26"/>
-                    </g>
-
-                    <!-- Sound wave arcs - left -->
-                    <g stroke="white" fill="none" stroke-width="1.5" stroke-linecap="round" opacity="0.25">
-                        <path d="M72 155 Q60 175, 72 195"/>
-                        <path d="M60 148 Q42 175, 60 202"/>
-                    </g>
-
-                    <!-- Sound wave arcs - right -->
-                    <g stroke="white" fill="none" stroke-width="1.5" stroke-linecap="round" opacity="0.25">
-                        <path d="M328 155 Q340 175, 328 195"/>
-                        <path d="M340 148 Q358 175, 340 202"/>
-                    </g>
-
-                    <!-- Small decorative dots -->
-                    <circle cx="90" cy="120" r="3" fill="white" opacity="0.2"/>
-                    <circle cx="315" cy="290" r="2.5" fill="white" opacity="0.15"/>
-                    <circle cx="42" cy="200" r="2" fill="white" opacity="0.15"/>
-                    <circle cx="360" cy="150" r="2.5" fill="white" opacity="0.2"/>
-                </svg>
+            <div class="hero-cta">
+                <button mat-raised-button mat-lg-button id="frontend-btn" [routerLink]="['/auth/login']">Get Started</button>
             </div>
         </div>
     </div>

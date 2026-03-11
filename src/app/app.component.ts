@@ -15,7 +15,7 @@ export class AppComponent {
                 if (event.url === '/' || event.url === '/home' || event.url === '/auth/login')
                     authService.isLoggedIn$.subscribe((isLoggedIn) => {
                         if(isLoggedIn){
-                            router.navigate(['/accounts']);   
+                            router.navigate(['/bands']);   
                         }
                       });
             }

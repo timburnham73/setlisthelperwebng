@@ -89,6 +89,10 @@ export class LayoutNoSidebarComponent
     this.changeDetectorRef.detectChanges();
   }
 
+  openHelp() {
+    window.open('/help', '_blank');
+  }
+
   onLogout() {
     this.authService.logout();
   }
