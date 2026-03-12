@@ -4,7 +4,6 @@ import { WINDOW_PROVIDERS, WINDOW } from '../../../shared/helpers/window.helper'
 import { MatIcon } from '@angular/material/icon';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { FlexLayoutModule } from 'ngx-flexible-layout';
-import { ScrollToDirective } from 'src/app/shared/directives/scroll-to.directive';
 import { Router } from '@angular/router';
 
 @Component({
@@ -15,8 +14,7 @@ import { Router } from '@angular/router';
     NgClass,
     MatIconButton,
     MatButton,
-    FlexLayoutModule,
-    ScrollToDirective
+    FlexLayoutModule
   ],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
@@ -43,6 +41,16 @@ export class HeaderComponent {
 
   toggleMenu() {
     this.menuOpened = !this.menuOpened
+  }
+
+  navigateToSection(sectionId: string) {
+    this.menuOpened = false;
+    const element = this.document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      this.router.navigate(['/home'], { fragment: sectionId });
+    }
   }
 
   navigateToHelp() {

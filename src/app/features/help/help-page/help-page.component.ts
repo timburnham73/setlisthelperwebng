@@ -4,11 +4,12 @@ import { Title, Meta } from '@angular/platform-browser';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { HelpSectionComponent } from '../help-section/help-section.component';
 import { HELP_CONTENT, HelpPageContent } from '../help-content';
+import { HeaderComponent } from '../../home/header/header.component';
 
 @Component({
   selector: 'app-help-page',
   standalone: true,
-  imports: [MatToolbarModule, RouterLink, HelpSectionComponent],
+  imports: [MatToolbarModule, RouterLink, HelpSectionComponent, HeaderComponent],
   templateUrl: './help-page.component.html',
   styleUrls: ['./help-page.component.css']
 })

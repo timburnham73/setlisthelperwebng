@@ -2,27 +2,10 @@
   display: block;
 }
 
-.help-toolbar {
-  margin-bottom: 24px;
-}
-
-.help-toolbar a {
-  color: white;
-  text-decoration: none;
-}
-
-.toolbar-spacer {
-  flex: 1;
-}
-
-.toolbar-link {
-  font-size: 14px;
-}
-
 .help-container {
   max-width: 800px;
   margin: 0 auto;
-  padding: 0 16px 48px;
+  padding: 80px 16px 48px;
 }
 
 .help-nav {

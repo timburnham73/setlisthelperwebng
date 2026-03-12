@@ -4,11 +4,12 @@ import { Title, Meta } from '@angular/platform-browser';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { HeaderComponent } from '../../home/header/header.component';
 
 @Component({
   selector: 'app-help-migration',
   standalone: true,
-  imports: [RouterLink, MatToolbarModule, MatCardModule, MatIconModule],
+  imports: [RouterLink, MatToolbarModule, MatCardModule, MatIconModule, HeaderComponent],
   templateUrl: './help-migration.component.html',
   styleUrls: ['./help-migration.component.css']
 })

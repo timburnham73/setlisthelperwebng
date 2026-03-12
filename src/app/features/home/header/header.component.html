@@ -11,9 +11,9 @@
 
         <div fxFlex fxLayoutAlign="end" class="top-menu">
 
-            <button mat-button id="dashboard-topbtn" class="hometop-btn" scrollTo="intro-one-section" (click)="toggleMenu()"><strong>Home</strong></button>
-            <button mat-button id="dashboard-topbtn" class="hometop-btn" scrollTo="feature-section" (click)="toggleMenu()"><strong>Features</strong></button>
-            <button mat-button id="dashboard-topbtn" class="hometop-btn" scrollTo="pricings-section" (click)="toggleMenu()"><strong>Pricings</strong></button>
+            <button mat-button id="dashboard-topbtn" class="hometop-btn" (click)="navigateToSection('intro-one-section')"><strong>Home</strong></button>
+            <button mat-button id="dashboard-topbtn" class="hometop-btn" (click)="navigateToSection('feature-section')"><strong>Features</strong></button>
+            <button mat-button id="dashboard-topbtn" class="hometop-btn" (click)="navigateToSection('pricings-section')"><strong>Pricings</strong></button>
             <button mat-button id="dashboard-topbtn" class="hometop-btn" (click)="navigateToContact()"><strong>Contact</strong></button>
             <button mat-button id="dashboard-topbtn" class="hometop-btn" (click)="navigateToHelp()"><strong>Help</strong></button>
         </div>

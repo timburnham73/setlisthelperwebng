@@ -19,6 +19,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { NotificationService } from '../../core/services/notification.service';
+import { HeaderComponent } from '../home/header/header.component';
 
 @Component({
   selector: 'app-contact',
@@ -37,6 +38,7 @@ import { NotificationService } from '../../core/services/notification.service';
     MatIconModule,
     MatRadioModule,
     MatProgressSpinnerModule,
+    HeaderComponent,
   ]
 })
 export class ContactComponent implements OnDestroy {

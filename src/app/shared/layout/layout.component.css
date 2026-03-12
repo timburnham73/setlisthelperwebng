@@ -9,6 +9,13 @@
 .navbar-brand {
   text-decoration: none;
   color: white;
+  display: flex;
+  align-items: center;
+}
+
+.navbar-logo {
+  height: 28px;
+  width: auto;
 }
 
 .navbar-container {
