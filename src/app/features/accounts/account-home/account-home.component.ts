@@ -22,6 +22,7 @@ import { FlexLayoutModule } from "ngx-flexible-layout";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "src/environments/environment";
 import { LoginLegacySetlistHelperComponent } from "../login-legacy-setlist-helper/login-legacy-setlist-helper.component";
+import { getEntitlementLimits } from "src/app/core/model/entitlement-limits";
 
 @Component({
     selector: "app-account-home",
@@ -45,6 +46,7 @@ import { LoginLegacySetlistHelperComponent } from "../login-legacy-setlist-helpe
 export class AccountHomeComponent implements OnInit {
   currentUser: any;
   accounts$: Observable<Account[]>;
+  private entitlementLevel: string = 'free';
 
   constructor(
     private authService: AuthenticationService,
@@ -53,15 +55,19 @@ export class AccountHomeComponent implements OnInit {
     private router: Router,
     public dialog: MatDialog,
     private userService: UserService,
+    private notificationService: NotificationService,
     private route: ActivatedRoute,
     private http: HttpClient
   ) {
     this.accounts$ = this.store.select(AccountState.all);
-    
+
     this.authService.user$.subscribe((user) => {
       if(user && user.uid){
         this.currentUser = user;
         this.store.dispatch(new AccountActions.LoadAccounts(user.uid));
+        this.userService.getUserById(user.uid).subscribe((firestoreUser) => {
+          this.entitlementLevel = firestoreUser?.entitlementLevel ?? 'free';
+        });
       }
     });
   }
@@ -76,6 +82,15 @@ export class AccountHomeComponent implements OnInit {
   }
 
   onAddAccount() {
+    const limits = getEntitlementLimits(this.entitlementLevel);
+    const currentBands = this.store.selectSnapshot(AccountState.all);
+    if (limits.maxBands !== null && currentBands.length >= limits.maxBands) {
+      this.notificationService.openSnackBar(
+        `Your plan allows up to ${limits.maxBands} band${limits.maxBands === 1 ? '' : 's'}. Upgrade your subscription to add more.`
+      );
+      return;
+    }
+
     const dialogRef = this.dialog.open(EditAccountDialogComponent, {
       data: {},
       panelClass: "dialog-responsive",
@@ -85,7 +100,7 @@ export class AccountHomeComponent implements OnInit {
       if (data) {
         this.store.dispatch(new AccountActions.LoadAccounts(this.currentUser.uid));
       }
-    }); 
+    });
   }
 
   onImportAccount(account: Account) {

@@ -13,6 +13,7 @@ import { Store } from '@ngxs/store';
 import { AccountActions } from 'src/app/core/store/account.actions';
 import { AccountState } from 'src/app/core/store/account.state';
 import { Account } from 'src/app/core/model/account';
+import { getEntitlementLimits } from 'src/app/core/model/entitlement-limits';
 import { SongActions } from 'src/app/core/store/song.actions';
 import { SongState } from 'src/app/core/store/song.state';
 import { getSongDetails as utilGetSongDetails, getSongLength as utilGetSongLength } from 'src/app/core/util/song.util';
@@ -152,6 +153,15 @@ export class SongListComponent implements OnInit {
   }
 
   onAddSong(){
+    const account = this.store.selectSnapshot(AccountState.selectedAccount);
+    const limits = getEntitlementLimits(account?.entitlementLevel);
+    if (limits.maxSongs !== null && (account?.countOfSongs ?? 0) >= limits.maxSongs) {
+      this.notificationService.openSnackBar(
+        `Your plan allows up to ${limits.maxSongs} songs. Upgrade your subscription to add more.`
+      );
+      return;
+    }
+
     const dialogRef = this.dialog.open(SongEditDialogComponent, {
       data: { accountId: this.accountId, song: null},
       panelClass: "dialog-responsive",
