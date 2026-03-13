@@ -16,21 +16,25 @@
   *ngIf="(accounts$ | async)?.length !== 0"
     class="card-wrapper"
     fxLayout="row wrap"
-    fxLayout.lt-lg="column" 
+    fxLayout.lt-lg="column"
     fxLayoutAlign="center center"
-    fxLayoutGap="16px 12px grid">      
+    fxLayoutGap="16px 12px grid">
       <ng-container *ngFor="let account of (accounts$ | async)">
-        <div fxFlex="25">
+        <div fxFlex="25" fxFlex.lt-lg="100" class="card-item">
         <mat-card  class="account-card">
           <div (click)="onSelectAccount(account)">
           <mat-card-header>
             <mat-card-title>{{account.name}}</mat-card-title>
-            <mat-card-subtitle><span class="padding-right">Owner: {{account.ownerUser?.displayName}}</span></mat-card-subtitle>
+            <mat-card-subtitle>
+              <span class="padding-right">Owner: {{account.ownerUser?.displayName || account.ownerUser?.email || 'Unknown'}}</span>
+              <span class="entitlement-badge" [ngClass]="account.entitlementLevel || 'free'">{{(account.entitlementLevel || 'free') | titlecase}}</span>
+            </mat-card-subtitle>
             <mat-card-subtitle><span class="padding-right">Songs: {{account.countOfSongs}}</span>  <span>Setlists: {{account.countOfSetlists}}</span></mat-card-subtitle>
           </mat-card-header>
           <mat-card-content>
-            <p *ngIf="!account.description">Songs, Setlists, Lyrics, Audio and Documents that are grouped for a band, worship group, or solo act. </p>
-            <p *ngIf="account.description">{{account.description}}</p>
+            <div class="description-area">
+              <p *ngIf="account.description">{{account.description}}</p>
+            </div>
             <mat-divider></mat-divider>
           </mat-card-content>
         </div>

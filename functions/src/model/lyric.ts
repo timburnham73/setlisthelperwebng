@@ -63,7 +63,7 @@ export class LyricHelper {
       audioLocation: data.audioLocation ?? "",
       audioFileName: data.audioFileName ?? "",
       transpose: data.transpose ?? 0,
-      scrollSpeed: data.scrollSpeed ?? 0,
+      scrollSpeed: data.scrollSpeed ?? 7,
       dbxDocumentRev: data.dbxDocumentRev ?? "",
       dbxAudioRev: data.dbxAudioRev ?? "",
       ...(data.pdfScale ? { pdfScale: data.pdfScale } : {}),

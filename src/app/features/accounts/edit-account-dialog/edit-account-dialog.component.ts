@@ -30,7 +30,7 @@ export class EditAccountDialogComponent {
   accountForm = new FormGroup({
     id: new FormControl(this.data.id),
     name: new FormControl(this.data.name, Validators.required),
-    description: new FormControl(this.data.description),
+    description: new FormControl(this.data.description, Validators.maxLength(255)),
   });
 
   get name() { return this.accountForm.get('name'); }

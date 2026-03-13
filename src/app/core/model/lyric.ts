@@ -69,7 +69,7 @@ export class LyricHelper {
       audioLocation: data.audioLocation ?? "",
       audioFileName: data.audioFileName ?? "",
       transpose: data.transpose ?? 0,
-      scrollSpeed: data.scrollSpeed ?? 0,
+      scrollSpeed: data.scrollSpeed ?? 7,
       pdfScale: data.pdfScale ?? undefined,
       formatScope: data.formatScope ?? FormatScope.ACCOUNT,
       formatSettings: data.formatSettings ?? undefined

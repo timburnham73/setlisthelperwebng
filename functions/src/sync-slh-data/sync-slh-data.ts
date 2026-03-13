@@ -436,7 +436,7 @@ async function addLyrics(slhSong: SLHSong, accountId: string, songId: string, co
     const audioLocation = slhSong.IosAudioLocation ? slhSong.IosAudioLocation : slhSong.SongLocation;
     const audioFileName = audioLocation ? (audioLocation.split("/").pop() || "").toLowerCase() : "";
     const scrollSpeedMatch = slhSong.Lyrics?.match(/{scrollspeed:\s*(\d+)\s*}/i);
-    const scrollSpeed = scrollSpeedMatch ? parseInt(scrollSpeedMatch[1], 10) : 0;
+    const scrollSpeed = scrollSpeedMatch ? parseInt(scrollSpeedMatch[1], 10) : 7;
 
     if (slhSong.DocumentLocation) {
       // Single lyric with document — include lyrics text if present

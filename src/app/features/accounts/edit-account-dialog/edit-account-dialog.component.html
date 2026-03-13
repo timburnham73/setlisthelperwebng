@@ -11,7 +11,8 @@
     <p>
       <mat-form-field appearance="outline" class="dialog-input-full-width">
         <mat-label>Description</mat-label>
-        <input matInput formControlName="description" />
+        <input matInput formControlName="description" maxlength="255" />
+        <mat-hint align="end">{{accountForm.get('description')?.value?.length || 0}} / 255</mat-hint>
       </mat-form-field>
     </p>
   </div>

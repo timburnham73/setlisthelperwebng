@@ -15,7 +15,7 @@ import { UserService } from "src/app/core/services/user.service";
 import { AccountUsersComponent } from "../account-users/account-users.component";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatCardModule } from "@angular/material/card";
-import { NgIf, NgFor, AsyncPipe } from "@angular/common";
+import { NgIf, NgFor, NgClass, AsyncPipe, TitleCasePipe } from "@angular/common";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { FlexLayoutModule } from "ngx-flexible-layout";
@@ -34,6 +34,8 @@ import { LoginLegacySetlistHelperComponent } from "../login-legacy-setlist-helpe
         FlexLayoutModule,
         NgIf,
         NgFor,
+        NgClass,
+        TitleCasePipe,
         MatCardModule,
         MatDividerModule,
         RouterLink,
