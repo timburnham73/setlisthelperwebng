@@ -2,18 +2,17 @@
   <mat-card-content class="lyrics-view">
     <div class="ibox-content">
       <div *ngIf="stepNumber === 1">
-        <p>
-          <span class="labelText"
-            >Add songs into the Song Catalog by typing "Song name", "Artist",
-            "Key" into the space below. There can only one song per line.</span
-          ><br />
-          <span class="labelText">For Example:</span><br />
-          <span class="labelText">In the deep, John Smith, A</span><br />
-          <span class="labelText">So Long, New Fossils, B</span><br />
-          <span class="labelText"
-            >The comma can be replaced with TAB. This allows songs to be copied
-            from a spreadsheet and pasted below.</span
-          >
+        <h3 class="import-title">Import Songs</h3>
+        <p class="import-description">
+          Paste your songs below, one per line. Separate fields with commas or tabs.
+        </p>
+        <div class="import-example">
+          <span class="example-label">Example:</span>
+          <code>Bohemian Rhapsody, Queen, Rock, Bb</code><br>
+          <code>Hotel California, Eagles, Rock, Bm</code>
+        </div>
+        <p class="import-hint">
+          You can copy and paste directly from a spreadsheet. On the next step you'll map each column to the right field (Name, Artist, Genre, Key, Tempo, etc.).
         </p>
         <form class="dialog-form" [formGroup]="multiSongForm">
           <textarea
@@ -21,6 +20,7 @@
             name="import-list"
             id="import-list"
             formControlName="importText"
+            placeholder="Song Name, Artist, Genre, Key&#10;Bohemian Rhapsody, Queen, Rock, Bb&#10;Hotel California, Eagles, Rock, Bm"
           ></textarea>
         </form>
         <div>
@@ -28,7 +28,6 @@
             mat-raised-button
             color="primary"
             type="button"
-            class="btn btn-primary pull-right"
             (click)="stepOneImport()"
           >
             Next
@@ -36,15 +35,13 @@
         </div>
       </div>
       <div *ngIf="stepNumber === 2">
+        <p class="step-instructions">Map each column to a song field. Preview data is shown below each dropdown.</p>
         <form [formGroup]="songAttributeForm">
-          <div fxLayout="row" fxLayoutAlign="space-evenly space-between start stretch">
-            <div *ngFor="let category of categories; index as i">
-              <mat-form-field
-                appearance="outline"
-                class="dialog-input-full-width"
-              >
-                <mat-label>Field {{ i + 1 }}</mat-label>
-                <mat-select formControlName="{{ category.type.attribute }}">
+          <div class="column-grid">
+            <div *ngFor="let category of categories; index as i" class="column-card">
+              <mat-form-field appearance="outline" class="column-select">
+                <mat-label>Column {{ i + 1 }}</mat-label>
+                <mat-select formControlName="{{ category.controlName }}">
                   <mat-option
                     *ngFor="let songField of songFieldTypes"
                     [value]="songField.attribute"
@@ -53,21 +50,20 @@
                   </mat-option>
                 </mat-select>
               </mat-form-field>
-              <ul class="todo-list m-t small-list ui-sortable field-list">
-                <li *ngFor="let item of category.items">
-                  <span>{{ item }}</span>
-                </li>
-              </ul>
+              <div class="preview-items">
+                <div *ngFor="let item of category.items" class="preview-item">
+                  {{ item }}
+                </div>
+              </div>
             </div>
           </div>
         </form>
 
-        <div>
+        <div style="margin-top: 16px;">
           <button
             mat-raised-button
             color="primary"
             type="button"
-            class="btn btn-primary pull-right"
             (click)="stepTwoStartImport()"
             [disabled]="!songAttributeForm.valid || !songAttributeForm.dirty"
           >
@@ -81,17 +77,19 @@
           name="import-list"
           id="import-result-list"
           [(ngModel)]="importSongsResult"
+          readonly
         ></textarea>
-        <div>
+        <div style="display: flex; align-items: center; gap: 12px; margin-top: 8px;">
           <button
             mat-raised-button
             color="primary"
             type="button"
-            class="btn btn-primary pull-right"
             (click)="stepThreeFinish()"
+            [disabled]="importing"
           >
             Finish
           </button>
+          <mat-spinner *ngIf="importing" diameter="24"></mat-spinner>
         </div>
       </div>
     </div>

@@ -222,6 +222,39 @@ export class SongService {
     );
   }
 
+  /**
+   * Add a song without artist/genre upsert — for bulk import.
+   * Returns the created song. Does NOT increment countOfSongs (caller handles that).
+   */
+  addSongBulk(accountId: string, song: Song, editingUser: BaseUser): Observable<Song> {
+    const songForAdd = new SongFactory(editingUser).getForAdd(song);
+    const dbPath = `/accounts/${accountId}/songs`;
+    const songDocRef = this.db.firestore.collection(dbPath).doc();
+    const rtnSong: Song = { id: songDocRef.id, ...songForAdd };
+    return from(songDocRef.set(songForAdd)).pipe(map(() => rtnSong));
+  }
+
+  /**
+   * After bulk import, set the countOfSongs on the account and recompute artist/genre counts.
+   */
+  finalizeBulkImport(
+    accountId: string,
+    songCount: number,
+    artistNames: Set<string>,
+    genreNames: Set<string>,
+    editingUser: BaseUser
+  ): Observable<any> {
+    const accountRef = this.db.firestore.doc(`/accounts/${accountId}`);
+    return from(
+      accountRef.set(
+        { countOfSongs: firebase.firestore.FieldValue.increment(songCount) },
+        { merge: true }
+      )
+    ).pipe(
+      switchMap(() => this.recomputeArtistAndGenreCounts(accountId, artistNames, genreNames, editingUser))
+    );
+  }
+
   private recomputeArtistAndGenreCounts(
     accountId: string,
     artistNames: Set<string>,
