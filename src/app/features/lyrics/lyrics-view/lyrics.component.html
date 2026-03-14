@@ -82,57 +82,51 @@
         <button mat-icon-button aria-label="Back to Song List" (click)="onBackToSong()">
           <mat-icon>arrow_back_ios</mat-icon>
         </button>
+        <!-- Desktop: show song name -->
         <h4 fxShow fxHide.lt-lg>{{ song?.name }}</h4>
+        <!-- Mobile: show song name -->
+        <h4 fxShow fxHide.gt-md class="song-name-mobile">{{ song?.name }}</h4>
         @if(selectedLyric){
-        
-        
+
+        <!-- Desktop toolbar buttons -->
         @if(canEditOrDelete){
-        <button mat-button aria-label="Edit Lyrics" title="Edit" (click)="onEditLyric()">
+        <button mat-button fxShow fxHide.lt-md aria-label="Edit Lyrics" title="Edit" (click)="onEditLyric()">
           <mat-icon>edit</mat-icon>
-          <span fxShow fxHide.lt-md>
-            Edit
-          </span>
+          <span>Edit</span>
         </button>
         }
-        <button mat-button aria-label="Print Lyrics" title="Print" (click)="onPrintLyric()" >
+        <button mat-button fxShow fxHide.lt-md aria-label="Print Lyrics" title="Print" (click)="onPrintLyric()">
           <mat-icon>print</mat-icon>
-          <span fxShow fxHide.lt-md>
-            Print
-          </span>
+          <span>Print</span>
         </button>
-        <div class="vl"></div>
-        <button mat-button fxShow fxHide.lt-md aria-label="Toggle Transpose" title="Toggle Transpose" 
+        <div class="vl" fxShow fxHide.lt-md></div>
+        <button mat-button fxShow fxHide.lt-md aria-label="Toggle Transpose" title="Toggle Transpose"
           (click)="onTranspose()">
           <mat-icon>swap_vert</mat-icon>
-          <span fxShow fxHide.lt-md>
-            Transpose
-          </span>
+          <span>Transpose</span>
         </button>
         <button mat-button fxShow fxHide.lt-md aria-label="Toggle Format" title="Toggle Format"
           (click)="onFormatLyrics()">
           <mat-icon>format_color_text</mat-icon>
-          <span fxShow fxHide.lt-md>
-            Format
-          </span>
+          <span>Format</span>
         </button>
 
         }
         <span class="spacer"></span>
+        <!-- Desktop: star and version dropdown -->
         @if(!isDefaultLyric){
         <button mat-button fxShow fxHide.lt-md aria-label="Set the default lyric for this song." *ngIf="selectedLyric"
           title="Set the default lyric for this song." (click)="onSetDefaultUser($event)">
           <mat-icon>star</mat-icon>
-          <span fxShow fxHide.lt-md>
-            Set Default
-          </span>
+          <span>Set Default</span>
         </button>
         }
         @else {
-        <mat-icon tabindex="0" aria-label="This is the default lyric for this song." *ngIf="selectedLyric"
+        <mat-icon fxShow fxHide.lt-md tabindex="0" aria-label="This is the default lyric for this song." *ngIf="selectedLyric"
           title="This is the default lyric for this song.">star</mat-icon>
         }
         <ng-container *ngIf="selectedLyric">
-          <mat-form-field subscriptSizing="dynamic">
+          <mat-form-field fxShow fxHide.lt-md subscriptSizing="dynamic">
             <mat-select [value]="this.selectedLyric.id || 'add'" (selectionChange)="onSelectLyric($event.value)">
               <mat-option *ngFor="let lyric of lyrics" [value]="lyric?.id">
                 <mat-icon *ngIf="lyric.id === defaultLyricId">star</mat-icon>
@@ -148,8 +142,12 @@
         <mat-icon>more_vert</mat-icon>
       </button>
       <mat-menu #moreMenu="matMenu">
-        <button
-          mat-menu-item aria-label="Print Lyrics" (click)="onPrintLyric()">
+        <!-- Versions - shown on mobile only -->
+        <button mat-menu-item fxShow fxHide.gt-sm aria-label="Lyric Versions" (click)="onShowVersions()">
+          <mat-icon>library_books</mat-icon>
+          <span>Versions</span>
+        </button>
+        <button mat-menu-item aria-label="Print Lyrics" (click)="onPrintLyric()">
           <mat-icon>print</mat-icon>
           <span>Print</span>
         </button>
@@ -162,8 +160,8 @@
           <span>Format</span>
         </button>
         @if(!isDefaultLyric){
-        <button mat-menu-item (click)="onSetDefaultUser($event)">
-          <mat-icon>group</mat-icon>
+        <button mat-menu-item fxShow fxHide.gt-sm (click)="onSetDefaultUser($event)">
+          <mat-icon>star</mat-icon>
           <span>Set as Default Lyric</span>
         </button>
         }

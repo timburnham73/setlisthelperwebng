@@ -11,6 +11,8 @@ import { BaseUser, User, UserHelper } from "src/app/core/model/user";
 import { AccountService } from "src/app/core/services/account.service";
 import { AuthenticationService } from "src/app/core/services/auth.service";
 import { UserService } from "src/app/core/services/user.service";
+import { NotificationService } from "src/app/core/services/notification.service";
+import { getEntitlementLimits } from "src/app/core/model/entitlement-limits";
 import { AutoFocusDirective } from "../../../shared/directives/auto-focus/auto-focus.directive";
 import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -81,6 +83,7 @@ export class AccountUsersComponent {
     private accountService: AccountService,
     private authService: AuthenticationService,
     private userService: UserService,
+    private notificationService: NotificationService,
     @Inject(MAT_DIALOG_DATA) public data: Account
   ) {
     this.accountId = data.id ?? "";
@@ -102,6 +105,14 @@ export class AccountUsersComponent {
   }
 
   onAdd(): void {
+    const limits = getEntitlementLimits(this.data.entitlementLevel);
+    const currentMembers = this.dataSource.data.length;
+    if (currentMembers >= limits.maxMembers) {
+      this.notificationService.openSnackBar(
+        `Your plan allows up to ${limits.maxMembers} member${limits.maxMembers === 1 ? '' : 's'}. Upgrade your subscription to add more.`
+      );
+      return;
+    }
     this.searching = true;
     this.email?.setErrors(null);
     const emailToAdd = this.email?.value;

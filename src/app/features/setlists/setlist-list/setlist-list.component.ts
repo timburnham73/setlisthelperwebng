@@ -27,6 +27,7 @@ import { FlexLayoutModule } from "ngx-flexible-layout";
 import { AuthenticationService } from "src/app/core/services/auth.service";
 import { CONFIRM_DIALOG_RESULT, ConfirmDialogComponent } from "src/app/shared/confirm-dialog/confirm-dialog.component";
 import { NotificationService } from "src/app/core/services/notification.service";
+import { getEntitlementLimits } from "src/app/core/model/entitlement-limits";
 
 @Component({
     selector: "app-setlist-list",
@@ -122,6 +123,14 @@ export class SetlistListComponent implements OnInit {
   }
 
   onAddSetlist() {
+    const account = this.store.selectSnapshot(AccountState.selectedAccount);
+    const limits = getEntitlementLimits(account?.entitlementLevel);
+    if (limits.maxSetlists !== null && (account?.countOfSetlists ?? 0) >= limits.maxSetlists) {
+      this.notificationService.openSnackBar(
+        `Your plan allows up to ${limits.maxSetlists} setlist${limits.maxSetlists === 1 ? '' : 's'}. Upgrade your subscription to add more.`
+      );
+      return;
+    }
     const dialogRef = this.dialog.open(SetlistEditDialogComponent, {
       data: { accountId: this.accountId } as AccountSetlist,
       panelClass: "dialog-responsive",

@@ -28,19 +28,37 @@ export const HELP_CONTENT: Record<string, HelpPageContent> = {
         topics: [
           {
             question: 'How do I create an account?',
-            answer: 'Open Band Central and tap "Sign Up." You can create an account using your email address or sign in with your Google account. Once signed in, you can create or join a band to start adding songs and setlists.'
+            answer: 'When you open Band Central for the first time, you\'ll see the login screen with three options: Sign in with Google, Sign in with Apple, or Sign in with Email. If you don\'t already have an account, one will be created automatically when you sign in. Your email address is what identifies your account — if your email is banduser@gmail.com, signing in with Google, Apple, or Email using that address will all connect to the same account. Once signed in, you can create or join a band to start adding songs and setlists.'
           },
           {
-            question: 'How do I sign in?',
-            answer: 'Tap "Sign In" and enter your email and password, or use "Sign in with Google." If you\'ve forgotten your password, tap "Forgot Password" to receive a reset email.'
+            question: 'What if I forget my password?',
+            answer: 'If you sign in with Email, tap "Forgot Password" on the email sign-in screen to receive a password reset email. If you use Sign in with Google or Sign in with Apple, your password is managed by those services instead.'
           },
           {
             question: 'How do bands work?',
-            answer: 'Bands are shared workspaces where members collaborate on songs and setlists. One person creates the band and invites others by sharing the band code. All band members see the same songs and setlists, and changes sync automatically.'
+            answer: 'Bands are shared workspaces where members collaborate on songs and setlists. The band owner creates the band and adds members from the band settings. All band members see the same songs and setlists, and changes sync automatically.'
           },
           {
-            question: 'How do I join an existing band?',
-            answer: 'Ask your band leader for the band code. Then tap "Join Band" and enter the code. You\'ll immediately have access to the band\'s songs and setlists.'
+            question: 'How do users get added or removed from a band?',
+            answer: 'Only the band owner can add or remove members. Go to the Bands page, tap the info button to the right of the band, and choose Edit. At the bottom of the band page there is a section to add and remove band members. The member must already have a Band Central account — once they create their account, the owner can search for them and add them to the band.'
+          }
+        ]
+      },
+      {
+        title: 'Subscriptions',
+        icon: 'card_membership',
+        topics: [
+          {
+            question: 'Who needs to subscribe?',
+            answer: 'Only the band owner needs to subscribe. When the owner subscribes, all members of that band get the full subscription features. The owner\'s subscription covers everyone in the band.'
+          },
+          {
+            question: 'What if I belong to multiple bands?',
+            answer: 'Each band has its own subscription level based on what the band owner has purchased. You may be a member of a band with a paid subscription and also own a separate band on the free tier. You\'ll see an indicator on each band showing its subscription level.'
+          },
+          {
+            question: 'What are the free tier limits?',
+            answer: 'The free tier allows 1 band with up to 25 songs and 5 setlists. Upgrading to a paid subscription removes these limits and unlocks additional bands and members depending on the plan.'
           }
         ]
       },
@@ -67,6 +85,40 @@ export const HELP_CONTENT: Record<string, HelpPageContent> = {
         ]
       },
       {
+        title: 'Lyrics & ChordPro',
+        icon: 'article',
+        topics: [
+          {
+            question: 'How do I view and edit lyrics?',
+            answer: 'Tap the info button next to a song and choose Lyrics. This will show all the lyrics the song contains. To edit a lyric, tap the info button next to it. A song can have multiple lyrics — for example, plain lyrics for a vocalist, lyrics with chords above them for a guitar player, or a PDF chart for horn players.'
+          },
+          {
+            question: 'What is the default lyric?',
+            answer: 'If a song has multiple lyrics, you can set one as your default. The default lyric setting is tied to your profile, so each band member can choose the lyric that works best for them. If no default is set, the app will display the first lyric it finds.'
+          },
+          {
+            question: 'Why would I want multiple lyrics for one song?',
+            answer: 'Different band members often need different views of the same song. A vocalist might want plain lyrics, a guitar player might want lyrics with chords (ChordPro), a keyboard player might want a chord chart, and horn players might need a PDF sheet music chart. With multiple lyrics per song, each member can set their preferred version as their default and see exactly what they need during a performance — all without duplicating the song.'
+          },
+          {
+            question: 'What is ChordPro format?',
+            answer: 'ChordPro is a standard format for writing lyrics with chord notations. Chords are placed in square brackets above the lyrics, like [G]Amazing [D]grace. Band Central renders ChordPro with chords highlighted and properly positioned above the lyrics. For more details on ChordPro format, visit <a href="https://www.chordpro.org" target="_blank">chordpro.org</a>.'
+          },
+          {
+            question: 'How do I transpose chords?',
+            answer: 'When viewing a song with ChordPro lyrics, tap the transpose button (up/down arrows) to shift all chords up or down by semitones. The transposition is saved per song.'
+          },
+          {
+            question: 'How does auto-scroll work?',
+            answer: 'In the lyrics viewer, tap the auto-scroll button to start scrolling through the lyrics automatically. You can adjust the scroll speed using the speed controls. This is great for hands-free performance.'
+          },
+          {
+            question: 'Can I change the font size?',
+            answer: 'Yes! Use the pinch-to-zoom gesture on the lyrics view to adjust the text size, or use the zoom controls in the toolbar. Your preferred zoom level is remembered.'
+          }
+        ]
+      },
+      {
         title: 'Setlists',
         icon: 'queue_music',
         topics: [
@@ -85,28 +137,6 @@ export const HELP_CONTENT: Record<string, HelpPageContent> = {
           {
             question: 'Can I share a setlist with my band?',
             answer: 'Setlists are automatically shared with all members of your band. Everyone sees the same setlists and any changes sync in real time.'
-          }
-        ]
-      },
-      {
-        title: 'Lyrics & ChordPro',
-        icon: 'article',
-        topics: [
-          {
-            question: 'What is ChordPro format?',
-            answer: 'ChordPro is a standard format for writing lyrics with chord notations. Chords are placed in square brackets above the lyrics, like [G]Amazing [D]grace. Band Central renders ChordPro with chords highlighted and properly positioned above the lyrics.'
-          },
-          {
-            question: 'How do I transpose chords?',
-            answer: 'When viewing a song with ChordPro lyrics, tap the transpose button (up/down arrows) to shift all chords up or down by semitones. The transposition is saved per song.'
-          },
-          {
-            question: 'How does auto-scroll work?',
-            answer: 'In the lyrics viewer, tap the auto-scroll button to start scrolling through the lyrics automatically. You can adjust the scroll speed using the speed controls. This is great for hands-free performance.'
-          },
-          {
-            question: 'Can I change the font size?',
-            answer: 'Yes! Use the pinch-to-zoom gesture on the lyrics view to adjust the text size, or use the zoom controls in the toolbar. Your preferred zoom level is remembered.'
           }
         ]
       },
@@ -224,11 +254,7 @@ export const HELP_CONTENT: Record<string, HelpPageContent> = {
         topics: [
           {
             question: 'How do I change the app appearance?',
-            answer: 'Go to Settings to customize the app appearance. You can adjust display options including text size and performance mode settings.'
-          },
-          {
-            question: 'What is performance mode?',
-            answer: 'Performance mode optimizes the display for on-stage use. It can increase text size, simplify the interface, and keep the screen awake during performances.'
+            answer: 'Go to Settings to customize the app appearance. You can adjust display options including text size and other settings.'
           }
         ]
       },
@@ -274,19 +300,37 @@ export const HELP_CONTENT: Record<string, HelpPageContent> = {
         topics: [
           {
             question: 'How do I create an account?',
-            answer: 'Open Band Central and tap "Sign Up." You can create an account using your email address or sign in with your Google account. Once signed in, you can create or join a band to start adding songs and setlists.'
+            answer: 'When you open Band Central for the first time, you\'ll see the login screen with two options: Sign in with Google or Sign in with Email. If you don\'t already have an account, one will be created automatically when you sign in. Your email address is what identifies your account — if your email is banduser@gmail.com, signing in with Google or Email using that address will connect to the same account. Once signed in, you can create or join a band to start adding songs and setlists.'
           },
           {
-            question: 'How do I sign in?',
-            answer: 'Tap "Sign In" and enter your email and password, or use "Sign in with Google." If you\'ve forgotten your password, tap "Forgot Password" to receive a reset email.'
+            question: 'What if I forget my password?',
+            answer: 'If you sign in with Email, tap "Forgot Password" on the email sign-in screen to receive a password reset email. If you use Sign in with Google, your password is managed by Google instead.'
           },
           {
             question: 'How do bands work?',
-            answer: 'Bands are shared workspaces where members collaborate on songs and setlists. One person creates the band and invites others by sharing the band code. All band members see the same songs and setlists, and changes sync automatically.'
+            answer: 'Bands are shared workspaces where members collaborate on songs and setlists. The band owner creates the band and adds members from the band settings. All band members see the same songs and setlists, and changes sync automatically.'
           },
           {
-            question: 'How do I join an existing band?',
-            answer: 'Ask your band leader for the band code. Then tap "Join Band" and enter the code. You\'ll immediately have access to the band\'s songs and setlists.'
+            question: 'How do users get added or removed from a band?',
+            answer: 'Only the band owner can add or remove members. Go to the Bands page, tap the info button to the right of the band, and choose Edit. At the bottom of the band page there is a section to add and remove band members. The member must already have a Band Central account — once they create their account, the owner can search for them and add them to the band.'
+          }
+        ]
+      },
+      {
+        title: 'Subscriptions',
+        icon: 'card_membership',
+        topics: [
+          {
+            question: 'Who needs to subscribe?',
+            answer: 'Only the band owner needs to subscribe. When the owner subscribes, all members of that band get the full subscription features. The owner\'s subscription covers everyone in the band.'
+          },
+          {
+            question: 'What if I belong to multiple bands?',
+            answer: 'Each band has its own subscription level based on what the band owner has purchased. You may be a member of a band with a paid subscription and also own a separate band on the free tier. You\'ll see an indicator on each band showing its subscription level.'
+          },
+          {
+            question: 'What are the free tier limits?',
+            answer: 'The free tier allows 1 band with up to 25 songs and 5 setlists. Upgrading to a paid subscription removes these limits and unlocks additional bands and members depending on the plan.'
           }
         ]
       },
@@ -313,6 +357,40 @@ export const HELP_CONTENT: Record<string, HelpPageContent> = {
         ]
       },
       {
+        title: 'Lyrics & ChordPro',
+        icon: 'article',
+        topics: [
+          {
+            question: 'How do I view and edit lyrics?',
+            answer: 'Tap the info button next to a song and choose Lyrics. This will show all the lyrics the song contains. To edit a lyric, tap the info button next to it. A song can have multiple lyrics — for example, plain lyrics for a vocalist, lyrics with chords above them for a guitar player, or a PDF chart for horn players.'
+          },
+          {
+            question: 'What is the default lyric?',
+            answer: 'If a song has multiple lyrics, you can set one as your default. The default lyric setting is tied to your profile, so each band member can choose the lyric that works best for them. If no default is set, the app will display the first lyric it finds.'
+          },
+          {
+            question: 'Why would I want multiple lyrics for one song?',
+            answer: 'Different band members often need different views of the same song. A vocalist might want plain lyrics, a guitar player might want lyrics with chords (ChordPro), a keyboard player might want a chord chart, and horn players might need a PDF sheet music chart. With multiple lyrics per song, each member can set their preferred version as their default and see exactly what they need during a performance — all without duplicating the song.'
+          },
+          {
+            question: 'What is ChordPro format?',
+            answer: 'ChordPro is a standard format for writing lyrics with chord notations. Chords are placed in square brackets above the lyrics, like [G]Amazing [D]grace. Band Central renders ChordPro with chords highlighted and properly positioned above the lyrics. For more details on ChordPro format, visit <a href="https://www.chordpro.org" target="_blank">chordpro.org</a>.'
+          },
+          {
+            question: 'How do I transpose chords?',
+            answer: 'When viewing a song with ChordPro lyrics, tap the transpose button (up/down arrows) to shift all chords up or down by semitones. The transposition is saved per song.'
+          },
+          {
+            question: 'How does auto-scroll work?',
+            answer: 'In the lyrics viewer, tap the auto-scroll button to start scrolling through the lyrics automatically. You can adjust the scroll speed using the speed controls. This is great for hands-free performance.'
+          },
+          {
+            question: 'Can I change the font size?',
+            answer: 'Yes! Use the pinch-to-zoom gesture on the lyrics view to adjust the text size, or use the zoom controls in the toolbar. Your preferred zoom level is remembered.'
+          }
+        ]
+      },
+      {
         title: 'Setlists',
         icon: 'queue_music',
         topics: [
@@ -331,28 +409,6 @@ export const HELP_CONTENT: Record<string, HelpPageContent> = {
           {
             question: 'Can I share a setlist with my band?',
             answer: 'Setlists are automatically shared with all members of your band. Everyone sees the same setlists and any changes sync in real time.'
-          }
-        ]
-      },
-      {
-        title: 'Lyrics & ChordPro',
-        icon: 'article',
-        topics: [
-          {
-            question: 'What is ChordPro format?',
-            answer: 'ChordPro is a standard format for writing lyrics with chord notations. Chords are placed in square brackets above the lyrics, like [G]Amazing [D]grace. Band Central renders ChordPro with chords highlighted and properly positioned above the lyrics.'
-          },
-          {
-            question: 'How do I transpose chords?',
-            answer: 'When viewing a song with ChordPro lyrics, tap the transpose button (up/down arrows) to shift all chords up or down by semitones. The transposition is saved per song.'
-          },
-          {
-            question: 'How does auto-scroll work?',
-            answer: 'In the lyrics viewer, tap the auto-scroll button to start scrolling through the lyrics automatically. You can adjust the scroll speed using the speed controls. This is great for hands-free performance.'
-          },
-          {
-            question: 'Can I change the font size?',
-            answer: 'Yes! Use the pinch-to-zoom gesture on the lyrics view to adjust the text size, or use the zoom controls in the toolbar. Your preferred zoom level is remembered.'
           }
         ]
       },
@@ -470,11 +526,7 @@ export const HELP_CONTENT: Record<string, HelpPageContent> = {
         topics: [
           {
             question: 'How do I change the app appearance?',
-            answer: 'Go to Settings to customize the app appearance. You can adjust display options including text size and performance mode settings.'
-          },
-          {
-            question: 'What is performance mode?',
-            answer: 'Performance mode optimizes the display for on-stage use. It can increase text size, simplify the interface, and keep the screen awake during performances.'
+            answer: 'Go to Settings to customize the app appearance. You can adjust display options including text size and other settings.'
           }
         ]
       },
@@ -520,11 +572,11 @@ export const HELP_CONTENT: Record<string, HelpPageContent> = {
         topics: [
           {
             question: 'How do I create an account?',
-            answer: 'Visit bandcentral.com and click "Sign Up." You can create an account using your email address or sign in with your Google account.'
+            answer: 'Visit bandcentral.com and click "Login." You can sign in with Google or with your email address. If you don\'t already have an account, one will be created automatically when you sign in. Your email address is what identifies your account — if your email is banduser@gmail.com, signing in with Google or Email using that address will connect to the same account.'
           },
           {
-            question: 'How do I sign in?',
-            answer: 'Click "Login" and enter your email and password, or use "Sign in with Google." If you\'ve forgotten your password, click "Forgot Password" to receive a reset email.'
+            question: 'What if I forget my password?',
+            answer: 'If you sign in with Email, click "Forgot Password" on the email sign-in screen to receive a password reset email. If you use Sign in with Google, your password is managed by Google instead.'
           }
         ]
       },
@@ -534,15 +586,33 @@ export const HELP_CONTENT: Record<string, HelpPageContent> = {
         topics: [
           {
             question: 'How do I create a band?',
-            answer: 'After signing in, click "Create Band" on the dashboard. Enter your band name and any details. You\'ll be the owner of the band and can invite other members.'
+            answer: 'After signing in, click "Create Band" on the dashboard. Enter your band name and any details. You\'ll be the owner of the band and can add other members.'
           },
           {
-            question: 'How do I manage band members?',
-            answer: 'Open your band and go to the Members section. You can share the band code with others so they can join. As the band owner, you can manage member roles and remove members.'
+            question: 'How do users get added or removed from a band?',
+            answer: 'Only the band owner can add or remove members. Go to Bands and click Users. The member must already have a Band Central account — once they create their account, the owner can search for them and add them to the band.'
           },
           {
             question: 'How do I switch between bands?',
             answer: 'If you belong to multiple bands, use the band selector on the dashboard to switch between them. Each band has its own set of songs, setlists, and tags.'
+          }
+        ]
+      },
+      {
+        title: 'Subscriptions',
+        icon: 'card_membership',
+        topics: [
+          {
+            question: 'Who needs to subscribe?',
+            answer: 'Only the band owner needs to subscribe. When the owner subscribes, all members of that band get the full subscription features. The owner\'s subscription covers everyone in the band.'
+          },
+          {
+            question: 'What if I belong to multiple bands?',
+            answer: 'Each band has its own subscription level based on what the band owner has purchased. You may be a member of a band with a paid subscription and also own a separate band on the free tier. You\'ll see an indicator on each band showing its subscription level.'
+          },
+          {
+            question: 'What are the free tier limits?',
+            answer: 'The free tier allows 1 band with up to 25 songs and 5 setlists. Upgrading to a paid subscription removes these limits and unlocks additional bands and members depending on the plan.'
           }
         ]
       },

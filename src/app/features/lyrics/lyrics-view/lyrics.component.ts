@@ -31,6 +31,7 @@ import { AccountService } from "src/app/core/services/account.service";
 import { Account } from "src/app/core/model/account";
 import { FlexLayoutModule, FlexModule } from "ngx-flexible-layout";
 import { LyricsFormatDialogComponent } from "../lyrics-format-dialog/lyrics-format-dialog.component";
+import { LyricVersionsDialogComponent, LyricVersionsDialogData, LyricVersionsDialogResult } from "../lyric-versions-dialog/lyric-versions-dialog.component";
 
 @Component({
     selector: "app-lyrics",
@@ -389,6 +390,35 @@ export class LyricsComponent {
     
     //Global font name
     this.selectedFont = this.lyricFormatWithScope.lyricFormat.fontFamily;
+  }
+
+  onShowVersions() {
+    const dialogRef = this.dialog.open(LyricVersionsDialogComponent, {
+      data: {
+        lyrics: this.lyrics,
+        selectedLyricId: this.selectedLyric?.id,
+        defaultLyricId: this.defaultLyricId,
+      } as LyricVersionsDialogData,
+      panelClass: 'dialog-responsive',
+    });
+
+    dialogRef.afterClosed().subscribe((result: LyricVersionsDialogResult) => {
+      if (!result) return;
+      if (result.action === 'select' && result.lyricId) {
+        this.onSelectLyric(result.lyricId);
+      } else if (result.action === 'add') {
+        this.onAddLyric();
+      } else if (result.action === 'setDefault' && result.lyricId) {
+        this.defaultLyricId = result.lyricId;
+        this.lyricsService.setDefaultLyric(
+          this.selectedAccount.id!,
+          this.song?.id!,
+          this.lyrics,
+          result.lyricId,
+          this.currentUser
+        );
+      }
+    });
   }
 
   onSelectLyric(value: string) {

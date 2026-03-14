@@ -52,3 +52,19 @@ li.break {
   padding-right: 36px;
   padding-left: 36px;
 }
+
+.song-name-mobile {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-right: 8px;
+}
+
+/* Mobile lyrics padding */
+@media (max-width: 959px) {
+  #lyric-section {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}

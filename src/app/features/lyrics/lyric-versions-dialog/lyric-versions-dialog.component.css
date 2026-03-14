@@ -1,0 +1,18 @@
+.versions-content {
+  min-width: 280px;
+}
+
+.versions-select {
+  width: 100%;
+}
+
+.default-action {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.default-star {
+  color: #f9a825;
+}

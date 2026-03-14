@@ -1,0 +1,26 @@
+<h2 mat-dialog-title>Lyric Versions</h2>
+<div mat-dialog-content class="versions-content">
+  <mat-form-field appearance="outline" class="versions-select">
+    <mat-label>Version</mat-label>
+    <mat-select [value]="selectedLyricId" (selectionChange)="onVersionChange($event.value)">
+      <mat-option *ngFor="let lyric of lyrics" [value]="lyric.id">
+        <mat-icon *ngIf="lyric.id === defaultLyricId">star</mat-icon>
+        {{ lyric.name }}
+      </mat-option>
+      <mat-option value="add">Add...</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <div class="default-action" *ngIf="selectedLyricId && selectedLyricId !== defaultLyricId">
+    <button mat-button (click)="onSetDefault()">
+      <mat-icon>star_border</mat-icon>
+      Set as Default Lyric
+    </button>
+  </div>
+  <div class="default-action" *ngIf="selectedLyricId && selectedLyricId === defaultLyricId">
+    <mat-icon class="default-star">star</mat-icon>
+    <span>Default Lyric</span>
+  </div>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onClose()">Close</button>
+</div>
