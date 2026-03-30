@@ -1,5 +1,6 @@
 import { FirestoreEvent, QueryDocumentSnapshot } from "firebase-functions/v2/firestore";
 import * as nodemailer from "nodemailer";
+import * as admin from "firebase-admin";
 
 interface ContactRequest {
   supportType: "billing" | "technical";
@@ -55,10 +56,36 @@ export default async function handler(
   lines.push("", "Description:", data.description);
 
   if (data.screenshotUrl) {
-    lines.push("", `Screenshot: ${data.screenshotUrl}`);
+    lines.push("", "Screenshot: (see attached)");
   }
 
   const emailBody = lines.join("\n");
+
+  // Download screenshot attachment if present
+  const attachments: nodemailer.SendMailOptions["attachments"] = [];
+  if (data.screenshotUrl) {
+    try {
+      // Extract the file path from the Firebase Storage URL
+      const urlObj = new URL(data.screenshotUrl);
+      const encodedPath = urlObj.pathname.split("/o/")[1]?.split("?")[0];
+      if (encodedPath) {
+        const filePath = decodeURIComponent(encodedPath);
+        const bucket = admin.storage().bucket();
+        const file = bucket.file(filePath);
+        const [fileBuffer] = await file.download();
+        const fileName = filePath.split("/").pop() || "screenshot.jpg";
+        attachments.push({
+          filename: fileName,
+          content: fileBuffer,
+        });
+      }
+    } catch (dlError) {
+      console.error("Error downloading screenshot:", dlError);
+      // Fall back to including the URL
+      lines.pop(); // Remove "(see attached)"
+      lines.push("", `Screenshot: ${data.screenshotUrl}`);
+    }
+  }
 
   const transporter = nodemailer.createTransport({
     host: smtpHost,
@@ -77,6 +104,7 @@ export default async function handler(
       replyTo: data.email,
       subject: `[${typeLabel}] ${data.subject}`,
       text: emailBody,
+      attachments,
     });
 
     await snapshot.ref.update({ status: "sent" });

@@ -1,0 +1,426 @@
+<mat-toolbar color="primary" class="blog-toolbar">
+  <a routerLink="/home">Band Central</a>
+</mat-toolbar>
+
+<div class="blog-container">
+  <mat-card>
+    <mat-card-content>
+      <p class="blog-breadcrumb"><a routerLink="/blog">&larr; Back to Blog</a></p>
+
+      <div [ngSwitch]="slug">
+
+        <!-- Article 1: Essential Band Management Features -->
+        <article *ngSwitchCase="'essential-band-management-features'">
+          <h1>5 Essential Features Every Band Management App Needs</h1>
+          <p class="blog-date">March 2026</p>
+
+          <p>Whether you are in a weekend cover band, a touring original act, or a worship team, managing a band involves more than just playing music. Between song lists, setlists, schedules, and communication, the organizational overhead adds up fast. The right app can eliminate most of that friction — but only if it has the features that actually matter.</p>
+          <p>After looking at what working musicians actually use (and what they complain about), here are the five features that separate useful band apps from shelfware.</p>
+
+          <h2>1. A Real Song Catalog</h2>
+          <p>Every band app starts with songs, but a good song catalog goes beyond a simple list of titles. You need:</p>
+          <ul>
+            <li><strong>Key and tempo</strong> — so you can spot conflicts when building setlists</li>
+            <li><strong>Duration</strong> — so set timing is automatic, not guesswork</li>
+            <li><strong>Lyrics and chord charts</strong> — accessible on any device, on stage or at rehearsal</li>
+            <li><strong>Tags and categories</strong> — filter by genre, energy, who sings lead, event type</li>
+            <li><strong>Search</strong> — when you have 200+ songs, scrolling is not an option</li>
+          </ul>
+          <p>The catalog is the foundation. If it is clunky, everything built on top of it — setlists, scheduling, sharing — will be clunky too.</p>
+
+          <h2>2. Setlist Builder With Drag-and-Drop</h2>
+          <p>Building a setlist should feel intuitive. Drag songs in, reorder them, see the total time update in real time. A good setlist builder also shows you:</p>
+          <ul>
+            <li><strong>Running time</strong> — know exactly how long your set is without doing math</li>
+            <li><strong>Key sequence</strong> — spot three songs in a row in the same key</li>
+            <li><strong>Energy flow</strong> — see at a glance whether your set builds, peaks, and breathes</li>
+          </ul>
+          <p>Bonus points for the ability to save setlists as templates and duplicate them for recurring gigs with minor tweaks.</p>
+
+          <h2>3. Team Sync and Sharing</h2>
+          <p>A band is not a solo operation. The moment you add other musicians, you need everyone looking at the same information. That means:</p>
+          <ul>
+            <li><strong>Shared song catalog</strong> — one source of truth, not five separate spreadsheets</li>
+            <li><strong>Setlist sharing</strong> — build the setlist once, everyone sees it instantly</li>
+            <li><strong>Real-time updates</strong> — change a song's key or swap the order, and it updates for the whole band</li>
+            <li><strong>Works offline</strong> — the stage is not always a great Wi-Fi environment</li>
+          </ul>
+          <p>This is where most free apps fall short. They handle solo use well but crumble when a second person needs access. If your band has more than one member (and it probably does), team sync is not optional.</p>
+
+          <h2>4. Lyrics and Chord Access On Stage</h2>
+          <p>Having lyrics in the app is table stakes. Having them <em>accessible on stage</em> is what matters. That means:</p>
+          <ul>
+            <li><strong>Large, readable text</strong> — not tiny font on a phone screen</li>
+            <li><strong>Auto-scroll</strong> — hands-free lyrics scrolling during performance</li>
+            <li><strong>Quick access</strong> — tap a song in the setlist, see the lyrics instantly</li>
+            <li><strong>Dark mode</strong> — essential for dimly lit stages</li>
+            <li><strong>Screen stays on</strong> — the screen should not go dark mid-song</li>
+          </ul>
+          <p>For worship teams especially, lyrics projection to a secondary screen or confidence monitor is a game-changer.</p>
+
+          <h2>5. Cross-Platform Availability</h2>
+          <p>Your guitarist uses an iPhone. Your drummer has a Samsung. Your keyboard player prefers their iPad. And you build setlists on your laptop. If the app only works on one platform, someone is left out.</p>
+          <p>The best band apps work on:</p>
+          <ul>
+            <li><strong>iOS</strong> (iPhone and iPad)</li>
+            <li><strong>Android</strong></li>
+            <li><strong>Web</strong> (for desktop access without installing anything)</li>
+          </ul>
+          <p>Cloud sync across all platforms means changes made on any device appear everywhere else. This seems basic, but many popular music apps are still iOS-only.</p>
+
+          <h2>What About Everything Else?</h2>
+          <p>You might notice this list does not include gig calendars, financial tracking, stage plots, or MIDI control. Those are valuable features, but they are not essential for every band. The five features above are the foundation — get these right and everything else is a bonus.</p>
+          <p>The trap many apps fall into is trying to do everything at the expense of doing the basics well. A clean, fast song catalog and setlist builder that syncs across your band will get used every week. A bloated app with 50 features and a confusing interface will not.</p>
+
+          <p><a routerLink="/home">Band Central</a> is built around these five essentials — a powerful song catalog, intuitive setlist builder, real-time team sync, on-stage lyrics access, and full cross-platform support on iOS, Android, and the web.</p>
+
+          <p class="blog-cta"><a routerLink="/auth/register">Get started with Band Central &rarr;</a></p>
+        </article>
+
+        <!-- Article 2: Worship Set Planning -->
+        <article *ngSwitchCase="'worship-set-planning-guide'">
+          <h1>Worship Set Planning: How to Build Sets That Flow</h1>
+          <p class="blog-date">March 2026</p>
+
+          <p>A worship set is more than a playlist. It is a journey — from celebration to reflection, from praise to surrender. When a set flows well, the congregation moves together naturally. When it does not, transitions feel jarring, momentum stalls, and people disengage.</p>
+          <p>Whether you are a seasoned worship leader or just stepping into the role, here is a practical guide to building sets that flow.</p>
+
+          <h2>Start With Purpose, Not Songs</h2>
+          <p>Before you pick a single song, ask:</p>
+          <ul>
+            <li>What is the sermon topic or theme this week?</li>
+            <li>What is the emotional journey you want the congregation to take?</li>
+            <li>Is this a celebratory service, a reflective one, or a mix?</li>
+            <li>Are there special elements (communion, baptism, prayer time) that affect the flow?</li>
+          </ul>
+          <p>The answers shape everything. A service about God's faithfulness calls for a different set than one about lament or surrender.</p>
+
+          <h2>The Classic Worship Flow</h2>
+          <p>Most worship sets follow a variation of this arc:</p>
+          <ol>
+            <li><strong>Gathering (1-2 songs):</strong> Upbeat, celebratory songs that bring the congregation together. Think "come as you are" energy. These songs are often familiar, easy to sing, and rhythmically engaging.</li>
+            <li><strong>Praise (1-2 songs):</strong> Continue the upward energy but shift from "us" to "God." Declarations of who God is. Still energetic but more focused.</li>
+            <li><strong>Transition:</strong> A musical bridge — could be a chorus reprise, an instrumental, or a brief prayer — that shifts the atmosphere from external praise to internal reflection.</li>
+            <li><strong>Worship/Intimacy (1-2 songs):</strong> Slower, more personal songs. "I" and "me" language rather than "we." This is where the congregation connects individually.</li>
+            <li><strong>Response (0-1 songs):</strong> A final song of commitment, surrender, or sending. Often ties into the sermon theme.</li>
+          </ol>
+          <p>This is not a rigid formula — it is a starting framework. Many effective sets modify this structure based on the service needs.</p>
+
+          <h2>Key Management for Worship</h2>
+          <p>Key transitions can make or break the flow between songs. A jarring key change pulls people out of the moment. A smooth one keeps them in it.</p>
+          <ul>
+            <li><strong>Same key:</strong> Seamless transition — great for songs you want to medley or flow directly into each other</li>
+            <li><strong>Half step up:</strong> Creates natural lift and energy — perfect for building from praise into a peak</li>
+            <li><strong>Fourth or fifth away:</strong> Musically related keys that transition smoothly (e.g., G to C, or D to A)</li>
+            <li><strong>Distant keys:</strong> Need a clear break (talk, prayer, or pad) between songs to reset the ear</li>
+          </ul>
+          <p>Tip: Plan your keys on paper (or in your app) before rehearsal. Transpose songs to create better flow rather than always playing them in the original key. Your congregation does not care what key the recording is in — they care that it is singable.</p>
+
+          <h2>Singability Matters</h2>
+          <p>The congregation is not your audience — they are participants. Every song needs to be singable:</p>
+          <ul>
+            <li><strong>Range:</strong> Keep melodies within an octave and a half (roughly B2 to D4 for mixed congregations). If a song goes too high, transpose it down.</li>
+            <li><strong>Simplicity:</strong> Rhythmically complex songs that are fun for the band can be impossible for a congregation to follow. Prioritize songs with predictable, repeatable melodies.</li>
+            <li><strong>Familiarity:</strong> Mix new songs with established ones. A good ratio is 70-80% known songs, 20-30% newer songs. Introduce one new song at a time and repeat it for 3-4 weeks before adding another.</li>
+          </ul>
+
+          <h2>Tempo and Energy Mapping</h2>
+          <p>Map out the tempo and energy of each song in your set:</p>
+          <table class="blog-table">
+            <thead>
+              <tr>
+                <th>Position</th>
+                <th>Song</th>
+                <th>Key</th>
+                <th>BPM</th>
+                <th>Energy</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>Example gathering song</td>
+                <td>G</td>
+                <td>130</td>
+                <td>High</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>Example praise song</td>
+                <td>A</td>
+                <td>120</td>
+                <td>High</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>Example bridge song</td>
+                <td>A</td>
+                <td>85</td>
+                <td>Medium</td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>Example intimate song</td>
+                <td>D</td>
+                <td>72</td>
+                <td>Low</td>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td>Example response song</td>
+                <td>D</td>
+                <td>78</td>
+                <td>Medium-Low</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>When you can see the energy curve visually, gaps and problems become obvious. Two high-energy songs followed by a slow ballad with no transition? You will spot it in the planning phase instead of feeling it awkwardly on Sunday morning.</p>
+
+          <h2>Practical Tips</h2>
+          <ul>
+            <li><strong>Plan transitions explicitly.</strong> Write down how you will get from song to song. Will the band vamp? Will someone pray? Will you use a musical pad? Do not leave transitions to chance.</li>
+            <li><strong>Rehearse the transitions, not just the songs.</strong> Your band knows the songs. What they need to rehearse is how to move between them smoothly.</li>
+            <li><strong>Use a click track sparingly.</strong> Click tracks help with tempo consistency but can make transitions rigid. Consider using clicks only for songs that need them (those with tracks or loops) and playing freely during intimate moments.</li>
+            <li><strong>Communicate with your pastor.</strong> Know the sermon topic by midweek so you can build a set that complements it. A five-minute conversation on Wednesday saves a disjointed service on Sunday.</li>
+            <li><strong>Keep a running list of songs that work.</strong> After every service, note which songs landed and which fell flat. Over time, you will build a proven library that you can draw from confidently.</li>
+          </ul>
+
+          <h2>Tools for Worship Leaders</h2>
+          <p>A good worship planning tool should let you:</p>
+          <ul>
+            <li>Build your song library with keys, tempos, and tags (fast/slow, theme, season)</li>
+            <li>Create setlists with drag-and-drop ordering</li>
+            <li>See keys and energy flow at a glance</li>
+            <li>Share the set with your team so everyone arrives at rehearsal prepared</li>
+            <li>Access chord charts and lyrics on stage from any device</li>
+          </ul>
+
+          <p><a routerLink="/home">Band Central</a> handles all of this with a clean, intuitive interface. Build your worship song library, plan your sets with key and tempo visibility, and share everything with your team — on iOS, Android, and the web.</p>
+
+          <p class="blog-cta"><a routerLink="/auth/register">Start planning worship sets with Band Central &rarr;</a></p>
+        </article>
+
+        <!-- Article 3: Organize Band With App -->
+        <article *ngSwitchCase="'organize-band-with-app'">
+          <h1>How to Organize Your Band With an App (and Stop Using Group Texts)</h1>
+          <p class="blog-date">March 2026</p>
+
+          <p>Here is how most bands operate: the setlist lives in someone's Notes app. Gig details are buried in a group text from three weeks ago. The song list is a Google Sheet that nobody updates. Lyrics are scattered across printouts, screenshots, and bookmarked websites. And when someone asks "what key do we play that in?" — three different people give three different answers.</p>
+          <p>It works. Until it does not.</p>
+
+          <h2>The Real Cost of Disorganization</h2>
+          <p>Band disorganization rarely causes a single dramatic failure. Instead, it creates a steady drip of friction:</p>
+          <ul>
+            <li>Rehearsal time wasted looking up lyrics or debating what key a song is in</li>
+            <li>Duplicate song entries because nobody knows what is already in the "master list"</li>
+            <li>Last-minute setlist changes that half the band does not know about</li>
+            <li>New or substitute musicians with no easy way to access the material</li>
+            <li>Forgotten gig details — wrong address, wrong load-in time, wrong dress code</li>
+          </ul>
+          <p>Individually, these are minor annoyances. Collectively, they make running a band feel harder than it needs to be.</p>
+
+          <h2>What "Organized" Actually Looks Like</h2>
+          <p>An organized band has:</p>
+          <ol>
+            <li><strong>One source of truth for songs.</strong> Every song the band knows is in one place, with the correct key, tempo, lyrics, and status (performance-ready vs. still learning).</li>
+            <li><strong>Setlists that everyone can see.</strong> The setlist is shared before the gig, and any changes are immediately visible to the whole band.</li>
+            <li><strong>Lyrics accessible on any device.</strong> No one has to bring printouts or rely on memory.</li>
+            <li><strong>A simple way to onboard new songs.</strong> When the band decides to learn a new song, it goes into the system with all the details. By rehearsal time, everyone has the lyrics and chords.</li>
+            <li><strong>History you can reference.</strong> What did you play at that venue last time? Which songs always get the crowd going? When you can look back, you make better decisions going forward.</li>
+          </ol>
+
+          <h2>Why a Dedicated App Beats General Tools</h2>
+          <p>You could organize everything in Google Sheets, Dropbox, and group texts. Many bands do. But general tools were not designed for this workflow, and the gaps show:</p>
+
+          <table class="blog-table">
+            <thead>
+              <tr>
+                <th>Need</th>
+                <th>General Tools</th>
+                <th>Band Management App</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Song catalog</td>
+                <td>Spreadsheet (no lyrics, manual updates)</td>
+                <td>Built-in with lyrics, keys, tempos, tags</td>
+              </tr>
+              <tr>
+                <td>Setlist building</td>
+                <td>Copy-paste from spreadsheet</td>
+                <td>Drag-and-drop with auto timing</td>
+              </tr>
+              <tr>
+                <td>Sharing with band</td>
+                <td>Share a link, hope everyone opens it</td>
+                <td>Automatic sync to all members</td>
+              </tr>
+              <tr>
+                <td>Lyrics on stage</td>
+                <td>Separate app or printout</td>
+                <td>Tap song, see lyrics</td>
+              </tr>
+              <tr>
+                <td>Offline access</td>
+                <td>Depends on caching</td>
+                <td>Designed for offline use</td>
+              </tr>
+              <tr>
+                <td>Searching 200+ songs</td>
+                <td>Ctrl+F in a spreadsheet</td>
+                <td>Instant search with filters</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2>Getting Your Band to Actually Use It</h2>
+          <p>The hardest part of any tool is adoption. Here is what works:</p>
+          <ol>
+            <li><strong>Start small.</strong> Do not try to migrate everything at once. Start with your song list and the next gig's setlist. Once people see the value, they will engage with the rest.</li>
+            <li><strong>Make it the default.</strong> Stop texting the setlist. Put it in the app and tell people "the setlist is in the app." When they have to use it to get the information, they will use it.</li>
+            <li><strong>Enter the data yourself.</strong> As the band leader, do not ask five people to enter songs. Enter the catalog yourself (or delegate to one person) so it is consistent and complete.</li>
+            <li><strong>Pick something cross-platform.</strong> If even one band member cannot install the app on their phone, adoption will fail. Make sure it works on both iOS and Android, ideally with a web option too.</li>
+            <li><strong>Keep it simple.</strong> If the app is complicated, people will not use it. The best tool is the one your band will actually open.</li>
+          </ol>
+
+          <h2>The Payoff</h2>
+          <p>Bands that get organized spend less time on logistics and more time on music. Rehearsals start faster. Gigs run smoother. New members get up to speed in hours instead of weeks. And the band leader does not have to be the human search engine for every question about every song.</p>
+
+          <p><a routerLink="/home">Band Central</a> is designed for exactly this — a clean, simple app that gives your band one place for songs, setlists, and lyrics. It works on iOS, Android, and the web, syncs in real time, and gets out of your way so you can focus on playing.</p>
+
+          <p class="blog-cta"><a routerLink="/auth/register">Try Band Central free &rarr;</a></p>
+        </article>
+
+        <!-- Article 4: Cover Band Repertoire Guide -->
+        <article *ngSwitchCase="'cover-band-repertoire-guide'">
+          <h1>Building a Cover Band Repertoire: What Songs to Learn and How Many You Need</h1>
+          <p class="blog-date">March 2026</p>
+
+          <p>A cover band lives and dies by its repertoire. Learn the wrong songs and you are playing to empty dance floors. Learn too few and you are repeating sets at regular venues. Learn too many without organizing them and you cannot find what you need when the crowd is calling for it.</p>
+          <p>Here is how to build a repertoire that keeps you booked and keeps crowds dancing.</p>
+
+          <h2>How Many Songs Do You Actually Need?</h2>
+          <p>It depends on your typical gig length and how often you play the same venues:</p>
+          <ul>
+            <li><strong>Minimum viable repertoire:</strong> 40-50 songs (covers a 3-hour gig with extras)</li>
+            <li><strong>Comfortable repertoire:</strong> 70-80 songs (can vary sets between repeat venues)</li>
+            <li><strong>Professional depth:</strong> 120+ songs (can handle any request, any venue, any theme night)</li>
+          </ul>
+          <p>Start with the minimum and grow from there. Quality matters more than quantity — 50 well-rehearsed songs will always beat 100 songs you kind of know.</p>
+
+          <h2>Choosing the Right Songs</h2>
+
+          <h3>The 70/20/10 Rule</h3>
+          <p>A practical framework for song selection:</p>
+          <ul>
+            <li><strong>70% crowd-pleasers:</strong> Songs that everyone knows and responds to. These are your foundation — the songs that fill dance floors and get people singing along.</li>
+            <li><strong>20% genre-specific:</strong> Songs that fit your band's identity or target market. If you play a lot of country bars, this is your deeper country cuts. If you do weddings, this is your cocktail hour jazz standards.</li>
+            <li><strong>10% wildcards:</strong> Deep cuts, recent hits, or unexpected choices that showcase your band's personality. These keep your set from sounding like a "greatest hits of the same 40 songs every cover band plays" playlist.</li>
+          </ul>
+
+          <h3>Cross-Generational Appeal</h3>
+          <p>Unless you are playing genre-specific venues, your crowd will span multiple generations. Make sure your repertoire covers:</p>
+          <ul>
+            <li><strong>Classic rock (60s-70s):</strong> The foundation songs everyone knows regardless of age</li>
+            <li><strong>80s:</strong> High nostalgia factor, great energy songs</li>
+            <li><strong>90s:</strong> Often underrepresented by cover bands but hugely popular with 30-45 year olds</li>
+            <li><strong>2000s-2010s:</strong> Modern classics that younger crowds expect</li>
+            <li><strong>Current hits:</strong> 3-5 recent songs show you are not stuck in the past</li>
+          </ul>
+
+          <h3>Dance Floor vs. Listening Songs</h3>
+          <p>Know which songs get people moving and which are "drink order" songs. Tag them accordingly in your song catalog so you can build setlists with intentional dance floor peaks and valleys.</p>
+
+          <h2>Building Your Song Pipeline</h2>
+          <p>A sustainable approach to growing your repertoire:</p>
+          <ol>
+            <li><strong>Add 2-3 new songs per month.</strong> More than that overwhelms rehearsal time. Less than that and your repertoire stagnates.</li>
+            <li><strong>Learn songs in pairs or themes.</strong> Learning two songs in the same key or by the same artist is more efficient than jumping between unrelated material.</li>
+            <li><strong>Test live before committing.</strong> Play a new song at a gig and see how the crowd responds. If it falls flat twice, retire it. Not every song that is fun to play is fun for the audience.</li>
+            <li><strong>Retire strategically.</strong> If a song has not been played in 6 months and nobody misses it, move it to a "retired" list. You can always bring it back.</li>
+          </ol>
+
+          <h2>Organizing Your Repertoire</h2>
+          <p>A big repertoire is only useful if you can navigate it quickly. Essential organization:</p>
+          <ul>
+            <li><strong>Tag by genre</strong> — so you can pull up "all country songs" when a venue requests a country-heavy set</li>
+            <li><strong>Tag by energy/tempo</strong> — so you can find "something upbeat" or "a slow song" in seconds</li>
+            <li><strong>Tag by who sings lead</strong> — so you can balance vocal duties across a set and avoid burning out one singer</li>
+            <li><strong>Track keys and tempos</strong> — so you can build setlists with good musical flow</li>
+            <li><strong>Note request frequency</strong> — mark songs that get requested often so you can prioritize keeping them rehearsed</li>
+          </ul>
+
+          <h2>The Request List</h2>
+          <p>Keep a separate "request-ready" section in your catalog — songs your band knows but that do not typically make the setlist. When someone requests "Piano Man" and it is not on tonight's set, you can check whether it is in your request list and drop it in on the fly.</p>
+          <p>Over time, track which songs get requested most. If the same song keeps coming up, promote it to your regular rotation.</p>
+
+          <h2>Repertoire for Different Venue Types</h2>
+          <table class="blog-table">
+            <thead>
+              <tr>
+                <th>Venue Type</th>
+                <th>Set Length</th>
+                <th>Song Focus</th>
+                <th>Tips</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Bar/Pub</td>
+                <td>3-4 hours</td>
+                <td>Crowd-pleasers, singalongs, danceable</td>
+                <td>Read the room, take requests, vary energy</td>
+              </tr>
+              <tr>
+                <td>Wedding</td>
+                <td>3-4 hours</td>
+                <td>Dinner music + dance floor hits</td>
+                <td>Coordinate with couple, have must-play list</td>
+              </tr>
+              <tr>
+                <td>Corporate Event</td>
+                <td>1-2 hours</td>
+                <td>Upbeat, clean lyrics, recognizable</td>
+                <td>No controversial content, professional presentation</td>
+              </tr>
+              <tr>
+                <td>Festival</td>
+                <td>45-90 min</td>
+                <td>High energy, your best material only</td>
+                <td>No filler — every song must land</td>
+              </tr>
+              <tr>
+                <td>Private Party</td>
+                <td>2-3 hours</td>
+                <td>Mix based on host's preferences</td>
+                <td>Ask in advance what the host wants</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2>Getting Started</h2>
+          <p>If you are building a repertoire from scratch or want to get your existing one organized:</p>
+          <ol>
+            <li>List every song your band can perform today</li>
+            <li>Enter them into a song catalog app with title, artist, key, and tags</li>
+            <li>Identify gaps — not enough slow songs? Missing 90s material? No country?</li>
+            <li>Set a goal of 2-3 new songs per month to fill the gaps</li>
+            <li>Review and prune every quarter</li>
+          </ol>
+
+          <p><a routerLink="/home">Band Central</a> makes repertoire management simple — catalog your songs with keys, tempos, lyrics, and tags, then build setlists by filtering and dragging. Available on iOS, Android, and the web with real-time sync across your whole band.</p>
+
+          <p class="blog-cta"><a routerLink="/auth/register">Start building your repertoire with Band Central &rarr;</a></p>
+        </article>
+
+        <!-- Default: post not found -->
+        <div *ngSwitchDefault>
+          <h1>Post Not Found</h1>
+          <p>The article you are looking for does not exist. <a routerLink="/blog">Return to the blog</a>.</p>
+        </div>
+
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

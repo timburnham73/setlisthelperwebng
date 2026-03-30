@@ -1,0 +1,19 @@
+<mat-toolbar color="primary" class="blog-toolbar">
+  <a routerLink="/home">Band Central</a>
+</mat-toolbar>
+
+<div class="blog-container">
+  <h1>Band Central Blog</h1>
+  <p class="blog-intro">Tips, guides, and best practices for bands, worship teams, and gigging musicians.</p>
+
+  <div class="blog-list">
+    <mat-card *ngFor="let post of posts" class="blog-card">
+      <mat-card-content>
+        <h2><a [routerLink]="['/blog', post.slug]">{{post.title}}</a></h2>
+        <p class="blog-date">{{post.date}}</p>
+        <p>{{post.summary}}</p>
+        <a [routerLink]="['/blog', post.slug]" class="read-more">Read More &rarr;</a>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

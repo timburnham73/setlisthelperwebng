@@ -44,7 +44,7 @@
         "headers": [
           {
             "key": "Access-Control-Allow-Origin",
-            "value": "https://www.songsetter.com"
+            "value": "https://www.bandcentral.com"
           },
           {
             "key": "Access-Control-Allow-Methods",

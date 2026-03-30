@@ -1,5 +1,17 @@
 import { Song } from '../model/song';
 
+/**
+ * Computes lengthMin and lengthSec from songLength (total seconds).
+ * Firestore stores songLength but not the derived min/sec fields.
+ */
+export function hydrateSongLength<T extends { songLength?: number; lengthMin?: number; lengthSec?: number }>(song: T): T {
+  if (song.songLength && !song.lengthMin) {
+    song.lengthMin = Math.floor(song.songLength / 60);
+    song.lengthSec = song.songLength % 60;
+  }
+  return song;
+}
+
 export function getSongLength(song: Song): string {
   return song.lengthMin ? song.lengthMin + ':' + (song.lengthSec ?? 0).toString().padStart(2, '0') : '';
 }

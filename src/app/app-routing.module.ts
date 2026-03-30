@@ -73,6 +73,11 @@ const appRoutes: Routes = [
       ),
   },
   {
+    path: "blog",
+    loadChildren: () =>
+      import("./features/blog/blog.module").then((m) => m.BlogModule),
+  },
+  {
     path: "**",
     redirectTo: "home",
     pathMatch: "full",

@@ -6,6 +6,7 @@ import { Subject, takeUntil } from 'rxjs';
 
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import firebase from 'firebase/compat/app';
 
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -63,6 +64,7 @@ export class ContactComponent implements OnDestroy {
   constructor(
     private afs: AngularFirestore,
     private storage: AngularFireStorage,
+    private auth: AngularFireAuth,
     private notificationService: NotificationService,
     private titleService: Title,
     private metaService: Meta,
@@ -137,6 +139,12 @@ export class ContactComponent implements OnDestroy {
       let screenshotUrl: string | null = null;
 
       if (this.selectedFile) {
+        // Sign in anonymously for Firebase Storage CORS support
+        const user = await this.auth.currentUser;
+        if (!user) {
+          await this.auth.signInAnonymously();
+        }
+
         const filePath = `contact-attachments/${Date.now()}_${this.selectedFile.name}`;
         const ref = this.storage.ref(filePath);
         const task = ref.put(this.selectedFile);

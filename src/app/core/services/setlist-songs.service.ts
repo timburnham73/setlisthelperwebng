@@ -13,6 +13,7 @@ import { SetlistBreak, SetlistBreakHelper } from "../model/setlist-break";
 import { BaseUser } from "../model/user";
 import { Setlist } from "../model/setlist";
 import { SetlistSongRef } from "functions/src/model/setlist";
+import { hydrateSongLength } from '../util/song.util';
 
 @Injectable({
   providedIn: "root",
@@ -28,7 +29,7 @@ export class SetlistSongService {
     return songsRef.snapshotChanges().pipe(
       map((changes) =>
         changes.map((c) => {
-          const song = c.payload.doc.data() as SetlistSong;
+          const song = hydrateSongLength(c.payload.doc.data() as SetlistSong);
           song.id = c.payload.doc.id;
           return song;
         })
@@ -46,7 +47,7 @@ export class SetlistSongService {
           const setlistSongs: SetlistSong[] = [];
           snaps.forEach(snap => {
             const fullPath = snap.ref.path;
-            const setlistsong = snap.data() as SetlistSong;
+            const setlistsong = hydrateSongLength(snap.data() as SetlistSong);
             setlistsong.id = snap.id;
             setlistsong.documentPath = fullPath;
             setlistSongs.push(setlistsong);

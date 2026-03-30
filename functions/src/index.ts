@@ -7,7 +7,13 @@
  */
 
 import { onDocumentCreated } from "firebase-functions/v2/firestore";
-// import { defineSecret } from "firebase-functions/params";
+import { defineSecret } from "firebase-functions/params";
+import * as admin from "firebase-admin";
+
+// Initialize firebase-admin at startup for Storage access
+if (!admin.apps.length) {
+  admin.initializeApp();
+}
 
 // ////////////////////////////////////////////////
 // Lyrics
@@ -52,7 +58,7 @@ export const Setlist_onAdd_UpdateSetlistCount =
 
 // ////////////////////////////////
 // Contact Request functions
-/* const SMTP_HOST = defineSecret("SMTP_HOST");
+const SMTP_HOST = defineSecret("SMTP_HOST");
 const SMTP_PORT = defineSecret("SMTP_PORT");
 const SMTP_USER = defineSecret("SMTP_USER");
 const SMTP_PASS = defineSecret("SMTP_PASS");
@@ -74,7 +80,7 @@ export const ContactRequest_OnCreate_SendEmail =
           SMTP_USER.value(),
           SMTP_PASS.value(),
         );
-    }); */
+    });
 
 // ////////////////////////////////
 // Sync functions

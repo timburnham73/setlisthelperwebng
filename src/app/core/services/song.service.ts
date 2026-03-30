@@ -8,6 +8,7 @@ import { SongFactory } from '../model/factory/song.factory';
 import { BaseUser } from '../model/user';
 import { CollectionReference, OrderByDirection } from 'firebase/firestore';
 import { SetlistSongService } from './setlist-songs.service';
+import { hydrateSongLength } from '../util/song.util';
 import {Query } from '@angular/fire/firestore';
 import { Account } from '../model/account';
 import { ArtistFactory } from '../model/factory/artist.factory';
@@ -35,7 +36,7 @@ export class SongService {
     return songRef.snapshotChanges().pipe(
       map((resultSong) =>
           {
-            const song = resultSong.payload.data() as Song;
+            const song = hydrateSongLength(resultSong.payload.data() as Song);
             song.id = songId;
             return song;
           }
@@ -52,7 +53,7 @@ export class SongService {
     return songsRef.snapshotChanges().pipe(
       map((changes) =>
       changes.map((c) => {
-        const song = c.payload.doc.data() as Song;
+        const song = hydrateSongLength(c.payload.doc.data() as Song);
         song.id = c.payload.doc.id;
         return song;
       })
@@ -62,13 +63,13 @@ export class SongService {
 
   getSongs(accountId: string, sortField: string, sortOrder: OrderByDirection = 'asc'): Observable<Song[]> {
     const dbPath = `/accounts/${accountId}/songs`;
-    
+
     const songsRef = this.db.collection(dbPath, ref => ref.orderBy("deactivated").where("deactivated", "!=", true).where("deleted", "==", false).orderBy(sortField, sortOrder));
-    
+
     return songsRef.snapshotChanges().pipe(
       map((changes) =>
       changes.map((c) => {
-        const song = c.payload.doc.data() as Song;
+        const song = hydrateSongLength(c.payload.doc.data() as Song);
         song.id = c.payload.doc.id;
         return song;
       })

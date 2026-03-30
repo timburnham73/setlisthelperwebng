@@ -9,6 +9,14 @@
           <button mat-icon-button aria-label="Save" (click)="onSaveSong()">
             <mat-icon>save</mat-icon>
           </button>
+          <button mat-button [matMenuTriggerFor]="chordMenu" aria-label="Insert Chord">
+            <mat-icon>music_note</mat-icon>
+            <span>Chord</span>
+          </button>
+          <button mat-button [matMenuTriggerFor]="songPartMenu" aria-label="Insert Song Part">
+            <mat-icon>format_align_left</mat-icon>
+            <span>Song Part</span>
+          </button>
           <button mat-button [matMenuTriggerFor]="insertMenu" aria-label="Insert ChordPro">
             <mat-icon>add_circle</mat-icon>
             <span>Insert</span>
@@ -29,9 +37,14 @@
       <button mat-icon-button aria-label="Save" (click)="onSaveSong()">
         <mat-icon>save</mat-icon>
       </button>
-      <button mat-button [matMenuTriggerFor]="insertMenu" aria-label="Insert ChordPro">
+      <button mat-icon-button [matMenuTriggerFor]="chordMenu" aria-label="Insert Chord">
+        <mat-icon>music_note</mat-icon>
+      </button>
+      <button mat-icon-button [matMenuTriggerFor]="songPartMenu" aria-label="Insert Song Part">
+        <mat-icon>format_align_left</mat-icon>
+      </button>
+      <button mat-icon-button [matMenuTriggerFor]="insertMenu" aria-label="Insert ChordPro">
         <mat-icon>add_circle</mat-icon>
-        <span>Insert</span>
       </button>
       <span class="spacer"></span>
     </mat-toolbar>
@@ -41,29 +54,56 @@
   </div>
 </div>
 
-<mat-menu #insertMenu="matMenu">
+<!-- Chord Menu -->
+<mat-menu #chordMenu="matMenu">
   <button mat-menu-item (click)="insertChordProText('[]', 1)">
-    <mat-icon>music_note</mat-icon>
-    <span>Insert Chord</span>
+    <span>Custom...</span>
   </button>
-
   <mat-divider></mat-divider>
-
-  <button mat-menu-item (click)="insertChordProText('[Verse 1]', 9)">
-    <mat-icon>format_align_left</mat-icon>
-    <span>Verse</span>
-  </button>
-  <button mat-menu-item (click)="insertChordProText('[Chorus]', 8)">
-    <mat-icon>format_align_left</mat-icon>
-    <span>Chorus</span>
-  </button>
-  <button mat-menu-item (click)="insertChordProText('[Bridge]', 8)">
-    <mat-icon>format_align_left</mat-icon>
-    <span>Bridge</span>
-  </button>
-
+  <button mat-menu-item (click)="insertChordProText('[A]', 3)"><span>A</span></button>
+  <button mat-menu-item (click)="insertChordProText('[B]', 3)"><span>B</span></button>
+  <button mat-menu-item (click)="insertChordProText('[C]', 3)"><span>C</span></button>
+  <button mat-menu-item (click)="insertChordProText('[D]', 3)"><span>D</span></button>
+  <button mat-menu-item (click)="insertChordProText('[E]', 3)"><span>E</span></button>
+  <button mat-menu-item (click)="insertChordProText('[F]', 3)"><span>F</span></button>
+  <button mat-menu-item (click)="insertChordProText('[G]', 3)"><span>G</span></button>
   <mat-divider></mat-divider>
+  <button mat-menu-item (click)="insertChordProText('[Am]', 4)"><span>Am</span></button>
+  <button mat-menu-item (click)="insertChordProText('[Bm]', 4)"><span>Bm</span></button>
+  <button mat-menu-item (click)="insertChordProText('[Cm]', 4)"><span>Cm</span></button>
+  <button mat-menu-item (click)="insertChordProText('[Dm]', 4)"><span>Dm</span></button>
+  <button mat-menu-item (click)="insertChordProText('[Em]', 4)"><span>Em</span></button>
+  <button mat-menu-item (click)="insertChordProText('[Fm]', 4)"><span>Fm</span></button>
+  <button mat-menu-item (click)="insertChordProText('[Gm]', 4)"><span>Gm</span></button>
+  <mat-divider></mat-divider>
+  <button mat-menu-item (click)="insertChordProText('[A7]', 4)"><span>A7</span></button>
+  <button mat-menu-item (click)="insertChordProText('[B7]', 4)"><span>B7</span></button>
+  <button mat-menu-item (click)="insertChordProText('[C7]', 4)"><span>C7</span></button>
+  <button mat-menu-item (click)="insertChordProText('[D7]', 4)"><span>D7</span></button>
+  <button mat-menu-item (click)="insertChordProText('[E7]', 4)"><span>E7</span></button>
+  <button mat-menu-item (click)="insertChordProText('[F7]', 4)"><span>F7</span></button>
+  <button mat-menu-item (click)="insertChordProText('[G7]', 4)"><span>G7</span></button>
+</mat-menu>
 
+<!-- Song Part Menu -->
+<mat-menu #songPartMenu="matMenu">
+  <button mat-menu-item (click)="insertChordProText('[Intro]\n', 8)"><span>Intro</span></button>
+  <button mat-menu-item (click)="insertChordProText('[Verse]\n', 8)"><span>Verse</span></button>
+  <button mat-menu-item (click)="insertChordProText('[Verse 1]\n', 10)"><span>Verse 1</span></button>
+  <button mat-menu-item (click)="insertChordProText('[Verse 2]\n', 10)"><span>Verse 2</span></button>
+  <button mat-menu-item (click)="insertChordProText('[Verse 3]\n', 10)"><span>Verse 3</span></button>
+  <button mat-menu-item (click)="insertChordProText('[Verse 4]\n', 10)"><span>Verse 4</span></button>
+  <mat-divider></mat-divider>
+  <button mat-menu-item (click)="insertChordProText('[Pre-Chorus]\n', 13)"><span>Pre-Chorus</span></button>
+  <button mat-menu-item (click)="insertChordProText('[Chorus]\n', 9)"><span>Chorus</span></button>
+  <button mat-menu-item (click)="insertChordProText('[Bridge]\n', 9)"><span>Bridge</span></button>
+  <button mat-menu-item (click)="insertChordProText('[Outro]\n', 8)"><span>Outro</span></button>
+  <button mat-menu-item (click)="insertChordProText('[Interlude]\n', 12)"><span>Interlude</span></button>
+  <button mat-menu-item (click)="insertChordProText('[Instrumental]\n', 15)"><span>Instrumental</span></button>
+</mat-menu>
+
+<!-- Insert Menu (directives and blocks) -->
+<mat-menu #insertMenu="matMenu">
   <button mat-menu-item (click)="insertTitle()">
     <mat-icon>title</mat-icon>
     <span>Title</span>

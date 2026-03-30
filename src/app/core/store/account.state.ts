@@ -77,9 +77,9 @@ export class AccountState {
     );
 
     return col
-      .get()
+      .snapshotChanges()
       .pipe(
-        map((snap) => snap.docs.map((d) => ({ id: d.id, ...(d.data() as Account) }))),
+        map((actions) => actions.map((a) => ({ id: a.payload.doc.id, ...(a.payload.doc.data() as Account) }))),
         tap((accounts) => setState(patch({ accounts, loading: false })))
       );
   }

@@ -42,7 +42,7 @@ th.mat-sort-header-sorted {
 }
 
 .mat-mdc-row {
-    cursor: default;
+    cursor: pointer;
 }
 
 .spacer {
@@ -73,4 +73,31 @@ th.mat-sort-header-sorted {
 
 .hidden {
     display: none !important;
+}
+
+.name-cell {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  .song-name {
+    flex: 1 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .edit-btn {
+    flex: 0 0 auto;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  &:hover .edit-btn {
+    opacity: 1;
+  }
+}
+
+.setlist-song-row:hover .edit-btn {
+  opacity: 1;
 }
