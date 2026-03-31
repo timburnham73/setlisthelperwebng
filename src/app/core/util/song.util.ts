@@ -38,8 +38,9 @@ export function getSongDetails(song: any): string {
     }
   }
 
-  if (song.songLength) {
-    songDetails.push(getSongLength(song));
+  const length = song.songLength ? getSongLength(song) : '';
+  if (length) {
+    songDetails.push(length);
   }
 
   return songDetails.join(' - ');

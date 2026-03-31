@@ -339,8 +339,9 @@ export class SongService {
       }
     }
     
-    if(song.songLength){
-      songDetails.push(this.getSongLength(song))
+    const length = song.songLength ? this.getSongLength(song) : '';
+    if(length){
+      songDetails.push(length)
     }
     
     return songDetails.join(' - ');
