@@ -60,7 +60,7 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
     ],
 })
 export class AccountUsersComponent {
-  displayedColumns: string[] = ["email", "displayName", "role", "remove"];
+  displayedColumns: string[] = ["email", "displayName"];
   currentUser: BaseUser;
   roles: string[];
   searching = false;
