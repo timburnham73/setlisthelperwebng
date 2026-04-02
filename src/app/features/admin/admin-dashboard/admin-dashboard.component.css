@@ -1,0 +1,43 @@
+.container {
+    padding: 16px;
+}
+
+.admin-header {
+    margin-bottom: 16px;
+    gap: 8px;
+}
+
+.spacer {
+    flex: 1 1 auto;
+}
+
+.user-count {
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 64px;
+    gap: 16px;
+}
+
+.table-card {
+    overflow: hidden;
+}
+
+.table-container {
+    overflow-x: auto;
+    max-height: 80vh;
+}
+
+table {
+    width: 100%;
+}
+
+th.mat-header-cell {
+    font-weight: bold;
+}

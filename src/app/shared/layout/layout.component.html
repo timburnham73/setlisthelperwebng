@@ -13,6 +13,11 @@
 
     <span class="navbar-spacer"></span>
 
+    <button mat-button routerLink="/admin" *ngIf="isAdmin">
+      <mat-icon>admin_panel_settings</mat-icon>
+      <span fxShow fxHide.xs>Admin</span>
+    </button>
+
     <button mat-button [matMenuTriggerFor]="notificationMenu">
       <mat-icon>group_2</mat-icon>
       <span fxShow fxHide.xs>

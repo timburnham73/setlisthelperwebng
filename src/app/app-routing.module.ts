@@ -31,6 +31,13 @@ const appRoutes: Routes = [
       import("./features/auth/auth.module").then((m) => m.AuthModule),
   },
   {
+    path: "admin",
+    loadChildren: () =>
+      import("./features/admin/admin.module").then((m) => m.AdminModule),
+    canActivate: [AngularFireAuthGuard],
+    data: { authGuardPipe: redirectUnauthorizedToLogin },
+  },
+  {
     path: "bands",
     loadChildren: () =>
       import("./features/accounts/account.module").then(

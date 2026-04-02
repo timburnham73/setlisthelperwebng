@@ -70,6 +70,7 @@ export class LayoutComponent implements OnInit, OnDestroy, AfterViewInit {
         private router: Router,
         private activatedRoute: ActivatedRoute,
         private accountService: AccountService,
+        private userService: UserService,
         private location: Location,
         private authService: AuthenticationService) {
         this.displayUserName$ = authService.displayName$;
@@ -84,6 +85,10 @@ export class LayoutComponent implements OnInit, OnDestroy, AfterViewInit {
         this.authService.user$.subscribe((user) => {
             if (user && user.uid) {
                 this.accounts$ = this.accountService.getAccounts(user.uid);
+                // Check if user is a system admin
+                this.userService.getUserById(user.uid).subscribe((userData) => {
+                    this.isAdmin = userData?.systemAdmin === true;
+                });
             }
         });
     }

@@ -9,6 +9,7 @@ export interface BaseUser {
   formatSettings?: LyricFormat;
   lastLoginDate?: Timestamp;
   entitlementLevel?: string;
+  systemAdmin?: boolean;
 }
 
 export interface  User extends BaseUser {

@@ -75,6 +75,17 @@ export class UserService {
       );
   }
 
+  getAllUsers(): Observable<User[]> {
+    return this.db
+      .collection<User>(this.dbPath, ref => ref.orderBy('lastLoginDate', 'desc'))
+      .get()
+      .pipe(
+        map(snapshot =>
+          snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as User))
+        )
+      );
+  }
+
   loginToSetlistHelper(username: string, password: string): Observable<JwtToken>{
     const headers = new Headers();
     const httpOptions = {

@@ -1,0 +1,55 @@
+<div class="container">
+  <mat-toolbar class="admin-header">
+    <mat-icon>admin_panel_settings</mat-icon>
+    <span>Admin Dashboard</span>
+    <span class="spacer"></span>
+    <span class="user-count" *ngIf="!isLoading">{{ userCount }} users</span>
+  </mat-toolbar>
+
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Loading users...</p>
+  </div>
+
+  <mat-card *ngIf="!isLoading" class="table-card">
+    <mat-card-content>
+      <div class="table-container">
+        <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)" matSortActive="lastLoginDate" matSortDirection="desc">
+
+          <ng-container matColumnDef="email">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
+            <td mat-cell *matCellDef="let row">{{ row.email }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="displayName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Display Name</th>
+            <td mat-cell *matCellDef="let row">{{ row.displayName }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="countOfSongs">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Songs</th>
+            <td mat-cell *matCellDef="let row">{{ row.countOfSongs }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="countOfSetlists">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Setlists</th>
+            <td mat-cell *matCellDef="let row">{{ row.countOfSetlists }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="entitlementLevel">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Entitlement</th>
+            <td mat-cell *matCellDef="let row">{{ row.entitlementLevel }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="lastLoginDate">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Last Login</th>
+            <td mat-cell *matCellDef="let row">{{ row.lastLoginDate | date:'medium' }}</td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
