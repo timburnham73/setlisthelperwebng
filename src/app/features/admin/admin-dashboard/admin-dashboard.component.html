@@ -26,6 +26,11 @@
             <td mat-cell *matCellDef="let row">{{ row.displayName }}</td>
           </ng-container>
 
+          <ng-container matColumnDef="countOfAccounts">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Bands</th>
+            <td mat-cell *matCellDef="let row">{{ row.countOfAccounts }}</td>
+          </ng-container>
+
           <ng-container matColumnDef="countOfSongs">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Songs</th>
             <td mat-cell *matCellDef="let row">{{ row.countOfSongs }}</td>

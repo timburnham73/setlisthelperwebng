@@ -17,6 +17,7 @@ import { catchError, map } from 'rxjs/operators';
 export interface AdminUserRow {
   email: string;
   displayName: string;
+  countOfAccounts: number;
   countOfSongs: number;
   countOfSetlists: number;
   entitlementLevel: string;
@@ -44,7 +45,7 @@ export interface AdminUserRow {
     ]
 })
 export class AdminDashboardComponent implements OnInit {
-    displayedColumns: string[] = ['email', 'displayName', 'countOfSongs', 'countOfSetlists', 'entitlementLevel', 'lastLoginDate'];
+    displayedColumns: string[] = ['email', 'displayName', 'countOfAccounts', 'countOfSongs', 'countOfSetlists', 'entitlementLevel', 'lastLoginDate'];
     dataSource: AdminUserRow[] = [];
     isLoading = true;
     userCount = 0;
@@ -75,6 +76,7 @@ export class AdminDashboardComponent implements OnInit {
                         return {
                             email: user.email || '',
                             displayName: user.displayName || '',
+                            countOfAccounts: accounts.length,
                             countOfSongs: totalSongs,
                             countOfSetlists: totalSetlists,
                             entitlementLevel: entitlement,
@@ -84,6 +86,7 @@ export class AdminDashboardComponent implements OnInit {
                     catchError(() => of({
                         email: user.email || '',
                         displayName: user.displayName || '',
+                        countOfAccounts: 0,
                         countOfSongs: 0,
                         countOfSetlists: 0,
                         entitlementLevel: 'free',
@@ -111,6 +114,7 @@ export class AdminDashboardComponent implements OnInit {
             switch (sort.active) {
                 case 'email': return compare(a.email, b.email, isAsc);
                 case 'displayName': return compare(a.displayName, b.displayName, isAsc);
+                case 'countOfAccounts': return compare(a.countOfAccounts, b.countOfAccounts, isAsc);
                 case 'countOfSongs': return compare(a.countOfSongs, b.countOfSongs, isAsc);
                 case 'countOfSetlists': return compare(a.countOfSetlists, b.countOfSetlists, isAsc);
                 case 'entitlementLevel': return compare(a.entitlementLevel, b.entitlementLevel, isAsc);
