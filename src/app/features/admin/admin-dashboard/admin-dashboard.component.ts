@@ -32,6 +32,7 @@ export interface AdminUserRow {
     countOfSongs: number;
     countOfSetlists: number;
     entitlementLevel: string;
+    dateCreated: Date | null;
     lastLoginDate: Date | null;
     accounts: AccountDetail[];
     isSystemAdmin: boolean;
@@ -58,7 +59,7 @@ export interface AdminUserRow {
     ]
 })
 export class AdminDashboardComponent implements OnInit {
-    displayedColumns: string[] = ['expand', 'email', 'displayName', 'countOfAccounts', 'countOfSongs', 'countOfSetlists', 'entitlementLevel', 'lastLoginDate', 'actions'];
+    displayedColumns: string[] = ['expand', 'email', 'displayName', 'countOfAccounts', 'countOfSongs', 'countOfSetlists', 'entitlementLevel', 'dateCreated', 'lastLoginDate', 'actions'];
     dataSource: AdminUserRow[] = [];
     isLoading = true;
     userCount = 0;
@@ -97,6 +98,13 @@ export class AdminDashboardComponent implements OnInit {
                         const totalSongs = accounts.reduce((sum, a) => sum + (a.countOfSongs || 0), 0);
                         const totalSetlists = accounts.reduce((sum, a) => sum + (a.countOfSetlists || 0), 0);
                         const entitlement = accounts.length > 0 ? (accounts[0].entitlementLevel || 'free') : 'free';
+                        // Use earliest account dateCreated, fall back to user dateCreated or lastLoginDate
+                        const accountDates = accounts
+                            .filter(a => a.dateCreated)
+                            .map(a => a.dateCreated.toDate())
+                            .sort((a, b) => a.getTime() - b.getTime());
+                        const createdDate = accountDates.length > 0 ? accountDates[0]
+                            : (user.dateCreated ? user.dateCreated.toDate() : null);
                         const accountDetails: AccountDetail[] = accounts.map(a => ({
                             name: a.name,
                             countOfSongs: a.countOfSongs || 0,
@@ -112,6 +120,7 @@ export class AdminDashboardComponent implements OnInit {
                             countOfSongs: totalSongs,
                             countOfSetlists: totalSetlists,
                             entitlementLevel: entitlement,
+                            dateCreated: createdDate,
                             lastLoginDate: user.lastLoginDate ? user.lastLoginDate.toDate() : null,
                             accounts: accountDetails,
                             isSystemAdmin: user.systemAdmin === true,
@@ -125,6 +134,7 @@ export class AdminDashboardComponent implements OnInit {
                         countOfSongs: 0,
                         countOfSetlists: 0,
                         entitlementLevel: 'free',
+                        dateCreated: user.dateCreated ? user.dateCreated.toDate() : null,
                         lastLoginDate: user.lastLoginDate ? user.lastLoginDate.toDate() : null,
                         accounts: [],
                         isSystemAdmin: user.systemAdmin === true,
@@ -197,6 +207,7 @@ export class AdminDashboardComponent implements OnInit {
                 case 'countOfSongs': return compare(a.countOfSongs, b.countOfSongs, isAsc);
                 case 'countOfSetlists': return compare(a.countOfSetlists, b.countOfSetlists, isAsc);
                 case 'entitlementLevel': return compare(a.entitlementLevel, b.entitlementLevel, isAsc);
+                case 'dateCreated': return compare(a.dateCreated?.getTime() || 0, b.dateCreated?.getTime() || 0, isAsc);
                 case 'lastLoginDate': return compare(a.lastLoginDate?.getTime() || 0, b.lastLoginDate?.getTime() || 0, isAsc);
                 default: return 0;
             }

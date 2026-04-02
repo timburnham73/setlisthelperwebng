@@ -248,7 +248,7 @@ export class ChordProParser {
     } else if (stringToTextTrimmed.startsWith('outro') === true) {
       return ChordproEnum.songpart;
     } else if (stringToTextTrimmed.startsWith('note') === true) {
-      return ChordproEnum.note;
+      return ChordproEnum.noprintcomment;
     } else if (stringToTextTrimmed.startsWith('instrumental') === true) {
       return ChordproEnum.songpart;
     } else if (stringToTextTrimmed.startsWith('prechorus') === true) {
@@ -284,7 +284,7 @@ export class ChordProParser {
     } else if (stringToTextTrimmed.startsWith('intro') === true) {
       return ChordproEnum.songpart;
     } else if (stringToTextTrimmed.startsWith('pause') === true) {
-      return ChordproEnum.pause;
+      return ChordproEnum.noprintcomment;
     } else if (stringToTextTrimmed.startsWith('steel') === true) {
       return ChordproEnum.songpart;
     } else {

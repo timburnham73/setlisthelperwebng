@@ -8,6 +8,7 @@ export interface BaseUser {
   photoUrl?: string;
   formatSettings?: LyricFormat;
   lastLoginDate?: Timestamp;
+  dateCreated?: Timestamp;
   entitlementLevel?: string;
   systemAdmin?: boolean;
 }
