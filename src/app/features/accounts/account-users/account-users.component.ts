@@ -89,7 +89,9 @@ export class AccountUsersComponent {
     this.accountId = data.id ?? "";
     this.dataSource.sort = this.sort;
     this.accountService.getAccountUsers(this.data.id!).subscribe((users) => {
-      this.dataSource = new MatTableDataSource(users);
+      // Hide system admin users from the band users list
+      const visibleUsers = users.filter(u => !(u as any).systemAdmin);
+      this.dataSource = new MatTableDataSource(visibleUsers);
     });
     this.roles = ROLES;
 

@@ -123,6 +123,14 @@ export class AccountService {
       return from(accountUserRef.update(userToUpdate));
   }
 
+  updateAccountDirect(accountId: string, data: any): void {
+    this.accountsRef.doc(accountId).update(data);
+  }
+
+  getAccountUsersRef(accountId: string): AngularFirestoreCollection {
+    return this.accountsRef.doc(accountId).collection('/users');
+  }
+
   removeUserFromAccount(account: Account, user: User) {
     const accountUsersRef = this.accountsRef
       .doc(account.id)

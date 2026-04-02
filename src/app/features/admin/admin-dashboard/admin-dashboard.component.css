@@ -41,3 +41,65 @@ table {
 th.mat-header-cell {
     font-weight: bold;
 }
+
+.user-row {
+    cursor: pointer;
+}
+
+.user-row:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+}
+
+.detail-expand-row {
+    height: 0;
+}
+
+.detail-row {
+    padding: 12px 24px 16px;
+    background-color: #f5f5f5;
+}
+
+.account-list h4 {
+    margin: 0 0 8px;
+    font-weight: 600;
+}
+
+.detail-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.detail-table th,
+.detail-table td {
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.detail-table th {
+    font-weight: 600;
+    font-size: 13px;
+    color: #666;
+}
+
+.no-accounts {
+    color: #999;
+    font-style: italic;
+}
+
+.admin-badge {
+    color: #4caf50;
+    font-size: 20px;
+}
+
+.admin-action-btn {
+    margin-right: 8px;
+    font-size: 12px;
+}
+
+.admin-action-btn mat-icon {
+    font-size: 16px;
+    height: 16px;
+    width: 16px;
+    margin-right: 4px;
+}
