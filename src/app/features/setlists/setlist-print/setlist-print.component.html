@@ -1,101 +1,274 @@
-<div class="container" fxLayoutGap="10px grid" fxLayout="row" fxLayoutAlign="center none" >
-    <div fxFlex="100%">
-        <mat-toolbar id="print-toolbar">
-          <button mat-icon-button aria-label="Back to Song List" (click)="onBackToSetlist()">
-            <mat-icon>arrow_back_ios</mat-icon>
-          </button>
-          <button
-            mat-icon-button
-            aria-label="Print Setlist"
-            title="Print setlist"
-            (click)="onPrintSetlist()"
-          >
-            <mat-icon>print</mat-icon>
-          </button>
-          <div class="vl"></div>
+<div class="container" fxLayoutGap="10px grid" fxLayout="row" fxLayoutAlign="center none">
+  <div fxFlex="100%">
+    <!-- Toolbar -->
+    <mat-toolbar id="print-toolbar" class="no-print">
+      <button mat-icon-button aria-label="Back to Song List" (click)="onBackToSetlist()">
+        <mat-icon>arrow_back_ios</mat-icon>
+      </button>
+      <button mat-icon-button aria-label="Print Setlist" title="Print" (click)="onPrintSetlist()">
+        <mat-icon>print</mat-icon>
+      </button>
+      <div class="vl"></div>
 
-          <mat-button-toggle-group 
-            name="fontStyle" 
-            [(value)]="this.columns"
-            [hideSingleSelectionIndicator]="true"
-            aria-label="Print Columns"
-            #toggleFontStyle="matButtonToggleGroup">
-            <mat-button-toggle 
-              [value]="PrintColumns.one"  
-              aria-label="One Column"
-              title="One Column"  
-              (change)="onChangePrintColumn(PrintColumns.one)"
-              >
-              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Zm-20 200h80v-400H380v80h80v320Z"/></svg>
-            </mat-button-toggle>
-            <mat-button-toggle 
-              [value]="PrintColumns.two"
-              aria-label="Two Columns"
-              title="Two Columns"
-              (change)="onChangePrintColumn(PrintColumns.two)"
-              >
-              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320ZM360-280h240v-80H440v-80h80q33 0 56.5-23.5T600-520v-80q0-33-23.5-56.5T520-680H360v80h160v80h-80q-33 0-56.5 23.5T360-440v160Z"/></svg>
-            </mat-button-toggle>
-            <mat-button-toggle 
-              [value]="PrintColumns.three" 
-              aria-label="Three Columns"
-              title="Three Columns"
-              (change)="onChangePrintColumn(PrintColumns.three)"
-              >
-              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320ZM360-280h160q33 0 56.5-23.5T600-360v-60q0-26-17-43t-43-17q26 0 43-17t17-43v-60q0-33-23.5-56.5T520-680H360v80h160v80h-80v80h80v80H360v80Z"/></svg>
-            </mat-button-toggle>
-          </mat-button-toggle-group>
-
-          
-          <div class="vl"></div>
-          <button
-          mat-icon-button
-          aria-label="Hide or Show Setlist elements"
-          title="Hide or Show Setlist elements"
-          (click)="onSetVisibleElements()"
-        >
-          <mat-icon>visibility</mat-icon>
+      <!-- Desktop: dropdown menus for each settings group -->
+      <div class="vl" fxHide.xs></div>
+      <ng-container *ngIf="setlistPrintSettings">
+        <!-- Desktop: Font dropdowns -->
+        <button mat-button [matMenuTriggerFor]="fontMenu" fxHide.xs class="toolbar-menu-btn">
+          <mat-icon>format_size</mat-icon>
+          <span>Font</span>
         </button>
-          
-        </mat-toolbar>
-        
-        <div id="setlist-songs">
-          <div class="setlist-songs-static page">
-            <div>
-              <h2 *ngIf="setlistPrintSettings?.setlistName?.show">{{setlist?.name}}</h2>
-              <h4 *ngIf="setlistPrintSettings?.gigDateTime?.show">{{setlist?.gigDate?.toDate() | date: 'medium'}}</h4>
-              <h5 *ngIf="setlistPrintSettings?.gigLocation?.show">{{setlist?.gigLocation}}</h5>
-              <ol [ngClass]="{ 'one-column': setlistPrintSettings?.columns === PrintColumns.one, 'two-columns': setlistPrintSettings?.columns === PrintColumns.two, 'three-columns': setlistPrintSettings?.columns === PrintColumns.three}">
-                <li *ngFor="let song of setlistSongs; index as i;" [ngClass]="{'break': song.isBreak === true}" [value]="song.sequenceNumber">
+        <mat-menu #fontMenu="matMenu" [overlapTrigger]="false" class="settings-menu">
+          <div class="menu-settings font-settings" (click)="$event.stopPropagation()">
+            <label class="menu-label">Font</label>
+            <mat-select [(ngModel)]="setlistPrintSettings.fontFamily" (selectionChange)="onSettingChanged()">
+              <mat-option *ngFor="let font of fontOptions" [value]="font">{{font}}</mat-option>
+            </mat-select>
+            <label class="menu-label">Size</label>
+            <mat-select [(ngModel)]="setlistPrintSettings.fontSize" (selectionChange)="onSettingChanged()">
+              <mat-option *ngFor="let size of fontSizeOptions" [value]="size.value">{{size.label}}</mat-option>
+            </mat-select>
+          </div>
+        </mat-menu>
+
+        <div class="vl" fxHide.xs></div>
+
+        <button mat-button [matMenuTriggerFor]="headerMenu" fxHide.xs class="toolbar-menu-btn">
+          <mat-icon>text_fields</mat-icon>
+          <span>Header</span>
+        </button>
+        <mat-menu #headerMenu="matMenu" [overlapTrigger]="false" class="settings-menu">
+          <div class="menu-settings" (click)="$event.stopPropagation()">
+            <mat-checkbox [(ngModel)]="setlistPrintSettings.setlistName.show" (change)="onSettingChanged()">Setlist Name</mat-checkbox>
+            <mat-checkbox [(ngModel)]="setlistPrintSettings.gigDateTime.show" (change)="onSettingChanged()">Gig Date</mat-checkbox>
+            <mat-checkbox [(ngModel)]="setlistPrintSettings.gigLocation.show" (change)="onSettingChanged()">Gig Location</mat-checkbox>
+            <mat-checkbox [(ngModel)]="setlistPrintSettings.setlistDuration.show" (change)="onSettingChanged()">Duration</mat-checkbox>
+          </div>
+        </mat-menu>
+
+        <button mat-button [matMenuTriggerFor]="songMenu" fxHide.xs class="toolbar-menu-btn">
+          <mat-icon>music_note</mat-icon>
+          <span>Songs</span>
+        </button>
+        <mat-menu #songMenu="matMenu" [overlapTrigger]="false" class="settings-menu">
+          <div class="menu-settings" (click)="$event.stopPropagation()">
+            <mat-checkbox [(ngModel)]="setlistPrintSettings.sequenceNumbers.show" (change)="onSettingChanged()">Sequence Numbers</mat-checkbox>
+            <mat-checkbox [(ngModel)]="setlistPrintSettings.artist.show" (change)="onSettingChanged()">Artist</mat-checkbox>
+            <mat-checkbox [(ngModel)]="setlistPrintSettings.genre.show" (change)="onSettingChanged()">Genre</mat-checkbox>
+            <mat-checkbox [(ngModel)]="setlistPrintSettings.songKey.show" (change)="onSettingChanged()">Key</mat-checkbox>
+            <mat-checkbox [(ngModel)]="setlistPrintSettings.tempo.show" (change)="onSettingChanged()">Tempo</mat-checkbox>
+            <mat-checkbox [(ngModel)]="setlistPrintSettings.timeSignature.show" (change)="onSettingChanged()">Time Signature</mat-checkbox>
+            <mat-checkbox [(ngModel)]="setlistPrintSettings.songLength.show" (change)="onSettingChanged()">Song Length</mat-checkbox>
+            <mat-checkbox [(ngModel)]="setlistPrintSettings.notes.show" (change)="onSettingChanged()">Notes</mat-checkbox>
+            <mat-checkbox [(ngModel)]="setlistPrintSettings.other.show" (change)="onSettingChanged()">Other</mat-checkbox>
+          </div>
+        </mat-menu>
+
+        <button mat-button [matMenuTriggerFor]="breaksMenu" fxHide.xs class="toolbar-menu-btn">
+          <mat-icon>pause_circle</mat-icon>
+          <span>Breaks</span>
+        </button>
+        <mat-menu #breaksMenu="matMenu" [overlapTrigger]="false" class="settings-menu">
+          <div class="menu-settings" (click)="$event.stopPropagation()">
+            <mat-checkbox [(ngModel)]="setlistPrintSettings.showBreaks.show" (change)="onSettingChanged()">Show Set Breaks</mat-checkbox>
+            <mat-checkbox [(ngModel)]="setlistPrintSettings.insertPageBreak.show" (change)="onSettingChanged()">Insert Page Break</mat-checkbox>
+            <div class="radio-group" *ngIf="setlistPrintSettings.insertPageBreak.show">
+              <mat-radio-group [(ngModel)]="setlistPrintSettings.pageBreakPosition" (change)="onSettingChanged()">
+                <mat-radio-button value="after">After Set Break</mat-radio-button>
+                <mat-radio-button value="before">Before Set Break</mat-radio-button>
+              </mat-radio-group>
+            </div>
+          </div>
+        </mat-menu>
+      </ng-container>
+
+      <div class="vl" fxHide.xs></div>
+
+      <!-- Mobile: Settings menu with submenus -->
+      <ng-container *ngIf="setlistPrintSettings">
+        <button mat-button [matMenuTriggerFor]="mobileSettingsMenu" fxShow.xs fxHide class="toolbar-menu-btn">
+          <mat-icon>settings</mat-icon>
+        </button>
+        <mat-menu #mobileSettingsMenu="matMenu" [overlapTrigger]="false">
+          <button mat-menu-item [matMenuTriggerFor]="mobileFontMenu">
+            <mat-icon>format_size</mat-icon>
+            <span>Font</span>
+          </button>
+          <button mat-menu-item [matMenuTriggerFor]="mobileHeaderMenu">
+            <mat-icon>text_fields</mat-icon>
+            <span>Header</span>
+          </button>
+          <button mat-menu-item [matMenuTriggerFor]="mobileSongMenu">
+            <mat-icon>music_note</mat-icon>
+            <span>Songs</span>
+          </button>
+          <button mat-menu-item [matMenuTriggerFor]="mobileBreaksMenu">
+            <mat-icon>pause_circle</mat-icon>
+            <span>Breaks</span>
+          </button>
+        </mat-menu>
+
+        <mat-menu #mobileFontMenu="matMenu">
+          <div class="menu-settings font-settings" (click)="$event.stopPropagation()">
+            <label class="menu-label">Font</label>
+            <mat-select [(ngModel)]="setlistPrintSettings.fontFamily" (selectionChange)="onSettingChanged()">
+              <mat-option *ngFor="let font of fontOptions" [value]="font">{{font}}</mat-option>
+            </mat-select>
+            <label class="menu-label">Size</label>
+            <mat-select [(ngModel)]="setlistPrintSettings.fontSize" (selectionChange)="onSettingChanged()">
+              <mat-option *ngFor="let size of fontSizeOptions" [value]="size.value">{{size.label}}</mat-option>
+            </mat-select>
+          </div>
+        </mat-menu>
+
+        <mat-menu #mobileHeaderMenu="matMenu">
+          <div class="menu-settings" (click)="$event.stopPropagation()">
+            <mat-checkbox [(ngModel)]="setlistPrintSettings.setlistName.show" (change)="onSettingChanged()">Setlist Name</mat-checkbox>
+            <mat-checkbox [(ngModel)]="setlistPrintSettings.gigDateTime.show" (change)="onSettingChanged()">Gig Date</mat-checkbox>
+            <mat-checkbox [(ngModel)]="setlistPrintSettings.gigLocation.show" (change)="onSettingChanged()">Gig Location</mat-checkbox>
+            <mat-checkbox [(ngModel)]="setlistPrintSettings.setlistDuration.show" (change)="onSettingChanged()">Duration</mat-checkbox>
+          </div>
+        </mat-menu>
+
+        <mat-menu #mobileSongMenu="matMenu">
+          <div class="menu-settings" (click)="$event.stopPropagation()">
+            <mat-checkbox [(ngModel)]="setlistPrintSettings.sequenceNumbers.show" (change)="onSettingChanged()">Sequence Numbers</mat-checkbox>
+            <mat-checkbox [(ngModel)]="setlistPrintSettings.artist.show" (change)="onSettingChanged()">Artist</mat-checkbox>
+            <mat-checkbox [(ngModel)]="setlistPrintSettings.genre.show" (change)="onSettingChanged()">Genre</mat-checkbox>
+            <mat-checkbox [(ngModel)]="setlistPrintSettings.songKey.show" (change)="onSettingChanged()">Key</mat-checkbox>
+            <mat-checkbox [(ngModel)]="setlistPrintSettings.tempo.show" (change)="onSettingChanged()">Tempo</mat-checkbox>
+            <mat-checkbox [(ngModel)]="setlistPrintSettings.timeSignature.show" (change)="onSettingChanged()">Time Signature</mat-checkbox>
+            <mat-checkbox [(ngModel)]="setlistPrintSettings.songLength.show" (change)="onSettingChanged()">Song Length</mat-checkbox>
+            <mat-checkbox [(ngModel)]="setlistPrintSettings.notes.show" (change)="onSettingChanged()">Notes</mat-checkbox>
+            <mat-checkbox [(ngModel)]="setlistPrintSettings.other.show" (change)="onSettingChanged()">Other</mat-checkbox>
+          </div>
+        </mat-menu>
+
+        <mat-menu #mobileBreaksMenu="matMenu">
+          <div class="menu-settings" (click)="$event.stopPropagation()">
+            <mat-checkbox [(ngModel)]="setlistPrintSettings.showBreaks.show" (change)="onSettingChanged()">Show Set Breaks</mat-checkbox>
+            <mat-checkbox [(ngModel)]="setlistPrintSettings.insertPageBreak.show" (change)="onSettingChanged()">Insert Page Break</mat-checkbox>
+            <div class="radio-group" *ngIf="setlistPrintSettings.insertPageBreak.show">
+              <mat-radio-group [(ngModel)]="setlistPrintSettings.pageBreakPosition" (change)="onSettingChanged()">
+                <mat-radio-button value="after">After Set Break</mat-radio-button>
+                <mat-radio-button value="before">Before Set Break</mat-radio-button>
+              </mat-radio-group>
+            </div>
+          </div>
+        </mat-menu>
+
+        <!-- Mobile: Columns dropdown -->
+        <button mat-button [matMenuTriggerFor]="mobileColumnsMenu" fxShow.xs fxHide class="toolbar-menu-btn">
+          <mat-icon>view_column</mat-icon>
+        </button>
+        <mat-menu #mobileColumnsMenu="matMenu">
+          <div class="menu-settings" (click)="$event.stopPropagation()">
+            <mat-radio-group [ngModel]="columns" (ngModelChange)="onChangePrintColumn($event)">
+              <mat-radio-button [value]="PrintColumns.one">1 Column</mat-radio-button>
+              <mat-radio-button [value]="PrintColumns.two">2 Columns</mat-radio-button>
+              <mat-radio-button [value]="PrintColumns.three">3 Columns</mat-radio-button>
+            </mat-radio-group>
+          </div>
+        </mat-menu>
+      </ng-container>
+
+      <div class="vl"></div>
+
+      <!-- Desktop: column toggle buttons -->
+      <mat-button-toggle-group
+        name="columns"
+        [(value)]="this.columns"
+        [hideSingleSelectionIndicator]="true"
+        aria-label="Print Columns"
+        fxHide.xs
+        #toggleColumns="matButtonToggleGroup">
+        <mat-button-toggle
+          [value]="PrintColumns.one"
+          aria-label="One Column"
+          title="One Column"
+          (change)="onChangePrintColumn(PrintColumns.one)">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Zm-20 200h80v-400H380v80h80v320Z"/></svg>
+        </mat-button-toggle>
+        <mat-button-toggle
+          [value]="PrintColumns.two"
+          aria-label="Two Columns"
+          title="Two Columns"
+          (change)="onChangePrintColumn(PrintColumns.two)">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320ZM360-280h240v-80H440v-80h80q33 0 56.5-23.5T600-520v-80q0-33-23.5-56.5T520-680H360v80h160v80h-80q-33 0-56.5 23.5T360-440v160Z"/></svg>
+        </mat-button-toggle>
+        <mat-button-toggle
+          [value]="PrintColumns.three"
+          aria-label="Three Columns"
+          title="Three Columns"
+          (change)="onChangePrintColumn(PrintColumns.three)">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320ZM360-280h160q33 0 56.5-23.5T600-360v-60q0-26-17-43t-43-17q26 0 43-17t17-43v-60q0-33-23.5-56.5T520-680H360v80h160v80h-80v80h80v80H360v80Z"/></svg>
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+    </mat-toolbar>
+
+    <!-- Print Preview -->
+    <div id="setlist-songs">
+      <div class="setlist-songs-static page" [style.font-family]="setlistPrintSettings?.fontFamily" [style.font-size]="setlistPrintSettings?.fontSize">
+        <div>
+          <!-- Header -->
+          <h2 *ngIf="setlistPrintSettings?.setlistName?.show">{{setlist?.name}}</h2>
+          <h4 *ngIf="setlistPrintSettings?.gigDateTime?.show">{{setlist?.gigDate?.toDate() | date: 'medium'}}</h4>
+          <h5 *ngIf="setlistPrintSettings?.gigLocation?.show">{{setlist?.gigLocation}}</h5>
+          <p class="duration" *ngIf="setlistPrintSettings?.setlistDuration?.show && totalDuration">
+            Duration: {{totalDuration}}
+          </p>
+
+          <!-- Song List -->
+          <ol [ngClass]="{
+            'one-column': setlistPrintSettings?.columns === PrintColumns.one,
+            'two-columns': setlistPrintSettings?.columns === PrintColumns.two,
+            'three-columns': setlistPrintSettings?.columns === PrintColumns.three
+          }">
+            <ng-container *ngFor="let song of setlistSongs; index as i;">
+              <!-- Break item -->
+              <ng-container *ngIf="song.isBreak === true">
+                <li *ngIf="setlistPrintSettings?.showBreaks?.show"
+                    class="break"
+                    [ngClass]="{
+                      'page-break-after': setlistPrintSettings?.insertPageBreak?.show && setlistPrintSettings?.pageBreakPosition === 'after',
+                      'page-break-before': setlistPrintSettings?.insertPageBreak?.show && setlistPrintSettings?.pageBreakPosition === 'before'
+                    }">
+                  <p>
+                    <span><b>{{song.name}}</b></span>
+                    <span *ngIf="song.notes" class="break-notes"> - {{song.notes}}</span>
+                  </p>
+                </li>
+              </ng-container>
+
+              <!-- Song item -->
+              <ng-container *ngIf="song.isBreak !== true">
+                <li [value]="song.sequenceNumber"
+                    [ngClass]="{'hide-number': !setlistPrintSettings?.sequenceNumbers?.show}">
                   <p>
                     <span><b>{{song.name}}</b></span>
                     <br>
-                    @if(song.isBreak === true){
-                      <span *ngIf="song.notes">{{song.notes}}</span>
-                    }
-                    @else {
-                      <span class="second-line" *ngIf="setlistPrintSettings?.artist?.show">{{song.artist}}</span>
-                      <span class="second-line" *ngIf="setlistPrintSettings?.genre?.show">{{song.genre}}</span>
-                      <span class="second-line" *ngIf="setlistPrintSettings?.songKey?.show">{{song.key}}</span>
-                      <span class="second-line" *ngIf="setlistPrintSettings?.songLength?.show">
-                        {{
-                        song.lengthMin 
-                        ? song.lengthMin +
-                        ":" +
-                        song?.lengthSec?.toString()?.padStart(2, "0")
+                    <span class="second-line" *ngIf="setlistPrintSettings?.artist?.show && song.artist">{{song.artist}}</span>
+                    <span class="second-line" *ngIf="setlistPrintSettings?.genre?.show && song.genre">{{song.genre}}</span>
+                    <span class="second-line" *ngIf="setlistPrintSettings?.songKey?.show && song.key">{{song.key}}</span>
+                    <span class="second-line" *ngIf="setlistPrintSettings?.songLength?.show">
+                      {{
+                        song.lengthMin
+                        ? song.lengthMin + ":" + song?.lengthSec?.toString()?.padStart(2, "0")
                         : ""
-                        }}
-                      </span>
-                      <span class="second-line" *ngIf="setlistPrintSettings?.tempo?.show">{{song.tempo}}</span>
-                      <span class="second-line" *ngIf="setlistPrintSettings?.timeSignature?.show">{{song.noteValue}}/{{song.beatValue}}</span>
-                      
-                    }
-                    
+                      }}
+                    </span>
+                    <span class="second-line" *ngIf="setlistPrintSettings?.tempo?.show && song.tempo">{{song.tempo}} BPM</span>
+                    <span class="second-line" *ngIf="setlistPrintSettings?.timeSignature?.show">{{song.noteValue}}/{{song.beatValue}}</span>
+                    <span class="second-line notes-text" *ngIf="setlistPrintSettings?.notes?.show && song.notes">{{song.notes}}</span>
+                    <span class="second-line notes-text" *ngIf="setlistPrintSettings?.other?.show && song.other">{{song.other}}</span>
                   </p>
                 </li>
-              </ol>  
-            </div>
-          </div>
+              </ng-container>
+            </ng-container>
+          </ol>
+          <div class="print-footer">www.bandcentral.com</div>
         </div>
       </div>
+    </div>
+  </div>
 </div>

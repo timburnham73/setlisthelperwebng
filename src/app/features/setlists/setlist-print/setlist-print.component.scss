@@ -6,33 +6,128 @@ th.mat-sort-header-sorted {
     color: black;
 }
 
-.setlist-row {
-    cursor: pointer;
-}
-
 .spacer {
     flex: 1 1 auto;
 }
 
+.toolbar-label {
+    font-size: 14px;
+    margin-left: 4px;
+}
+
+.toolbar-menu-btn {
+    font-size: 13px;
+    mat-icon {
+        font-size: 18px;
+        height: 18px;
+        width: 18px;
+        margin-right: 4px;
+    }
+}
+
+::ng-deep .settings-menu {
+    .menu-settings {
+        display: flex;
+        flex-direction: column;
+        padding: 8px 16px;
+        gap: 4px;
+        min-width: 200px;
+    }
+
+    .font-settings {
+        gap: 8px;
+        min-width: 220px;
+    }
+
+    .menu-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+}
+
+svg {
+    fill: black;
+}
+
+// Settings Panel
+.settings-panel {
+    background: #fafafa;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 16px 24px;
+    margin: 8px 0 16px;
+}
+
+.settings-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.settings-group-title {
+    font-weight: 600;
+    font-size: 14px;
+    color: #555;
+    margin: 0 0 8px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.radio-group {
+    padding-left: 24px;
+    mat-radio-button {
+        display: block;
+        margin: 4px 0;
+    }
+}
+
+// Break styling
 li.break {
     list-style: none;
     color: #999;
-    padding-top:10px !important;
-    padding-bottom:10px !important;
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
     border-top: 1px dashed #999;
     border-bottom: 1px solid #999;
 }
 
+.break-notes {
+    font-style: italic;
+    color: #888;
+}
+
+// Hide sequence numbers
+li.hide-number {
+    list-style: none;
+}
+
+// Duration
+.duration {
+    text-align: center;
+    color: #888;
+    font-size: 16px;
+    margin-top: 0;
+    margin-bottom: 16px;
+}
+
+// Notes/Other
+.notes-text {
+    font-style: italic;
+    color: #666;
+}
+
+// Print preview area
 #setlist-songs {
     height: calc(100vh - 138px);
     overflow-y: scroll;
 }
 
 .setlist-songs-static {
-
     font-size: 19px;
 }
-
 
 .setlist-songs-static li {
     padding-top: 5px;
@@ -46,28 +141,24 @@ li.break {
     margin-top: 18px;
 }
 
-svg {
-    fill: black;
+// Page layout
+@page {
+    margin-top: 1mm;
+    margin-bottom: 0mm;
 }
-  
-@page 
-    {
-        
-        margin-top: 1mm;  /* this affects the margin in the printer settings */
-        margin-bottom: 0mm;
-    }
+
 .page {
     width: 21cm;
     @media screen {
         min-height: 29.7cm;
-        padding-top: 3cm;    
+        padding-top: 3cm;
     }
     @media print {
         min-height: 32.7cm;
         margin-top: 0cm;
-        padding-top: 1cm;    
+        padding-top: 1cm;
     }
-    
+
     padding-left: 3cm;
     padding-right: 3cm;
     padding-bottom: 3cm;
@@ -87,21 +178,19 @@ h2, h4, h5 {
     margin-bottom: 5px;
 }
 
+// Column layouts
 ol.one-column {
     p {
         margin-top: 0px;
         margin-bottom: 0px;
     }
 }
+
 ol.two-columns {
     height: 300mm;
     width: 210mm;
     margin-left: auto;
     margin-right: auto;
-    -moz-column-count: 2;
-    -moz-column-gap: 1px;
-    -webkit-column-count: 2;
-    -webkit-column-gap: 1px;
     column-count: 2;
     column-gap: 1px;
     column-fill: auto;
@@ -117,10 +206,6 @@ ol.three-columns {
     width: 210mm;
     margin-left: auto;
     margin-right: auto;
-    -moz-column-count: 3;
-    -moz-column-gap: 1px;
-    -webkit-column-count: 3;
-    -webkit-column-gap: 1px;
     column-count: 3;
     column-gap: 1px;
     column-fill: auto;
@@ -133,4 +218,75 @@ ol.three-columns {
 
 .second-line {
     padding-right: 15px;
+}
+
+// Page break for set breaks
+.page-break-after {
+    @media print {
+        page-break-after: always;
+    }
+}
+
+.page-break-before {
+    @media print {
+        page-break-before: always;
+    }
+}
+
+// Print-only footer
+.print-footer {
+    display: none;
+}
+
+// Hide settings panel and toolbar when printing
+@media print {
+    .no-print {
+        display: none !important;
+    }
+
+    #setlist-songs {
+        height: auto;
+        overflow: visible;
+    }
+
+    .print-footer {
+        display: block;
+        text-align: center;
+        font-size: 10px;
+        letter-spacing: 1px;
+        color: #aaa;
+        margin-top: 24px;
+        padding-top: 8px;
+        border-top: 1px solid #eee;
+    }
+}
+
+// Responsive - phone
+@media screen and (max-width: 600px) {
+    .page {
+        width: 100%;
+        padding-left: 1cm;
+        padding-right: 1cm;
+        margin: 0;
+    }
+
+    ol.two-columns,
+    ol.three-columns {
+        width: 100%;
+        height: auto;
+        column-count: 1;
+    }
+
+    .settings-panel {
+        padding: 12px 16px;
+    }
+}
+
+// Responsive - tablet
+@media screen and (min-width: 601px) and (max-width: 960px) {
+    .page {
+        width: 100%;
+        padding-left: 2cm;
+        padding-right: 2cm;
+    }
 }

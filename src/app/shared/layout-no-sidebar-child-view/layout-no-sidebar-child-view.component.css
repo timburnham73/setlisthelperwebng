@@ -69,3 +69,13 @@
     position: absolute;
     bottom: 0;
   }
+
+  @media print {
+    .navbar, .navbar-container > div:first-child, .progress-bar-container {
+      display: none !important;
+    }
+
+    .navbar-container {
+      position: static;
+    }
+  }

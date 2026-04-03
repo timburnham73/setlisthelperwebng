@@ -1,10 +1,15 @@
 import { DatePipe, NgFor, NgIf } from '@angular/common';
-import { Component, LOCALE_ID } from '@angular/core';
-import { MatIconButton } from '@angular/material/button';
+import { Component } from '@angular/core';
+import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatToolbar } from '@angular/material/toolbar';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatSelectModule } from '@angular/material/select';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { FlexLayoutModule } from 'ngx-flexible-layout';
@@ -15,27 +20,30 @@ import { AuthenticationService } from 'src/app/core/services/auth.service';
 import { SetlistSongService } from 'src/app/core/services/setlist-songs.service';
 import { PrintColumns, SetlistService } from 'src/app/core/services/setlist.service';
 import { AccountState } from 'src/app/core/store/account.state';
-import { SetlistPrintShowDialogComponent } from './setlist-print-show-dialog/setlist-print-show-dialog.component';
-import { MatDialog } from '@angular/material/dialog';
-import { defaultPrintSettings, SetlistPrintSettings } from 'src/app/core/model/setlist-print-settings';
+import { defaultPrintSettings, SetlistPrintSettings, FONT_OPTIONS, FONT_SIZE_OPTIONS } from 'src/app/core/model/setlist-print-settings';
 import { take } from 'rxjs';
-import { FormControl, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-setlist-print',
   standalone: true,
   imports: [
     NgFor,
+    NgIf,
     MatToolbar,
     MatIcon,
     MatIconButton,
+    MatButton,
     MatButtonToggle,
     MatButtonToggleGroup,
     MatCard,
     MatCardContent,
+    MatCheckboxModule,
+    MatRadioModule,
+    MatMenuModule,
+    MatSelectModule,
+    FormsModule,
     FlexLayoutModule,
     DatePipe,
-    NgIf
   ],
   templateUrl: './setlist-print.component.html',
   styleUrl: './setlist-print.component.scss'
@@ -49,9 +57,13 @@ export class SetlistPrintComponent {
   setlistPrintSettings: SetlistPrintSettings | undefined;
   columns = PrintColumns.one;
   loading: boolean;
- 
+  showSettings = false;
+  totalDuration = '';
+  fontOptions = FONT_OPTIONS;
+  fontSizeOptions = FONT_SIZE_OPTIONS;
+
   public get PrintColumns(): typeof PrintColumns {
-    return PrintColumns; 
+    return PrintColumns;
   }
 
   constructor(
@@ -60,20 +72,14 @@ export class SetlistPrintComponent {
     private authService: AuthenticationService,
     private store: Store,
     private activeRoute: ActivatedRoute,
-    public dialog: MatDialog,
     private router: Router,
-  ){
-    
+  ) {
     this.authService.user$.subscribe((user) => {
-      if(user && user.uid){
+      if (user && user.uid) {
         this.currentUser = user;
       }
     });
 
-    const selectedAccount = this.store.selectSnapshot(
-      AccountState.selectedAccount
-    );
-    
     this.loading = true;
 
     const accountId = this.activeRoute.snapshot.paramMap.get("accountid");
@@ -82,81 +88,82 @@ export class SetlistPrintComponent {
       this.accountId = accountId;
       this.setlistId = setlistId;
       this.setlistService.getSetlist(this.accountId, this.setlistId)
-                          .subscribe((setlist) => {
-        this.loading = false;
-        this.setlist = setlist;
-      });
+        .subscribe((setlist) => {
+          this.loading = false;
+          this.setlist = setlist;
+        });
 
       this.setlistService
         .getSetlistPrintSettings(accountId, setlistId)
         .pipe(take(1))
         .subscribe((printsettings) => {
-          if(printsettings && printsettings.length > 0){
-            this.setlistPrintSettings = printsettings[0]; 
-          }
-          else {
-            this.setlistPrintSettings = defaultPrintSettings;
+          if (printsettings && printsettings.length > 0) {
+            // Merge saved settings with defaults for any new fields
+            this.setlistPrintSettings = { ...defaultPrintSettings, ...printsettings[0] };
+          } else {
+            this.setlistPrintSettings = { ...defaultPrintSettings };
           }
           this.columns = this.setlistPrintSettings.columns;
-      });
+        });
 
       this.setlistSongsService
         .getOrderedSetlistSongs(accountId, setlistId)
         .subscribe((setlistSongs) => {
           this.setlistSongs = setlistSongs.map((song, index) => {
-            let breakCount = setlistSongs.slice(0, index).filter(song => song.isBreak === true).length;;
+            let breakCount = setlistSongs.slice(0, index).filter(s => s.isBreak === true).length;
             const sequenceNumber = (index + 1) - breakCount;
-            if(!song.isBreak){
-              return {...song, sequenceNumber : sequenceNumber};
+            if (!song.isBreak) {
+              return { ...song, sequenceNumber: sequenceNumber };
             }
-            
-            return {...song, sequenceNumber : sequenceNumber + .01};
-          
+            return { ...song, sequenceNumber: sequenceNumber + .01 };
           });
+          this.calculateDuration();
         });
     }
   }
 
-  onPrintSetlist(){
-    let printContents = document?.getElementById("setlist-songs")?.innerHTML;
-     let originalContents = document.body.innerHTML;
-
-     if(document && document.body && document.body.innerHTML && printContents){
-        document.body.innerHTML = printContents;
-        window.print();
-
-        document.body.innerHTML = originalContents;
-        window.location.reload();
-     }
-  }
-
-  onBackToSetlist(){
-    this.router.navigate(["../songs"], { relativeTo: this.activeRoute });   
-  }
-
-  onChangePrintColumn(columns: PrintColumns){
-    if(this.setlistPrintSettings){
-    this.setlistPrintSettings.columns = columns;
-    
-    this.setlistService.setPrintSettings(this.accountId, this.setlistId, this.setlistPrintSettings)
-      .subscribe((result)=> {
-        this.setlistPrintSettings = result;
-      });
+  private calculateDuration(): void {
+    if (!this.setlistSongs) return;
+    const totalSeconds = this.setlistSongs.reduce((sum, song) => sum + (song.songLength || 0), 0);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    if (hours > 0) {
+      this.totalDuration = `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    } else {
+      this.totalDuration = `${minutes}:${seconds.toString().padStart(2, '0')}`;
     }
   }
 
-  onSetVisibleElements(){
-    const dialogRef = this.dialog.open(SetlistPrintShowDialogComponent, {
-      data: { accountId: this.accountId, setlist: this.setlist, printSettings: this.setlistPrintSettings},
-      panelClass: "dialog-responsive",
-    });
-
-    dialogRef.afterClosed().subscribe((printSettings) => {
-      if(printSettings){
-        this.setlistPrintSettings = printSettings;
-      }
-    });
+  onPrintSetlist() {
+    window.print();
   }
 
-}
+  onBackToSetlist() {
+    this.router.navigate(["../songs"], { relativeTo: this.activeRoute });
+  }
 
+  onChangePrintColumn(columns: PrintColumns) {
+    if (this.setlistPrintSettings) {
+      this.setlistPrintSettings.columns = columns;
+      this.saveSettings();
+    }
+  }
+
+  onToggleSettings() {
+    this.showSettings = !this.showSettings;
+  }
+
+  onSettingChanged() {
+    this.saveSettings();
+  }
+
+  private saveSettings() {
+    if (this.setlistPrintSettings) {
+      this.setlistService.setPrintSettings(this.accountId, this.setlistId, this.setlistPrintSettings)
+        .subscribe((result) => {
+          this.setlistPrintSettings = result;
+        });
+    }
+  }
+}
