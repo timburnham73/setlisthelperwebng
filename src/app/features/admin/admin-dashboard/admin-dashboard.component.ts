@@ -8,11 +8,16 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { FlexLayoutModule } from 'ngx-flexible-layout';
+import { FormsModule } from '@angular/forms';
+import { MatSelectModule } from '@angular/material/select';
 import { UserService } from 'src/app/core/services/user.service';
 import { AccountService } from 'src/app/core/services/account.service';
 import { AuthenticationService } from 'src/app/core/services/auth.service';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { User } from 'src/app/core/model/user';
 import { Account } from 'src/app/core/model/account';
+import { ENTITLEMENT_LIMITS } from 'src/app/core/model/entitlement-limits';
 import { forkJoin, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
@@ -36,6 +41,7 @@ export interface AdminUserRow {
     lastLoginDate: Date | null;
     accounts: AccountDetail[];
     isSystemAdmin: boolean;
+    welcomeEmailSent?: boolean;
 }
 
 @Component({
@@ -52,6 +58,9 @@ export interface AdminUserRow {
         MatCardModule,
         MatProgressSpinnerModule,
         FlexLayoutModule,
+        FormsModule,
+        MatSelectModule,
+        MatSnackBarModule,
         NgIf,
         NgFor,
         AsyncPipe,
@@ -65,13 +74,16 @@ export class AdminDashboardComponent implements OnInit {
     userCount = 0;
     expandedUid: string | null = null;
     currentAdminUid: string = '';
+    entitlementOptions = Object.keys(ENTITLEMENT_LIMITS);
 
     @ViewChild(MatSort) sort: MatSort;
 
     constructor(
         private userService: UserService,
         private accountService: AccountService,
-        private authService: AuthenticationService
+        private authService: AuthenticationService,
+        private firestore: AngularFirestore,
+        private snackBar: MatSnackBar
     ) {}
 
     ngOnInit(): void {
@@ -188,6 +200,44 @@ export class AdminDashboardComponent implements OnInit {
             accountUserRef.ref.where('uid', '==', this.currentAdminUid).get().then(snapshot => {
                 snapshot.forEach(doc => doc.ref.delete());
             });
+        });
+    }
+
+    onChangeUserEntitlement(row: AdminUserRow, newLevel: string): void {
+        // Update user's entitlement
+        this.userService.updateUserEntitlement(row.uid, newLevel);
+        row.entitlementLevel = newLevel;
+
+        // Update all their accounts too
+        for (const account of row.accounts) {
+            this.accountService.updateAccountDirect(account.accountId, { entitlementLevel: newLevel });
+            account.entitlementLevel = newLevel;
+        }
+    }
+
+    onChangeEntitlement(account: AccountDetail, newLevel: string): void {
+        this.accountService.updateAccountDirect(account.accountId, { entitlementLevel: newLevel });
+        account.entitlementLevel = newLevel;
+    }
+
+    sendWelcomeEmail(row: AdminUserRow): void {
+        if (!row.email) {
+            this.snackBar.open('No email address for this user', 'OK', { duration: 3000 });
+            return;
+        }
+
+        this.firestore.collection('welcomeEmails').add({
+            email: row.email,
+            displayName: row.displayName || '',
+            status: 'pending',
+            createdAt: new Date(),
+            uid: row.uid,
+        }).then(() => {
+            row.welcomeEmailSent = true;
+            this.snackBar.open(`Welcome email sent to ${row.email}`, 'OK', { duration: 3000 });
+        }).catch(error => {
+            console.error('Error queuing welcome email:', error);
+            this.snackBar.open('Failed to send welcome email', 'OK', { duration: 3000 });
         });
     }
 

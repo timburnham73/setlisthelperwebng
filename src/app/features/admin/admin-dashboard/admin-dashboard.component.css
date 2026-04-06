@@ -82,6 +82,10 @@ th.mat-header-cell {
     color: #666;
 }
 
+.entitlement-select {
+    min-width: 160px;
+}
+
 .no-accounts {
     color: #999;
     font-style: italic;
@@ -102,4 +106,8 @@ th.mat-header-cell {
     height: 16px;
     width: 16px;
     margin-right: 4px;
+}
+
+.email-sent {
+    color: #4caf50;
 }

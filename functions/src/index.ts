@@ -83,6 +83,27 @@ export const ContactRequest_OnCreate_SendEmail =
     });
 
 // ////////////////////////////////
+// Welcome Email functions
+// eslint-disable-next-line camelcase
+export const WelcomeEmail_OnCreate_SendEmail =
+  onDocumentCreated(
+    {
+      document: "welcomeEmails/{welcomeEmailId}",
+      secrets: [SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS],
+    },
+    async event => {
+      await (
+        await import("./welcome-email/on-create-welcome-email"))
+        .default(
+          event,
+          SMTP_HOST.value(),
+          SMTP_PORT.value(),
+          SMTP_USER.value(),
+          SMTP_PASS.value(),
+        );
+    });
+
+// ////////////////////////////////
 // Sync functions
 export const accoutImportOnAddStartSLHSync =
   onDocumentCreated(

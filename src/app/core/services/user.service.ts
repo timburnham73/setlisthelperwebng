@@ -60,6 +60,10 @@ export class UserService {
       );
   }
 
+  updateUserEntitlement(uid: string, entitlementLevel: string): void {
+    this.db.collection(this.dbPath).doc(uid).update({ entitlementLevel });
+  }
+
   getUserByEmail(emailAddress: string): Observable<User>{
     return this.db
       .collection(this.dbPath, (ref) =>
