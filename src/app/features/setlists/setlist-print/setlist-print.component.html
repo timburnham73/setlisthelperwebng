@@ -8,10 +8,8 @@
       <button mat-icon-button aria-label="Print Setlist" title="Print" (click)="onPrintSetlist()">
         <mat-icon>print</mat-icon>
       </button>
-      <div class="vl"></div>
-
-      <!-- Desktop: dropdown menus for each settings group -->
       <div class="vl" fxHide.xs></div>
+
       <ng-container *ngIf="setlistPrintSettings">
         <!-- Desktop: Font dropdowns -->
         <button mat-button [matMenuTriggerFor]="fontMenu" fxHide.xs class="toolbar-menu-btn">
@@ -81,8 +79,6 @@
           </div>
         </mat-menu>
       </ng-container>
-
-      <div class="vl" fxHide.xs></div>
 
       <!-- Mobile: Settings menu with submenus -->
       <ng-container *ngIf="setlistPrintSettings">
@@ -172,7 +168,7 @@
         </mat-menu>
       </ng-container>
 
-      <div class="vl"></div>
+      <div class="vl" fxHide.xs></div>
 
       <!-- Desktop: column toggle buttons -->
       <mat-button-toggle-group

@@ -10,18 +10,29 @@ export const FONT_OPTIONS = [
 ];
 
 export const FONT_SIZE_OPTIONS = [
-    { label: 'Small', value: '14px' },
-    { label: 'Medium', value: '17px' },
-    { label: 'Large', value: '19px' },
-    { label: 'X-Large', value: '22px' },
-    { label: 'XX-Large', value: '26px' },
+    { label: '8', value: '8pt' },
+    { label: '9', value: '9pt' },
+    { label: '10', value: '10pt' },
+    { label: '11', value: '11pt' },
+    { label: '12', value: '12pt' },
+    { label: '14', value: '14pt' },
+    { label: '16', value: '16pt' },
+    { label: '18', value: '18pt' },
+    { label: '20', value: '20pt' },
+    { label: '22', value: '22pt' },
+    { label: '24', value: '24pt' },
+    { label: '26', value: '26pt' },
+    { label: '28', value: '28pt' },
+    { label: '36', value: '36pt' },
+    { label: '48', value: '48pt' },
+    { label: '72', value: '72pt' },
 ];
 
 export const defaultPrintSettings: SetlistPrintSettings = {
     id: '',
     columns: PrintColumns.one,
     fontFamily: 'Arial',
-    fontSize: '19px',
+    fontSize: '14pt',
     setlistName: {show: true},
     gigDateTime: {show: true},
     gigLocation: {show: true},

@@ -10,6 +10,17 @@ th.mat-sort-header-sorted {
     flex: 1 1 auto;
 }
 
+.container {
+    margin-top: 0;
+    padding-top: 0;
+}
+
+#print-toolbar {
+    background: white;
+    border-bottom: 1px solid #e0e0e0;
+    margin-top: -1px;
+}
+
 .toolbar-label {
     font-size: 14px;
     margin-left: 4px;
