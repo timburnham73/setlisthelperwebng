@@ -12,6 +12,25 @@
         </div>
     </div>
 </section>
+<section id="video-section" class="video-section">
+    <div class="container">
+        <div class="video-content text-center">
+            <h2>See Band Central in Action</h2>
+            <div class="section-divider"></div>
+            <p>Watch a 5-minute walkthrough of the core features — creating bands, importing lyrics, building setlists, and real-time collaboration.</p>
+            <div class="video-wrapper">
+                <iframe [src]="videoUrl"
+                        title="Band Central Overview"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen></iframe>
+            </div>
+            <div class="video-cta">
+                <button mat-stroked-button [routerLink]="['/help']">Learn More</button>
+            </div>
+        </div>
+    </div>
+</section>
 <section id="feature-section" class="gap">
     <div class="container">
         <div fxLayout='column' class="text-center mb-5">

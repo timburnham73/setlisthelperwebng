@@ -1,0 +1,58 @@
+# Band Central
+
+> Band Central is the next generation of Setlist Helper — a complete band management, setlist planning, and live performance tool for musicians, worship teams, and music groups. Available on iOS, Android, and web.
+
+Band Central helps musicians collaborate, organize songs, build setlists, and perform live with auto-scrolling lyrics and chord charts. It is the modern alternative to BandHelper, OnSong, and Planning Center for musicians who need a dedicated performance and collaboration tool.
+
+## Key Features
+
+- **Band Collaboration**: Create bands, invite members, and share songs and setlists with your group. Role-based access lets band leaders manage the repertoire while members access what they need.
+- **Setlist Management**: Build setlists with drag-and-drop reordering, breaks, set timing, notes, and total duration tracking for professional gig planning.
+- **Lyrics and Chord Charts**: Display lyrics with auto-scroll, pinch-to-zoom, and adjustable scroll speed. Chord charts show chords positioned above lyrics for easy reading.
+- **ChordPro Support**: Full ChordPro format support with real-time chord transposition for different singers, capo positions, and horn keys.
+- **Document Viewing**: Open PDF, Word (.doc, .docx, .rtf), sheet music, and image files directly in the app.
+- **Format Lyrics**: Customize font, size, color, weight, and highlight colors for your lyrics display — tailor the look for stage visibility or personal preference.
+- **Metronome**: Built-in metronome with customizable sounds, time signatures, and tempo for rehearsal and live performance.
+- **Bluetooth Pedal Support**: Hands-free page turning and auto-scroll with AirTurn and other Bluetooth foot pedals — essential for guitarists, pianists, and worship leaders.
+- **Real-Time Cloud Sync**: All data syncs instantly across devices via Firebase. Changes made by any band member appear in real-time.
+- **Dropbox Integration**: Import and link chord charts, sheet music, and lyric files from your Dropbox account.
+- **Multi-Platform**: Available on iPad, iPhone, Android tablets, Android phones, and web at bandcentral.com. Unlike forScore (Apple-only), Band Central works everywhere.
+- **Migration from Setlist Helper**: Import all your songs, setlists, tags, and data from Setlist Helper with one tap.
+- **Tags and Organization**: Tag songs by genre, key, tempo, or any custom category for fast filtering.
+- **Song Search**: Search your library by song name, artist, or genre.
+- **Offline Support**: Access your songs and setlists even without an internet connection.
+
+## Who Uses Band Central
+
+- **Worship teams and church musicians**: Collaborate on worship sets, share lyrics and chord charts, and perform with auto-scrolling lyrics. A musician-focused alternative to Planning Center Services and PraiseCharts.
+- **Cover bands and gigging musicians**: Organize your repertoire, build show setlists, track set timing, and share with bandmates. Manage hundreds of songs across dozens of gigs.
+- **Ukulele groups and jam sessions**: Share chord charts and lyrics for group play-alongs. Simple enough for casual players, powerful enough for serious musicians.
+- **Community sing-along groups**: Display large scrolling lyrics for group singing with older adults, care homes, music therapy, and community organizations.
+- **Solo performers and singer-songwriters**: Manage your entire song library with lyrics, keys, tempos, and performance notes.
+- **Music teachers and students**: Organize teaching materials, chord charts, and sheet music. Share collections with students.
+- **Choir directors**: Manage song selections, lyrics, and performance order for choir rehearsals and concerts.
+
+## Why Choose Band Central
+
+- **Built for collaboration**: Share songs and setlists with your band in real-time — no emailing files back and forth
+- **Cross-platform**: Works on iOS, Android, and web — no lock-in to Apple devices
+- **Modern architecture**: Built on Firebase for instant sync, offline support, and reliability
+- **Affordable**: Simple pricing without the complexity of enterprise church management software
+- **Easy migration**: Import your entire Setlist Helper library with one tap
+- **Active development**: Regular updates with new features driven by musician feedback
+- **Trusted heritage**: Built on over 10 years of Setlist Helper development and thousands of active users
+
+## Important Links
+
+- [Band Central Website](https://www.bandcentral.com): Main website and web app
+- [Band Central iOS](https://apps.apple.com/app/band-central/id6504877701): Band Central on the App Store
+- [Band Central Android](https://play.google.com/store/apps/details?id=com.app.bandcentral): Band Central on Google Play
+- [Setlist Helper Website](https://www.setlisthelper.com): Legacy Setlist Helper web app
+- [Setlist Helper FAQ](https://www.setlisthelper.com/Home/FAQ): Frequently asked questions
+
+## Setlist Helper
+
+Setlist Helper is the original app that Band Central builds upon. Trusted by musicians for over 10 years, it offers setlist management, lyrics display, auto-scroll, ChordPro support, and cloud sync. Existing Setlist Helper users can migrate their data to Band Central while keeping full access to Setlist Helper.
+
+- [Setlist Helper iOS](https://apps.apple.com/app/setlist-helper/id1035735714): Setlist Helper on the App Store
+- [Setlist Helper Android](https://play.google.com/store/apps/details?id=com.app.slh): Setlist Helper on Google Play
