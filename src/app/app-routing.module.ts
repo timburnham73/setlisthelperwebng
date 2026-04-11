@@ -90,6 +90,13 @@ const appRoutes: Routes = [
       import("./features/tools/tools.module").then((m) => m.ToolsModule),
   },
   {
+    path: "why",
+    loadChildren: () =>
+      import("./features/why-band-central/why-band-central.module").then(
+        (m) => m.WhyBandCentralModule
+      ),
+  },
+  {
     path: "**",
     redirectTo: "home",
     pathMatch: "full",

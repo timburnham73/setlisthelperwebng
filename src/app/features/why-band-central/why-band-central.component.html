@@ -1,0 +1,157 @@
+<app-header></app-header>
+
+<div class="why-container">
+
+  <section class="hero-section">
+    <h1>Why Band Central?</h1>
+    <p class="hero-subtitle">If you play music with other people, Band Central is for you.</p>
+  </section>
+
+  <section class="intro-section">
+    <p><strong>Setlist Helper</strong> is a great tool for solo musicians — manage your songs, lyrics, and setlists on your own device.</p>
+    <p><strong>Band Central</strong> is built for <strong>collaboration</strong>. If any of these sound familiar, Band Central is the right choice:</p>
+  </section>
+
+  <section class="features-section">
+    <div class="feature-card">
+      <mat-icon class="feature-icon">groups</mat-icon>
+      <h2>You're in a band or worship team</h2>
+      <p>Every member sees the same songs and setlists in real time. Add a song on your phone, and it's on your bandmate's tablet before you put yours down. No more texting setlists or emailing PDF charts.</p>
+    </div>
+
+    <div class="feature-card">
+      <mat-icon class="feature-icon">lyrics</mat-icon>
+      <h2>Everyone needs different lyrics</h2>
+      <p>The guitarist wants the chord chart. The singer wants the full lyrics. The keyboard player wants the lead sheet PDF. With Band Central, each member sets their own default lyric version — same song, personalized view.</p>
+    </div>
+
+    <div class="feature-card">
+      <mat-icon class="feature-icon">swap_horiz</mat-icon>
+      <h2>You play in multiple groups</h2>
+      <p>Cover band on Fridays, worship team on Sundays, acoustic duo on Wednesdays? Create a separate band for each one. Switch between them with a tap. Your songs and setlists stay organized and separate.</p>
+    </div>
+
+    <div class="feature-card">
+      <mat-icon class="feature-icon">sync</mat-icon>
+      <h2>You need real-time sync</h2>
+      <p>Changes sync instantly across iOS, Android, and the web. No sync button. No waiting. Edit a setlist on your laptop and it's updated on every device immediately.</p>
+    </div>
+
+    <div class="feature-card">
+      <mat-icon class="feature-icon">devices</mat-icon>
+      <h2>You want to manage your band from anywhere</h2>
+      <p>Add or remove band members, organize songs by tags, build setlists, and assign lyrics — all from your phone, tablet, or computer at bandcentral.com.</p>
+    </div>
+  </section>
+
+  <section class="video-section">
+    <h2>See Band Central in Action</h2>
+    <div class="section-divider"></div>
+    <p>Watch a 5-minute walkthrough of the core features.</p>
+    <div class="video-wrapper">
+      <iframe [src]="videoUrl"
+              title="Band Central Overview"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen></iframe>
+    </div>
+  </section>
+
+  <section class="comparison-section">
+    <h2>Setlist Helper vs Band Central</h2>
+    <div class="section-divider"></div>
+    <div class="comparison-table-wrapper">
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Setlist Helper</th>
+            <th>Band Central</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Songs & setlists</td>
+            <td><mat-icon class="check">check_circle</mat-icon></td>
+            <td><mat-icon class="check">check_circle</mat-icon></td>
+          </tr>
+          <tr>
+            <td>ChordPro, PDF, Word docs</td>
+            <td><mat-icon class="check">check_circle</mat-icon></td>
+            <td><mat-icon class="check">check_circle</mat-icon></td>
+          </tr>
+          <tr>
+            <td>Auto-scroll & metronome</td>
+            <td><mat-icon class="check">check_circle</mat-icon></td>
+            <td><mat-icon class="check">check_circle</mat-icon></td>
+          </tr>
+          <tr>
+            <td>Transpose</td>
+            <td><mat-icon class="check">check_circle</mat-icon></td>
+            <td><mat-icon class="check">check_circle</mat-icon></td>
+          </tr>
+          <tr>
+            <td>Bluetooth pedal support</td>
+            <td><mat-icon class="check">check_circle</mat-icon></td>
+            <td><mat-icon class="check">check_circle</mat-icon></td>
+          </tr>
+          <tr class="highlight-row">
+            <td>Multiple bands</td>
+            <td><mat-icon class="no">cancel</mat-icon></td>
+            <td><mat-icon class="check">check_circle</mat-icon></td>
+          </tr>
+          <tr class="highlight-row">
+            <td>Band members</td>
+            <td><mat-icon class="no">cancel</mat-icon></td>
+            <td><mat-icon class="check">check_circle</mat-icon></td>
+          </tr>
+          <tr class="highlight-row">
+            <td>Real-time sync</td>
+            <td>Manual sync</td>
+            <td><mat-icon class="check">check_circle</mat-icon> Automatic</td>
+          </tr>
+          <tr class="highlight-row">
+            <td>Per-member default lyrics</td>
+            <td><mat-icon class="no">cancel</mat-icon></td>
+            <td><mat-icon class="check">check_circle</mat-icon></td>
+          </tr>
+          <tr class="highlight-row">
+            <td>Web access</td>
+            <td>setlisthelper.com</td>
+            <td>bandcentral.com</td>
+          </tr>
+          <tr class="highlight-row">
+            <td>Platforms</td>
+            <td>iOS, Android</td>
+            <td>iOS, Android, Web</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="solo-section">
+    <h2>Who should stay on Setlist Helper?</h2>
+    <p>If you're a solo musician who doesn't need to share songs with anyone, Setlist Helper is simple and does the job well. We're not abandoning it — it continues to receive updates and bug fixes.</p>
+  </section>
+
+  <section class="cta-section">
+    <h2>Ready to try Band Central?</h2>
+    <p>Download it free on iOS or Android, or visit bandcentral.com to get started.</p>
+    <div class="cta-buttons">
+      <a mat-raised-button href="https://apps.apple.com/app/band-central/id6504522042" target="_blank" class="cta-btn">
+        <mat-icon>apple</mat-icon> App Store
+      </a>
+      <a mat-raised-button href="https://play.google.com/store/apps/details?id=com.app.bandcentral" target="_blank" class="cta-btn">
+        <mat-icon>shop</mat-icon> Google Play
+      </a>
+      <a mat-raised-button href="https://www.bandcentral.com" target="_blank" class="cta-btn primary">
+        bandcentral.com
+      </a>
+    </div>
+    <p class="migration-link">Already a Setlist Helper user? <a routerLink="/help/migration">Migrate your data in minutes</a>.</p>
+  </section>
+
+</div>
+
+<app-footer></app-footer>
