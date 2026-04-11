@@ -1,0 +1,44 @@
+<app-header></app-header>
+
+<div class="tool-page">
+  <div class="tool-header">
+    <a routerLink="/tools" class="back-link">
+      <mat-icon>arrow_back</mat-icon> All Tools
+    </a>
+    <h1>BPM Tap Tempo</h1>
+    <p class="tool-subtitle">Tap the button or press spacebar to detect the tempo</p>
+  </div>
+
+  <mat-card class="tap-card">
+    <mat-card-content>
+      <div class="bpm-display">
+        <span class="bpm-number">{{ bpm || '—' }}</span>
+        <span class="bpm-label">BPM</span>
+      </div>
+
+      @if (getTempoMarking()) {
+        <div class="tempo-marking">{{ getTempoMarking() }}</div>
+      }
+
+      <button class="tap-button" (click)="tap()" (touchstart)="tap(); $event.preventDefault()">
+        TAP
+      </button>
+
+      <div class="tap-info">
+        @if (tapCount > 0) {
+          <span class="tap-count">{{ tapCount }} taps</span>
+        } @else {
+          <span class="tap-hint">Tap the button or press spacebar</span>
+        }
+      </div>
+
+      <button mat-stroked-button (click)="reset()" class="reset-button">
+        <mat-icon>refresh</mat-icon> Reset
+      </button>
+    </mat-card-content>
+  </mat-card>
+
+  <div class="cta-section">
+    <p>Save tempos to your songs with <a routerLink="/home">Band Central</a> — the complete band management platform.</p>
+  </div>
+</div>

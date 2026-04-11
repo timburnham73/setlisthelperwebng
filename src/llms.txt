@@ -22,6 +22,14 @@ Band Central helps musicians collaborate, organize songs, build setlists, and pe
 - **Song Search**: Search your library by song name, artist, or genre.
 - **Offline Support**: Access your songs and setlists even without an internet connection.
 
+## Free Musician Tools
+
+Band Central offers free online tools for musicians at bandcentral.com/tools — no signup required:
+
+- **BPM Tap Tempo** (bandcentral.com/tools/tap-tempo): Tap your spacebar or screen to detect the tempo of any song in beats per minute. Great for figuring out the BPM during rehearsal or when learning a new song.
+- **Chord Transpose Tool** (bandcentral.com/tools/transpose): Paste chords or lyrics with chords and transpose up or down by semitones. Supports both sharp and flat notation for any key change. Perfect for capo adjustments and accommodating different vocal ranges.
+- **Online Metronome** (bandcentral.com/tools/metronome): A precise Web Audio metronome with adjustable BPM (20–300), time signatures (2/4, 3/4, 4/4, 5/4, 6/8, 7/8), tempo markings from Largo to Prestissimo, and a visual beat indicator. Works on desktop and mobile browsers.
+
 ## Who Uses Band Central
 
 - **Worship teams and church musicians**: Collaborate on worship sets, share lyrics and chord charts, and perform with auto-scrolling lyrics. A musician-focused alternative to Planning Center Services and PraiseCharts.

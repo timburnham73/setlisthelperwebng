@@ -1,0 +1,33 @@
+<app-header></app-header>
+
+<div class="tools-page">
+  <div class="tools-hero">
+    <h1>Free Musician Tools</h1>
+    <p class="subtitle">Online tools for musicians — no signup required</p>
+  </div>
+
+  <div class="tools-grid">
+    @for (tool of tools; track tool.route) {
+      <mat-card class="tool-card" [routerLink]="tool.route">
+        <mat-card-content>
+          <div class="tool-icon">
+            <mat-icon>{{ tool.icon }}</mat-icon>
+          </div>
+          <h2>{{ tool.name }}</h2>
+          <p>{{ tool.description }}</p>
+          <button mat-flat-button color="primary" [routerLink]="tool.route">Open Tool</button>
+        </mat-card-content>
+      </mat-card>
+    }
+  </div>
+
+  <div class="cta-section">
+    <mat-card class="cta-card">
+      <mat-card-content>
+        <h3>Need more than just tools?</h3>
+        <p>Band Central is a complete band management platform — organize songs, build setlists, collaborate with your band, and perform live with auto-scrolling lyrics and chord charts.</p>
+        <a mat-flat-button color="accent" routerLink="/home">Learn More About Band Central</a>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

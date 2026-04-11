@@ -53,45 +53,33 @@ import { SharedModule } from "./app/shared/shared.module";
 import { CoreModule } from "./app/core/core.module";
 import { BrowserAnimationsModule, provideAnimations } from "@angular/platform-browser/animations";
 import { BrowserModule, bootstrapApplication } from "@angular/platform-browser";
-import {
-  getFirestore,
-  initializeFirestore,
-  persistentLocalCache,
-  provideFirestore,
-} from "@angular/fire/firestore";
-import { getApp, initializeApp, provideFirebaseApp } from "@angular/fire/app";
-import {
-  connectFunctionsEmulator,
-  getFunctions,
-  provideFunctions,
-} from "@angular/fire/functions";
-import { connectAuthEmulator, getAuth, provideAuth } from "@angular/fire/auth";
-import { connectFirestoreEmulator } from "@angular/fire/firestore";
+// Modular Firebase imports (unused — using compat API via AngularFireModule)
+// import { getFirestore, initializeFirestore, persistentLocalCache, provideFirestore } from "@angular/fire/firestore";
+// import { getApp, initializeApp, provideFirebaseApp } from "@angular/fire/app";
+// import { connectFunctionsEmulator, getFunctions, provideFunctions } from "@angular/fire/functions";
+// import { connectAuthEmulator, getAuth, provideAuth } from "@angular/fire/auth";
+// import { connectFirestoreEmulator } from "@angular/fire/firestore";
 //import { NgxMatDatetimePickerModule, NgxMatTimepickerModule } from '@angular-material-components/datetime-picker';
 if (environment.production) {
   enableProdMode();
-} else {
-  console.log(environment.production);
 }
 
 bootstrapApplication(AppComponent, {
   providers: [
     importProvidersFrom(
       AngularFireModule.initializeApp(environment.firebase),
+      AngularFirestoreModule,
       AngularFireAuthModule,
+      AngularFireAuthGuardModule,
+      AngularFireAnalyticsModule,
       AngularFireFunctionsModule,
+      AngularFireStorageModule,
       BrowserModule,
       BrowserAnimationsModule,
-      
       CoreModule,
       SharedModule,
       CustomMaterialModule.forRoot(),
       AppRoutingModule,
-      // LoggerModule.forRoot({
-      //   serverLoggingUrl: `https://www.songsetter.com/logs`,
-      //   level: environment.logLevel,
-      //   serverLogLevel: environment.serverLogLevel,
-      // }),
       NgxsModule.forRoot([], {
         selectorOptions: {
           injectContainerState: false,
@@ -102,31 +90,16 @@ bootstrapApplication(AppComponent, {
       MatDividerModule,
       MatButtonModule,
       MatProgressBarModule,
-      AngularFireModule.initializeApp(environment.firebase),
-      AngularFirestoreModule.enablePersistence({ synchronizeTabs: true }),
-      AngularFireAuthModule,
-      AngularFireAuthGuardModule,
-      AngularFireAnalyticsModule,
-      AngularFireFunctionsModule,
-      AngularFireStorageModule,
-      // provide modular style for AppCheck, see app.browser/server
-
     ),
-    provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideStates([SongState, ArtistState, GenreState]),
     provideAnimations(),
-    {
-      provide: FIRESTORE_SETTINGS,
-      useValue: { ignoreUndefinedProperties: true },
-    },
+    { provide: FIRESTORE_SETTINGS, useValue: { ignoreUndefinedProperties: true, merge: true } },
     { provide: USE_AUTH_EMULATOR, useValue: environment.useEmulators ? ['http://localhost:9099'] : undefined },
     { provide: USE_FIRESTORE_EMULATOR, useValue: environment.useEmulators ? ['localhost', 8080] : undefined },
     { provide: USE_FUNCTIONS_EMULATOR, useValue: environment.useEmulators ? ['localhost', 5001] : undefined },
     { provide: USE_STORAGE_EMULATOR, useValue: environment.useEmulators ? ['localhost', 9199] : undefined },
-    { provide: FIRESTORE_SETTINGS, useValue: { ignoreUndefinedProperties: true } },
-    { provide: ANALYTICS_DEBUG_MODE, useValue: true },
+    { provide: ANALYTICS_DEBUG_MODE, useValue: false },
     { provide: COLLECTION_ENABLED, useValue: true },
-    
     { provide: USE_DEVICE_LANGUAGE, useValue: true },
     { provide: APP_VERSION, useValue: '0.0.0' },
     { provide: APP_NAME, useValue: 'Angular' },

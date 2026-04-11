@@ -1,0 +1,68 @@
+<app-header></app-header>
+
+<div class="tool-page">
+  <div class="tool-header">
+    <a routerLink="/tools" class="back-link">
+      <mat-icon>arrow_back</mat-icon> All Tools
+    </a>
+    <h1>Chord Transpose</h1>
+    <p class="tool-subtitle">Paste chords or lyrics and transpose to any key</p>
+  </div>
+
+  <mat-card class="transpose-card">
+    <mat-card-content>
+      <div class="controls-row">
+        <button mat-fab color="primary" (click)="transposeDown()" aria-label="Transpose down">
+          <mat-icon>remove</mat-icon>
+        </button>
+
+        <div class="semitone-display">
+          <span class="semitone-number">{{ semitones >= 0 ? '+' : '' }}{{ semitones }}</span>
+          <span class="semitone-label">{{ getKeyLabel() }}</span>
+        </div>
+
+        <button mat-fab color="primary" (click)="transposeUp()" aria-label="Transpose up">
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+
+      <div class="options-row">
+        <mat-button-toggle-group [(value)]="useFlats" (change)="onInputChange()">
+          <mat-button-toggle [value]="false">Sharps (♯)</mat-button-toggle>
+          <mat-button-toggle [value]="true">Flats (♭)</mat-button-toggle>
+        </mat-button-toggle-group>
+
+        <button mat-stroked-button (click)="resetTranspose()" [disabled]="semitones === 0">
+          <mat-icon>refresh</mat-icon> Reset
+        </button>
+      </div>
+
+      <div class="text-areas">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Paste chords or lyrics here</mat-label>
+          <textarea matInput [(ngModel)]="inputText" (ngModelChange)="onInputChange()"
+                    rows="8" placeholder="e.g. C Am F G" class="chord-input"></textarea>
+        </mat-form-field>
+
+        @if (!inputText) {
+          <div class="sample-prompt">
+            <button mat-stroked-button (click)="loadSample()">
+              <mat-icon>music_note</mat-icon> Load sample chords
+            </button>
+          </div>
+        }
+
+        @if (transposedText) {
+          <div class="output-section">
+            <label class="output-label">Transposed:</label>
+            <pre class="output-text">{{ transposedText }}</pre>
+          </div>
+        }
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <div class="cta-section">
+    <p>Band Central has built-in ChordPro transposition — <a routerLink="/home">learn more</a>.</p>
+  </div>
+</div>

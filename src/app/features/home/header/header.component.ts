@@ -63,4 +63,9 @@ export class HeaderComponent {
     this.router.navigate(['/contact']);
   }
 
+  navigateToTools() {
+    this.menuOpened = false;
+    this.router.navigate(['/tools']);
+  }
+
 }

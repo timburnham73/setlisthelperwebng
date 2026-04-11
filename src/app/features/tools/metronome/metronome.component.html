@@ -1,0 +1,93 @@
+<app-header></app-header>
+
+<div class="tool-page">
+  <div class="tool-header">
+    <a routerLink="/tools" class="back-link">
+      <mat-icon>arrow_back</mat-icon> All Tools
+    </a>
+    <h1>Online Metronome</h1>
+    <p class="tool-subtitle">Precise tempo keeping with visual beat indicator</p>
+  </div>
+
+  <mat-card class="metronome-card">
+    <mat-card-content>
+      <!-- Tempo Marking -->
+      <div class="tempo-marking">{{ getTempoMarking() }}</div>
+
+      <!-- BPM Display -->
+      <div class="bpm-display">
+        <button mat-icon-button (click)="adjustBpm(-1)" class="bpm-adjust" aria-label="Decrease BPM">
+          <mat-icon>remove</mat-icon>
+        </button>
+        <div class="bpm-center">
+          <input type="number" [(ngModel)]="bpm" (change)="onBpmInputChange()"
+                 min="20" max="300" class="bpm-input" aria-label="BPM">
+          <span class="bpm-label">BPM</span>
+        </div>
+        <button mat-icon-button (click)="adjustBpm(1)" class="bpm-adjust" aria-label="Increase BPM">
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+
+      <!-- BPM Slider -->
+      <div class="slider-container">
+        <span class="slider-label">20</span>
+        <mat-slider min="20" max="300" step="1" class="bpm-slider">
+          <input matSliderThumb [ngModel]="bpm" (ngModelChange)="onBpmSliderChange($event)">
+        </mat-slider>
+        <span class="slider-label">300</span>
+      </div>
+
+      <!-- Beat Indicator -->
+      <div class="beat-indicator">
+        @for (beat of getBeatsArray(); track beat) {
+          <div class="beat-dot"
+               [ngClass]="{
+                 'active': currentBeat === beat,
+                 'accent': beat === 0 && currentBeat === beat
+               }">
+          </div>
+        }
+      </div>
+
+      <!-- Play/Stop Button -->
+      <button class="play-button" [ngClass]="{ 'playing': isPlaying }" (click)="togglePlay()">
+        <mat-icon>{{ isPlaying ? 'stop' : 'play_arrow' }}</mat-icon>
+      </button>
+
+      <!-- Controls Row -->
+      <div class="controls-row">
+        <!-- Time Signature -->
+        <mat-form-field appearance="outline" class="time-sig-field">
+          <mat-label>Time Signature</mat-label>
+          <mat-select [(value)]="selectedTimeSignature" (selectionChange)="onTimeSignatureChange()">
+            @for (ts of timeSignatures; track ts.label) {
+              <mat-option [value]="ts">{{ ts.label }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Tap Tempo -->
+        <button mat-stroked-button (click)="tapTempo()" class="tap-tempo-btn"
+                (touchstart)="tapTempo(); $event.preventDefault()">
+          <mat-icon>touch_app</mat-icon> Tap Tempo
+        </button>
+      </div>
+
+      <!-- Tempo Marking Reference -->
+      <div class="tempo-reference">
+        <div class="tempo-ref-item">Largo 40–60</div>
+        <div class="tempo-ref-item">Adagio 66–76</div>
+        <div class="tempo-ref-item">Andante 76–108</div>
+        <div class="tempo-ref-item">Moderato 108–120</div>
+        <div class="tempo-ref-item">Allegro 120–156</div>
+        <div class="tempo-ref-item">Vivace 156–176</div>
+        <div class="tempo-ref-item">Presto 176–200</div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <div class="cta-section">
+    <p>Band Central has a built-in metronome for rehearsal and live performance — <a routerLink="/home">learn more</a>.</p>
+  </div>
+</div>

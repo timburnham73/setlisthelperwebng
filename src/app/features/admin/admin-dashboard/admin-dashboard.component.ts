@@ -7,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTabsModule } from '@angular/material/tabs';
 import { FlexLayoutModule } from 'ngx-flexible-layout';
 import { FormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
@@ -21,10 +22,34 @@ import { ENTITLEMENT_LIMITS } from 'src/app/core/model/entitlement-limits';
 import { forkJoin, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
+// --- Bands Tab Interfaces ---
+export interface BandMember {
+    displayName: string;
+    email: string;
+    uid: string;
+    role: string;
+    isOwner: boolean;
+}
+
+export interface AdminBandRow {
+    accountId: string;
+    name: string;
+    ownerName: string;
+    ownerEmail: string;
+    countOfSongs: number;
+    countOfSetlists: number;
+    memberCount: number;
+    entitlementLevel: string;
+    dateCreated: Date | null;
+    members: BandMember[];
+}
+
+// --- Users Tab Interfaces ---
 export interface AccountDetail {
     name: string;
     countOfSongs: number;
     countOfSetlists: number;
+    memberCount: number;
     entitlementLevel: string;
     accountId: string;
 }
@@ -34,8 +59,6 @@ export interface AdminUserRow {
     email: string;
     displayName: string;
     countOfAccounts: number;
-    countOfSongs: number;
-    countOfSetlists: number;
     entitlementLevel: string;
     dateCreated: Date | null;
     lastLoginDate: Date | null;
@@ -57,6 +80,7 @@ export interface AdminUserRow {
         MatSortModule,
         MatCardModule,
         MatProgressSpinnerModule,
+        MatTabsModule,
         FlexLayoutModule,
         FormsModule,
         MatSelectModule,
@@ -68,11 +92,20 @@ export interface AdminUserRow {
     ]
 })
 export class AdminDashboardComponent implements OnInit {
-    displayedColumns: string[] = ['expand', 'email', 'displayName', 'countOfAccounts', 'countOfSongs', 'countOfSetlists', 'entitlementLevel', 'dateCreated', 'lastLoginDate', 'actions'];
-    dataSource: AdminUserRow[] = [];
-    isLoading = true;
+    // Bands tab
+    bandDisplayedColumns: string[] = ['expand', 'name', 'ownerName', 'countOfSongs', 'countOfSetlists', 'memberCount', 'entitlementLevel', 'dateCreated', 'actions'];
+    bandDataSource: AdminBandRow[] = [];
+    isLoadingBands = true;
+    bandCount = 0;
+    expandedBandId: string | null = null;
+
+    // Users tab
+    userDisplayedColumns: string[] = ['expand', 'email', 'displayName', 'countOfAccounts', 'entitlementLevel', 'dateCreated', 'lastLoginDate', 'actions'];
+    userDataSource: AdminUserRow[] = [];
+    isLoadingUsers = true;
     userCount = 0;
     expandedUid: string | null = null;
+
     currentAdminUid: string = '';
     entitlementOptions = Object.keys(ENTITLEMENT_LIMITS);
 
@@ -92,25 +125,141 @@ export class AdminDashboardComponent implements OnInit {
                 this.currentAdminUid = user.uid;
             }
         });
-        this.loadUsers();
+        this.loadBands();
     }
 
-    toggleExpand(row: AdminUserRow): void {
+    onTabChange(event: any): void {
+        if (event.index === 0 && this.bandDataSource.length === 0) {
+            this.loadBands();
+        } else if (event.index === 1 && this.userDataSource.length === 0) {
+            this.loadUsers();
+        }
+    }
+
+    // ==================== BANDS TAB ====================
+
+    toggleBandExpand(row: AdminBandRow): void {
+        if (this.expandedBandId === row.accountId) {
+            this.expandedBandId = null;
+        } else {
+            this.expandedBandId = row.accountId;
+            // Lazy load members if not loaded yet
+            if (!row.members || row.members.length === 0) {
+                this.accountService.getAccountUsers(row.accountId).subscribe(users => {
+                    row.members = users.map(u => ({
+                        displayName: (u as any).displayName || '',
+                        email: (u as any).email || '',
+                        uid: (u as any).uid || '',
+                        role: (u as any).role || 'Member',
+                        isOwner: (u as any).isOwner === true,
+                    }));
+                    row.memberCount = row.members.length;
+                });
+            }
+        }
+    }
+
+    private loadBands(): void {
+        this.isLoadingBands = true;
+        this.accountService.getAllAccounts().subscribe(accounts => {
+            this.bandCount = accounts.length;
+            this.bandDataSource = accounts.map(a => ({
+                accountId: a.id || '',
+                name: a.name || '',
+                ownerName: a.ownerUser?.displayName || '',
+                ownerEmail: a.ownerUser?.email || '',
+                countOfSongs: a.countOfSongs || 0,
+                countOfSetlists: a.countOfSetlists || 0,
+                memberCount: a.users?.length || 0,
+                entitlementLevel: a.entitlementLevel || 'free',
+                dateCreated: a.dateCreated ? a.dateCreated.toDate() : null,
+                members: [],
+            }));
+            this.isLoadingBands = false;
+        });
+    }
+
+    onChangeBandEntitlement(row: AdminBandRow, newLevel: string): void {
+        this.accountService.updateAccountDirect(row.accountId, { entitlementLevel: newLevel });
+        row.entitlementLevel = newLevel;
+    }
+
+    addAdminToBand(row: AdminBandRow): void {
+        this.accountService.getAccount(row.accountId).subscribe(fullAccount => {
+            if (!fullAccount.users?.includes(this.currentAdminUid)) {
+                fullAccount.users = fullAccount.users || [];
+                fullAccount.users.push(this.currentAdminUid);
+                this.accountService.updateAccountDirect(row.accountId, { users: fullAccount.users });
+
+                this.userService.getUserById(this.currentAdminUid).subscribe(adminUser => {
+                    if (adminUser) {
+                        const accountUserRef = this.accountService.getAccountUsersRef(row.accountId);
+                        accountUserRef.add({
+                            uid: adminUser.uid,
+                            displayName: adminUser.displayName,
+                            email: adminUser.email,
+                            role: 'Admin',
+                            systemAdmin: true,
+                        });
+                        this.snackBar.open(`Added to ${row.name}`, 'OK', { duration: 3000 });
+                    }
+                });
+            } else {
+                this.snackBar.open('Already a member of this band', 'OK', { duration: 3000 });
+            }
+        });
+    }
+
+    removeAdminFromBand(row: AdminBandRow): void {
+        this.accountService.getAccount(row.accountId).subscribe(fullAccount => {
+            const idx = fullAccount.users?.indexOf(this.currentAdminUid);
+            if (idx !== undefined && idx > -1) {
+                fullAccount.users?.splice(idx, 1);
+                this.accountService.updateAccountDirect(row.accountId, { users: fullAccount.users });
+            }
+            const accountUserRef = this.accountService.getAccountUsersRef(row.accountId);
+            accountUserRef.ref.where('uid', '==', this.currentAdminUid).get().then(snapshot => {
+                snapshot.forEach(doc => doc.ref.delete());
+            });
+            this.snackBar.open(`Removed from ${row.name}`, 'OK', { duration: 3000 });
+        });
+    }
+
+    sortBandData(sort: Sort): void {
+        const data = [...this.bandDataSource];
+        if (!sort.active || sort.direction === '') {
+            this.bandDataSource = data;
+            return;
+        }
+        this.bandDataSource = data.sort((a, b) => {
+            const isAsc = sort.direction === 'asc';
+            switch (sort.active) {
+                case 'name': return compare(a.name, b.name, isAsc);
+                case 'ownerName': return compare(a.ownerName, b.ownerName, isAsc);
+                case 'countOfSongs': return compare(a.countOfSongs, b.countOfSongs, isAsc);
+                case 'countOfSetlists': return compare(a.countOfSetlists, b.countOfSetlists, isAsc);
+                case 'memberCount': return compare(a.memberCount, b.memberCount, isAsc);
+                case 'entitlementLevel': return compare(a.entitlementLevel, b.entitlementLevel, isAsc);
+                case 'dateCreated': return compare(a.dateCreated?.getTime() || 0, b.dateCreated?.getTime() || 0, isAsc);
+                default: return 0;
+            }
+        });
+    }
+
+    // ==================== USERS TAB ====================
+
+    toggleUserExpand(row: AdminUserRow): void {
         this.expandedUid = this.expandedUid === row.uid ? null : row.uid;
     }
 
     private loadUsers(): void {
-        this.isLoading = true;
+        this.isLoadingUsers = true;
         this.userService.getAllUsers().subscribe(users => {
             this.userCount = users.length;
 
             const userQueries = users.map(user =>
                 this.accountService.getAccounts(user.uid).pipe(
                     map(accounts => {
-                        const totalSongs = accounts.reduce((sum, a) => sum + (a.countOfSongs || 0), 0);
-                        const totalSetlists = accounts.reduce((sum, a) => sum + (a.countOfSetlists || 0), 0);
-                        const entitlement = accounts.length > 0 ? (accounts[0].entitlementLevel || 'free') : 'free';
-                        // Use earliest account dateCreated, fall back to user dateCreated or lastLoginDate
                         const accountDates = accounts
                             .filter(a => a.dateCreated)
                             .map(a => a.dateCreated.toDate())
@@ -121,6 +270,7 @@ export class AdminDashboardComponent implements OnInit {
                             name: a.name,
                             countOfSongs: a.countOfSongs || 0,
                             countOfSetlists: a.countOfSetlists || 0,
+                            memberCount: a.users?.length || 0,
                             entitlementLevel: a.entitlementLevel || 'free',
                             accountId: a.id || '',
                         }));
@@ -129,9 +279,7 @@ export class AdminDashboardComponent implements OnInit {
                             email: user.email || '',
                             displayName: user.displayName || '',
                             countOfAccounts: accounts.length,
-                            countOfSongs: totalSongs,
-                            countOfSetlists: totalSetlists,
-                            entitlementLevel: entitlement,
+                            entitlementLevel: user.entitlementLevel || 'free',
                             dateCreated: createdDate,
                             lastLoginDate: user.lastLoginDate ? user.lastLoginDate.toDate() : null,
                             accounts: accountDetails,
@@ -143,9 +291,7 @@ export class AdminDashboardComponent implements OnInit {
                         email: user.email || '',
                         displayName: user.displayName || '',
                         countOfAccounts: 0,
-                        countOfSongs: 0,
-                        countOfSetlists: 0,
-                        entitlementLevel: 'free',
+                        entitlementLevel: user.entitlementLevel || 'free',
                         dateCreated: user.dateCreated ? user.dateCreated.toDate() : null,
                         lastLoginDate: user.lastLoginDate ? user.lastLoginDate.toDate() : null,
                         accounts: [],
@@ -155,21 +301,24 @@ export class AdminDashboardComponent implements OnInit {
             );
 
             forkJoin(userQueries).subscribe(rows => {
-                this.dataSource = rows;
-                this.isLoading = false;
+                this.userDataSource = rows;
+                this.isLoadingUsers = false;
             });
         });
     }
 
+    onChangeUserEntitlement(row: AdminUserRow, newLevel: string): void {
+        this.userService.updateUserEntitlement(row.uid, newLevel);
+        row.entitlementLevel = newLevel;
+    }
+
     addAdminToAccount(row: AdminUserRow, account: AccountDetail): void {
         this.accountService.getAccount(account.accountId).subscribe(fullAccount => {
-            // Add admin uid to the account's users array
             if (!fullAccount.users?.includes(this.currentAdminUid)) {
                 fullAccount.users = fullAccount.users || [];
                 fullAccount.users.push(this.currentAdminUid);
                 this.accountService.updateAccountDirect(account.accountId, { users: fullAccount.users });
 
-                // Add admin to account's users subcollection
                 this.userService.getUserById(this.currentAdminUid).subscribe(adminUser => {
                     if (adminUser) {
                         const accountUserRef = this.accountService.getAccountUsersRef(account.accountId);
@@ -188,36 +337,16 @@ export class AdminDashboardComponent implements OnInit {
 
     removeAdminFromAccount(row: AdminUserRow, account: AccountDetail): void {
         this.accountService.getAccount(account.accountId).subscribe(fullAccount => {
-            // Remove admin uid from the account's users array
             const idx = fullAccount.users?.indexOf(this.currentAdminUid);
             if (idx !== undefined && idx > -1) {
                 fullAccount.users?.splice(idx, 1);
                 this.accountService.updateAccountDirect(account.accountId, { users: fullAccount.users });
             }
-
-            // Remove admin from account's users subcollection
             const accountUserRef = this.accountService.getAccountUsersRef(account.accountId);
             accountUserRef.ref.where('uid', '==', this.currentAdminUid).get().then(snapshot => {
                 snapshot.forEach(doc => doc.ref.delete());
             });
         });
-    }
-
-    onChangeUserEntitlement(row: AdminUserRow, newLevel: string): void {
-        // Update user's entitlement
-        this.userService.updateUserEntitlement(row.uid, newLevel);
-        row.entitlementLevel = newLevel;
-
-        // Update all their accounts too
-        for (const account of row.accounts) {
-            this.accountService.updateAccountDirect(account.accountId, { entitlementLevel: newLevel });
-            account.entitlementLevel = newLevel;
-        }
-    }
-
-    onChangeEntitlement(account: AccountDetail, newLevel: string): void {
-        this.accountService.updateAccountDirect(account.accountId, { entitlementLevel: newLevel });
-        account.entitlementLevel = newLevel;
     }
 
     sendWelcomeEmail(row: AdminUserRow): void {
@@ -241,21 +370,19 @@ export class AdminDashboardComponent implements OnInit {
         });
     }
 
-    sortData(sort: Sort): void {
-        const data = [...this.dataSource];
+    sortUserData(sort: Sort): void {
+        const data = [...this.userDataSource];
         if (!sort.active || sort.direction === '') {
-            this.dataSource = data;
+            this.userDataSource = data;
             return;
         }
 
-        this.dataSource = data.sort((a, b) => {
+        this.userDataSource = data.sort((a, b) => {
             const isAsc = sort.direction === 'asc';
             switch (sort.active) {
                 case 'email': return compare(a.email, b.email, isAsc);
                 case 'displayName': return compare(a.displayName, b.displayName, isAsc);
                 case 'countOfAccounts': return compare(a.countOfAccounts, b.countOfAccounts, isAsc);
-                case 'countOfSongs': return compare(a.countOfSongs, b.countOfSongs, isAsc);
-                case 'countOfSetlists': return compare(a.countOfSetlists, b.countOfSetlists, isAsc);
                 case 'entitlementLevel': return compare(a.entitlementLevel, b.entitlementLevel, isAsc);
                 case 'dateCreated': return compare(a.dateCreated?.getTime() || 0, b.dateCreated?.getTime() || 0, isAsc);
                 case 'lastLoginDate': return compare(a.lastLoginDate?.getTime() || 0, b.lastLoginDate?.getTime() || 0, isAsc);

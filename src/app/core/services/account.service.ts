@@ -26,6 +26,15 @@ export class AccountService {
     this.accountsRef = db.collection(this.dbPath);
   }
 
+  getAllAccounts(): Observable<Account[]> {
+    return this.db
+      .collection(this.dbPath)
+      .get()
+      .pipe(
+        map(results => convertSnaps<Account>(results))
+      );
+  }
+
   getAccounts(userId: string): Observable<Account[]> {
     return this.db
       .collection(this.dbPath, (ref) =>

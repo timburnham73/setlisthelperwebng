@@ -25,8 +25,19 @@
     gap: 16px;
 }
 
+.tab-header {
+    padding: 12px 16px 4px;
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+.count-label {
+    font-weight: 500;
+}
+
 .table-card {
     overflow: hidden;
+    margin-top: 0;
 }
 
 .table-container {

@@ -85,6 +85,11 @@ const appRoutes: Routes = [
       import("./features/blog/blog.module").then((m) => m.BlogModule),
   },
   {
+    path: "tools",
+    loadChildren: () =>
+      import("./features/tools/tools.module").then((m) => m.ToolsModule),
+  },
+  {
     path: "**",
     redirectTo: "home",
     pathMatch: "full",

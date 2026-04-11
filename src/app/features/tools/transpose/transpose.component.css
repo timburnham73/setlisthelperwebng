@@ -1,0 +1,162 @@
+.tool-page {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 80px 16px 48px;
+}
+
+.tool-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #1976d2;
+  text-decoration: none;
+  font-size: 0.9rem;
+  margin-bottom: 16px;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+.tool-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 8px 0;
+  color: #333;
+}
+
+.tool-subtitle {
+  color: #666;
+  margin: 0;
+}
+
+.transpose-card {
+  padding: 24px 16px;
+}
+
+.controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 20px;
+}
+
+.semitone-display {
+  text-align: center;
+  min-width: 140px;
+}
+
+.semitone-number {
+  display: block;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1976d2;
+  line-height: 1;
+}
+
+.semitone-label {
+  display: block;
+  font-size: 0.85rem;
+  color: #999;
+  margin-top: 4px;
+}
+
+.options-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.chord-input {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.sample-prompt {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.output-section {
+  margin-top: 8px;
+}
+
+.output-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #666;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.output-text {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  background: #f5f5f5;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  margin: 0;
+}
+
+.cta-section {
+  text-align: center;
+  margin-top: 32px;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.cta-section a {
+  color: #1976d2;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.cta-section a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+  .tool-page {
+    padding: 70px 12px 32px;
+  }
+
+  .tool-header h1 {
+    font-size: 1.6rem;
+  }
+
+  .controls-row {
+    gap: 16px;
+  }
+
+  .semitone-number {
+    font-size: 2rem;
+  }
+
+  .semitone-display {
+    min-width: 100px;
+  }
+
+  .options-row {
+    gap: 8px;
+  }
+}
