@@ -102,9 +102,9 @@ www.bandcentral.com`;
       from: `"Band Central" <${smtpUser}>`,
       to: ownerEmail,
       replyTo: "support@bandcentral.com",
-      subject: isFreeTrial(newLevel)
-        ? "Welcome to Your Band Central Free Trial"
-        : "Thank You for Subscribing to Band Central",
+      subject: isFreeTrial(newLevel) ?
+        "Welcome to Your Band Central Free Trial" :
+        "Thank You for Subscribing to Band Central",
       text: emailBody,
     });
 
