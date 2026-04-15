@@ -10,9 +10,10 @@
     "watch": "ng build --watch --configuration development",
     "lint": "ng lint",
     "test": "ng test",
-    "build-production": "ng build --configuration=production --base-href=/setlist-helper/",
+    "build-production": "ng build --configuration=production --base-href=/",
     "build-debug": "ng build --configuration=development",
-    "deploy-debug": "npm run build-debug && firebase deploy --only hosting"
+    "deploy-debug": "npm run build-debug && firebase deploy --only hosting",
+    "deploy-production": "npm run build-production && firebase deploy --only hosting"
   },
   "private": true,
   "dependencies": {
