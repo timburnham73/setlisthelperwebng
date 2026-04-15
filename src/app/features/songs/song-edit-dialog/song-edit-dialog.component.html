@@ -18,22 +18,45 @@
     <mat-form-field appearance="outline" class="dialog-input-full-width">
       <mat-label>Key</mat-label>
       <mat-select formControlName="key">
-        <mat-option>None</mat-option>
-        <mat-option value="B">B</mat-option>
-        <mat-option value="Bb">Bb</mat-option>
-        <mat-option value="A">A</mat-option>
-        <mat-option value="Ab">Ab</mat-option>
-        <mat-option value="G">G</mat-option>
-        <mat-option value="Gb">Gb</mat-option>
-        <mat-option value="F#">F#</mat-option>
-        <mat-option value="F">F</mat-option>
-        <mat-option value="E">E</mat-option>
-        <mat-option value="Eb">Eb</mat-option>
-        <mat-option value="D">D</mat-option>
-        <mat-option value="Db">Db</mat-option>
-        <mat-option value="C#">C#</mat-option>
-        <mat-option value="C">C</mat-option>
-        <mat-option value="Cb">Cb</mat-option>
+        <mat-option value="">None</mat-option>
+        <mat-optgroup label="Major">
+          <mat-option value="A">A</mat-option>
+          <mat-option value="A#">A#</mat-option>
+          <mat-option value="Bb">Bb</mat-option>
+          <mat-option value="B">B</mat-option>
+          <mat-option value="C">C</mat-option>
+          <mat-option value="C#">C#</mat-option>
+          <mat-option value="Db">Db</mat-option>
+          <mat-option value="D">D</mat-option>
+          <mat-option value="D#">D#</mat-option>
+          <mat-option value="Eb">Eb</mat-option>
+          <mat-option value="E">E</mat-option>
+          <mat-option value="F">F</mat-option>
+          <mat-option value="F#">F#</mat-option>
+          <mat-option value="Gb">Gb</mat-option>
+          <mat-option value="G">G</mat-option>
+          <mat-option value="G#">G#</mat-option>
+          <mat-option value="Ab">Ab</mat-option>
+        </mat-optgroup>
+        <mat-optgroup label="Minor">
+          <mat-option value="Am">Am</mat-option>
+          <mat-option value="A#m">A#m</mat-option>
+          <mat-option value="Bbm">Bbm</mat-option>
+          <mat-option value="Bm">Bm</mat-option>
+          <mat-option value="Cm">Cm</mat-option>
+          <mat-option value="C#m">C#m</mat-option>
+          <mat-option value="Dbm">Dbm</mat-option>
+          <mat-option value="Dm">Dm</mat-option>
+          <mat-option value="D#m">D#m</mat-option>
+          <mat-option value="Ebm">Ebm</mat-option>
+          <mat-option value="Em">Em</mat-option>
+          <mat-option value="Fm">Fm</mat-option>
+          <mat-option value="F#m">F#m</mat-option>
+          <mat-option value="Gbm">Gbm</mat-option>
+          <mat-option value="Gm">Gm</mat-option>
+          <mat-option value="G#m">G#m</mat-option>
+          <mat-option value="Abm">Abm</mat-option>
+        </mat-optgroup>
       </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline" class="dialog-input-full-width">

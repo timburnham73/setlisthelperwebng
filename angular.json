@@ -29,7 +29,8 @@
             "assets": [
               "src/favicon.ico",
               "src/assets",
-              "src/llms.txt"
+              "src/llms.txt",
+              "src/sitemap.xml"
             ],
             "styles": [
               "src/styles.scss",

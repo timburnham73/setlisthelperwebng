@@ -75,6 +75,68 @@
   }
 }
 
+.hero-app-links {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.hero-app-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  background: #fff;
+  border: 1px solid #dadce0;
+  border-radius: 8px;
+  text-decoration: none;
+  color: rgba(0, 0, 0, 0.87);
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: #0A66C2;
+    box-shadow: 0 1px 4px rgba(10, 102, 194, 0.15);
+  }
+
+  mat-icon {
+    font-size: 28px;
+    width: 28px;
+    height: 28px;
+    color: #0A66C2;
+  }
+
+  > span {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+  }
+}
+
+.hero-app-link-label {
+  font-size: 11px;
+  color: rgba(0, 0, 0, 0.55);
+  line-height: 1.2;
+}
+
+.hero-app-link-store {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+@media (max-width: 480px) {
+  .hero-app-links {
+    flex-direction: column;
+    align-items: center;
+  }
+  .hero-app-link {
+    width: 220px;
+    justify-content: center;
+  }
+}
+
 // Video section
 .video-section {
   background: #f8f9fa;

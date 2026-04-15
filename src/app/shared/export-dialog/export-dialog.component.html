@@ -1,0 +1,26 @@
+<h2 mat-dialog-title>Export Songs</h2>
+<mat-dialog-content>
+  <p class="export-description">Select the columns to include in the export:</p>
+  <div class="select-all">
+    <mat-checkbox
+      [checked]="allSelected"
+      [indeterminate]="someSelected && !allSelected"
+      (change)="onSelectAll()">
+      Select All
+    </mat-checkbox>
+  </div>
+  <div class="column-list">
+    <mat-checkbox
+      *ngFor="let col of columns"
+      [(ngModel)]="col.selected"
+      class="column-checkbox">
+      {{ col.label }}
+    </mat-checkbox>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-raised-button color="primary" (click)="onExport()" [disabled]="!hasSelection">
+    Export
+  </button>
+  <button mat-button (click)="onCancel()">Cancel</button>
+</mat-dialog-actions>

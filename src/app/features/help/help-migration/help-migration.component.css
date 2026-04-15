@@ -110,6 +110,74 @@ ul, ol {
   font-size: 15px;
 }
 
+.app-links-banner {
+  margin-bottom: 16px;
+  padding: 20px 24px;
+  background: linear-gradient(135deg, #f0f7ff 0%, #e8f0fe 100%);
+  border-radius: 8px;
+  border: 1px solid #c4ddf5;
+}
+
+.app-links-banner h3 {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.app-links {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.app-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  background: #fff;
+  border: 1px solid #dadce0;
+  border-radius: 8px;
+  text-decoration: none;
+  color: rgba(0, 0, 0, 0.87);
+  transition: all 0.2s ease;
+}
+
+.app-link:hover {
+  border-color: #0A66C2;
+  box-shadow: 0 1px 4px rgba(10, 102, 194, 0.15);
+}
+
+.app-link mat-icon {
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
+  color: #0A66C2;
+}
+
+.app-link-label {
+  display: block;
+  font-size: 11px;
+  color: rgba(0, 0, 0, 0.55);
+  line-height: 1.2;
+}
+
+.app-link-store {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+@media (max-width: 480px) {
+  .app-links {
+    flex-direction: column;
+  }
+  .app-link {
+    justify-content: center;
+  }
+}
+
 .warning-card {
   margin-bottom: 16px;
   background-color: #fff8e1;

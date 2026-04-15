@@ -172,7 +172,7 @@ export class AdminDashboardComponent implements OnInit {
                 countOfSetlists: a.countOfSetlists || 0,
                 memberCount: a.users?.length || 0,
                 entitlementLevel: a.entitlementLevel || 'free',
-                dateCreated: a.dateCreated ? a.dateCreated.toDate() : null,
+                dateCreated: this.toDateSafe(a.dateCreated),
                 members: [],
             }));
             this.isLoadingBands = false;
@@ -261,11 +261,11 @@ export class AdminDashboardComponent implements OnInit {
                 this.accountService.getAccounts(user.uid).pipe(
                     map(accounts => {
                         const accountDates = accounts
-                            .filter(a => a.dateCreated)
-                            .map(a => a.dateCreated.toDate())
+                            .map(a => this.toDateSafe(a.dateCreated))
+                            .filter((d): d is Date => d !== null)
                             .sort((a, b) => a.getTime() - b.getTime());
                         const createdDate = accountDates.length > 0 ? accountDates[0]
-                            : (user.dateCreated ? user.dateCreated.toDate() : null);
+                            : this.toDateSafe(user.dateCreated);
                         const accountDetails: AccountDetail[] = accounts.map(a => ({
                             name: a.name,
                             countOfSongs: a.countOfSongs || 0,
@@ -281,7 +281,7 @@ export class AdminDashboardComponent implements OnInit {
                             countOfAccounts: accounts.length,
                             entitlementLevel: user.entitlementLevel || 'free',
                             dateCreated: createdDate,
-                            lastLoginDate: user.lastLoginDate ? user.lastLoginDate.toDate() : null,
+                            lastLoginDate: this.toDateSafe(user.lastLoginDate),
                             accounts: accountDetails,
                             isSystemAdmin: user.systemAdmin === true,
                         } as AdminUserRow;
@@ -292,8 +292,8 @@ export class AdminDashboardComponent implements OnInit {
                         displayName: user.displayName || '',
                         countOfAccounts: 0,
                         entitlementLevel: user.entitlementLevel || 'free',
-                        dateCreated: user.dateCreated ? user.dateCreated.toDate() : null,
-                        lastLoginDate: user.lastLoginDate ? user.lastLoginDate.toDate() : null,
+                        dateCreated: this.toDateSafe(user.dateCreated),
+                        lastLoginDate: this.toDateSafe(user.lastLoginDate),
                         accounts: [],
                         isSystemAdmin: user.systemAdmin === true,
                     } as AdminUserRow))
@@ -389,6 +389,18 @@ export class AdminDashboardComponent implements OnInit {
                 default: return 0;
             }
         });
+    }
+
+    private toDateSafe(value: any): Date | null {
+        if (!value) return null;
+        if (value instanceof Date) return value;
+        if (typeof value.toDate === 'function') return value.toDate();
+        if (typeof value === 'number' || typeof value === 'string') {
+            const d = new Date(value);
+            return isNaN(d.getTime()) ? null : d;
+        }
+        if (typeof value.seconds === 'number') return new Date(value.seconds * 1000);
+        return null;
     }
 }
 

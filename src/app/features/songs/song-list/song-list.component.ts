@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
 import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
 import { MatTableDataSource as MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { Title } from '@angular/platform-browser';
@@ -42,7 +42,9 @@ import { SetlistRef } from 'functions/src/model/setlist';
 import { FlexLayoutModule, FlexModule } from 'ngx-flexible-layout';
 import { MatSidenav } from '@angular/material/sidenav';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatMenuModule } from '@angular/material/menu';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { ExportColumn, ExportDialogComponent } from 'src/app/shared/export-dialog/export-dialog.component';
 
 @Component({
     selector: 'app-song-list',
@@ -66,7 +68,8 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
       MatSidenav,
       FlexModule,
       FlexLayoutModule,
-      MatPaginatorModule
+      MatPaginatorModule,
+      MatMenuModule
     ]
 })
 export class SongListComponent implements OnInit {
@@ -262,5 +265,103 @@ export class SongListComponent implements OnInit {
 
   getSongDetails(song: Song): string {
     return utilGetSongDetails(song);
+  }
+
+  private getExportColumns(): ExportColumn[] {
+    return [
+      { key: 'name', label: 'Name', selected: true },
+      { key: 'artist', label: 'Artist', selected: true },
+      { key: 'genre', label: 'Genre', selected: true },
+      { key: 'key', label: 'Key', selected: true },
+      { key: 'tempo', label: 'Tempo', selected: true },
+      { key: 'timeSignature', label: 'Time Signature', selected: false },
+      { key: 'songLength', label: 'Song Length', selected: false },
+      { key: 'notes', label: 'Notes', selected: false },
+      { key: 'tags', label: 'Tags', selected: false },
+    ];
+  }
+
+  onExport(format: 'csv' | 'html'): void {
+    const dialogRef = this.dialog.open(ExportDialogComponent, {
+      data: { columns: this.getExportColumns(), format },
+      panelClass: 'dialog-responsive',
+      width: '360px',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (!result) return;
+      this.filteredSongs$.pipe(first()).subscribe(songs => {
+        if (result.format === 'csv') {
+          this.exportCsv(songs, result.columns);
+        } else {
+          this.exportHtml(songs, result.columns);
+        }
+      });
+    });
+  }
+
+  private getSongFieldValue(song: Song, key: string): string {
+    switch (key) {
+      case 'name': return song.name || '';
+      case 'artist': return song.artist || '';
+      case 'genre': return song.genre || '';
+      case 'key': return song.key || '';
+      case 'tempo': return song.tempo ? String(song.tempo) : '';
+      case 'timeSignature': return song.beatValue ? `${song.beatValue}/${song.noteValue}` : '';
+      case 'songLength': return this.getSongLength(song);
+      case 'notes': return song.notes || '';
+      case 'tags': return song.tags?.join(', ') || '';
+      default: return '';
+    }
+  }
+
+  private exportCsv(songs: Song[], columns: ExportColumn[]): void {
+    const header = columns.map(c => `"${c.label}"`).join(',');
+    const rows = songs.map(song =>
+      columns.map(c => {
+        const val = this.getSongFieldValue(song, c.key).replace(/"/g, '""');
+        return `"${val}"`;
+      }).join(',')
+    );
+    const csv = [header, ...rows].join('\n');
+    this.downloadFile(csv, 'songs.csv', 'text/csv;charset=utf-8;');
+  }
+
+  private exportHtml(songs: Song[], columns: ExportColumn[]): void {
+    const headerCells = columns.map(c => `<th>${c.label}</th>`).join('');
+    const bodyRows = songs.map(song => {
+      const cells = columns.map(c => {
+        const val = this.getSongFieldValue(song, c.key)
+          .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        return `<td>${val}</td>`;
+      }).join('');
+      return `<tr>${cells}</tr>`;
+    }).join('\n');
+
+    const html = `<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Songs Export</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 20px; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+  th { background-color: #f5f5f5; font-weight: 600; }
+  tr:nth-child(even) { background-color: #fafafa; }
+  h1 { font-size: 1.4em; margin-bottom: 16px; }
+</style></head><body>
+<h1>Songs (${songs.length})</h1>
+<table><thead><tr>${headerCells}</tr></thead><tbody>
+${bodyRows}
+</tbody></table></body></html>`;
+    this.downloadFile(html, 'songs.html', 'text/html;charset=utf-8;');
+  }
+
+  private downloadFile(content: string, filename: string, mimeType: string): void {
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    link.click();
+    URL.revokeObjectURL(url);
   }
 }

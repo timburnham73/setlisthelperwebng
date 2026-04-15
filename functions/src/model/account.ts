@@ -9,6 +9,7 @@ export interface Account extends Base {
     countOfSongs?: number;
     countOfTags?: number;
     formatSettings?: any;
+    entitlementLevel?: string;
     slhImportCompleted?: boolean;
 }
 

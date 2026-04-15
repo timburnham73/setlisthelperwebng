@@ -19,6 +19,21 @@
             </span>
           </button>
           <div class="vl"></div>
+          <button mat-button [matMenuTriggerFor]="exportMenu" aria-label="Export Songs">
+            <mat-icon>download</mat-icon>
+            <span>Export</span>
+          </button>
+          <mat-menu #exportMenu="matMenu">
+            <button mat-menu-item (click)="onExport('csv')">
+              <mat-icon>description</mat-icon>
+              <span>Export as CSV</span>
+            </button>
+            <button mat-menu-item (click)="onExport('html')">
+              <mat-icon>code</mat-icon>
+              <span>Export as HTML</span>
+            </button>
+          </mat-menu>
+          <div class="vl"></div>
           <button mat-button aria-label="Remove Song" (click)="onEnableDeleteMode()">
             <mat-icon>delete</mat-icon>
             <span>Delete</span>

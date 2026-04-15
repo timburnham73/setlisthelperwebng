@@ -6,7 +6,7 @@
  * The exported function name has the format of {Model}_{Event}_{Function Name}
  */
 
-import { onDocumentCreated } from "firebase-functions/v2/firestore";
+import { onDocumentCreated, onDocumentUpdated } from "firebase-functions/v2/firestore";
 import { defineSecret } from "firebase-functions/params";
 import * as admin from "firebase-admin";
 
@@ -94,6 +94,27 @@ export const WelcomeEmail_OnCreate_SendEmail =
     async event => {
       await (
         await import("./welcome-email/on-create-welcome-email"))
+        .default(
+          event,
+          SMTP_HOST.value(),
+          SMTP_PORT.value(),
+          SMTP_USER.value(),
+          SMTP_PASS.value(),
+        );
+    });
+
+// ////////////////////////////////
+// Subscription Email functions (entitlement change: free -> paid/trial)
+// eslint-disable-next-line camelcase
+export const Account_OnUpdate_SendSubscriptionEmail =
+  onDocumentUpdated(
+    {
+      document: "accounts/{accountId}",
+      secrets: [SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS],
+    },
+    async event => {
+      await (
+        await import("./subscription-email/on-update-account-entitlement"))
         .default(
           event,
           SMTP_HOST.value(),
