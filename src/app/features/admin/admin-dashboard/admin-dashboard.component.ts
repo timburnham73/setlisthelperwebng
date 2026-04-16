@@ -40,8 +40,13 @@ export interface AdminBandRow {
     countOfSetlists: number;
     memberCount: number;
     entitlementLevel: string;
+    isPurchased: boolean;
     dateCreated: Date | null;
     members: BandMember[];
+}
+
+function isPaidEntitlement(level: string): boolean {
+    return level !== 'free' && !level.endsWith('-free-trial');
 }
 
 // --- Users Tab Interfaces ---
@@ -60,6 +65,7 @@ export interface AdminUserRow {
     displayName: string;
     countOfAccounts: number;
     entitlementLevel: string;
+    isPurchased: boolean;
     dateCreated: Date | null;
     lastLoginDate: Date | null;
     accounts: AccountDetail[];
@@ -93,14 +99,14 @@ export interface AdminUserRow {
 })
 export class AdminDashboardComponent implements OnInit {
     // Bands tab
-    bandDisplayedColumns: string[] = ['expand', 'name', 'ownerName', 'countOfSongs', 'countOfSetlists', 'memberCount', 'entitlementLevel', 'dateCreated', 'actions'];
+    bandDisplayedColumns: string[] = ['expand', 'name', 'ownerName', 'countOfSongs', 'countOfSetlists', 'memberCount', 'entitlementLevel', 'isPurchased', 'dateCreated', 'actions'];
     bandDataSource: AdminBandRow[] = [];
     isLoadingBands = true;
     bandCount = 0;
     expandedBandId: string | null = null;
 
     // Users tab
-    userDisplayedColumns: string[] = ['expand', 'email', 'displayName', 'countOfAccounts', 'entitlementLevel', 'dateCreated', 'lastLoginDate', 'actions'];
+    userDisplayedColumns: string[] = ['expand', 'email', 'displayName', 'countOfAccounts', 'entitlementLevel', 'isPurchased', 'dateCreated', 'lastLoginDate', 'actions'];
     userDataSource: AdminUserRow[] = [];
     isLoadingUsers = true;
     userCount = 0;
@@ -172,6 +178,7 @@ export class AdminDashboardComponent implements OnInit {
                 countOfSetlists: a.countOfSetlists || 0,
                 memberCount: a.users?.length || 0,
                 entitlementLevel: a.entitlementLevel || 'free',
+                isPurchased: isPaidEntitlement(a.entitlementLevel || 'free'),
                 dateCreated: this.toDateSafe(a.dateCreated),
                 members: [],
             }));
@@ -182,6 +189,7 @@ export class AdminDashboardComponent implements OnInit {
     onChangeBandEntitlement(row: AdminBandRow, newLevel: string): void {
         this.accountService.updateAccountDirect(row.accountId, { entitlementLevel: newLevel });
         row.entitlementLevel = newLevel;
+        row.isPurchased = isPaidEntitlement(newLevel);
     }
 
     addAdminToBand(row: AdminBandRow): void {
@@ -240,6 +248,7 @@ export class AdminDashboardComponent implements OnInit {
                 case 'countOfSetlists': return compare(a.countOfSetlists, b.countOfSetlists, isAsc);
                 case 'memberCount': return compare(a.memberCount, b.memberCount, isAsc);
                 case 'entitlementLevel': return compare(a.entitlementLevel, b.entitlementLevel, isAsc);
+                case 'isPurchased': return compare(a.isPurchased ? 1 : 0, b.isPurchased ? 1 : 0, isAsc);
                 case 'dateCreated': return compare(a.dateCreated?.getTime() || 0, b.dateCreated?.getTime() || 0, isAsc);
                 default: return 0;
             }
@@ -280,6 +289,7 @@ export class AdminDashboardComponent implements OnInit {
                             displayName: user.displayName || '',
                             countOfAccounts: accounts.length,
                             entitlementLevel: user.entitlementLevel || 'free',
+                            isPurchased: isPaidEntitlement(user.entitlementLevel || 'free'),
                             dateCreated: createdDate,
                             lastLoginDate: this.toDateSafe(user.lastLoginDate),
                             accounts: accountDetails,
@@ -292,6 +302,7 @@ export class AdminDashboardComponent implements OnInit {
                         displayName: user.displayName || '',
                         countOfAccounts: 0,
                         entitlementLevel: user.entitlementLevel || 'free',
+                        isPurchased: isPaidEntitlement(user.entitlementLevel || 'free'),
                         dateCreated: this.toDateSafe(user.dateCreated),
                         lastLoginDate: this.toDateSafe(user.lastLoginDate),
                         accounts: [],
@@ -310,6 +321,7 @@ export class AdminDashboardComponent implements OnInit {
     onChangeUserEntitlement(row: AdminUserRow, newLevel: string): void {
         this.userService.updateUserEntitlement(row.uid, newLevel);
         row.entitlementLevel = newLevel;
+        row.isPurchased = isPaidEntitlement(newLevel);
     }
 
     addAdminToAccount(row: AdminUserRow, account: AccountDetail): void {
@@ -384,6 +396,7 @@ export class AdminDashboardComponent implements OnInit {
                 case 'displayName': return compare(a.displayName, b.displayName, isAsc);
                 case 'countOfAccounts': return compare(a.countOfAccounts, b.countOfAccounts, isAsc);
                 case 'entitlementLevel': return compare(a.entitlementLevel, b.entitlementLevel, isAsc);
+                case 'isPurchased': return compare(a.isPurchased ? 1 : 0, b.isPurchased ? 1 : 0, isAsc);
                 case 'dateCreated': return compare(a.dateCreated?.getTime() || 0, b.dateCreated?.getTime() || 0, isAsc);
                 case 'lastLoginDate': return compare(a.lastLoginDate?.getTime() || 0, b.lastLoginDate?.getTime() || 0, isAsc);
                 default: return 0;

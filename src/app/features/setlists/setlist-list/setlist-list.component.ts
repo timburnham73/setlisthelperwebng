@@ -27,6 +27,7 @@ import { FlexLayoutModule } from "ngx-flexible-layout";
 import { AuthenticationService } from "src/app/core/services/auth.service";
 import { CONFIRM_DIALOG_RESULT, ConfirmDialogComponent } from "src/app/shared/confirm-dialog/confirm-dialog.component";
 import { NotificationService } from "src/app/core/services/notification.service";
+import { UserService } from "src/app/core/services/user.service";
 import { getEntitlementLimits } from "src/app/core/model/entitlement-limits";
 
 @Component({
@@ -57,6 +58,7 @@ export class SetlistListComponent implements OnInit {
   currentUser: any;
   showRemove = false;
   showFind = false;
+  isSystemAdmin = false;
   displayedColumns: string[] = ["name", "gigLocation", "gigDate", "setlistedit", "remove"];
   
   loading = false;
@@ -87,6 +89,7 @@ export class SetlistListComponent implements OnInit {
     private setlistSongsService: SetlistSongService,
     private authService: AuthenticationService,
     private notificationService: NotificationService,
+    private userService: UserService,
     private store: Store,
     private router: Router,
     public dialog: MatDialog
@@ -95,6 +98,9 @@ export class SetlistListComponent implements OnInit {
     this.authService.user$.subscribe((user) => {
       if(user && user.uid){
         this.currentUser = user;
+        this.userService.getUserById(user.uid).subscribe((userData) => {
+          this.isSystemAdmin = userData?.systemAdmin === true;
+        });
       }
     });
 
@@ -149,6 +155,30 @@ export class SetlistListComponent implements OnInit {
       data: { accountId: this.accountId, setlist: row } as AccountSetlist,
       panelClass: "dialog-responsive",
     });
+  }
+
+  onDuplicateSetlist(event, source: Setlist) {
+    event?.preventDefault();
+    event?.stopPropagation?.();
+    const account = this.store.selectSnapshot(AccountState.selectedAccount);
+    const limits = getEntitlementLimits(account?.entitlementLevel);
+    if (limits.maxSetlists !== null && (account?.countOfSetlists ?? 0) >= limits.maxSetlists) {
+      this.notificationService.openSnackBar(
+        `Your plan allows up to ${limits.maxSetlists} setlist${limits.maxSetlists === 1 ? '' : 's'}. Upgrade your subscription to duplicate more.`
+      );
+      return;
+    }
+    this.setlistService
+      .duplicateSetlist(this.accountId!, source, this.currentUser)
+      .pipe(first())
+      .subscribe({
+        next: (newSetlist) => {
+          this.notificationService.openSnackBar(`Duplicated "${source.name}"`);
+        },
+        error: () => {
+          this.notificationService.openSnackBar('Could not duplicate setlist. Please try again.');
+        }
+      });
   }
 
   onViewSetlistSongs(event, row: any) {

@@ -64,6 +64,13 @@
                 </td>
               </ng-container>
 
+              <ng-container matColumnDef="isPurchased">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Purchased</th>
+                <td mat-cell *matCellDef="let row">
+                  <mat-icon *ngIf="row.isPurchased" class="purchased-icon">check_circle</mat-icon>
+                </td>
+              </ng-container>
+
               <ng-container matColumnDef="dateCreated">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Created</th>
                 <td mat-cell *matCellDef="let row">{{ row.dateCreated | date:'mediumDate' }}</td>
@@ -163,6 +170,13 @@
                   <mat-select [value]="row.entitlementLevel" (selectionChange)="onChangeUserEntitlement(row, $event.value)" class="entitlement-select" (click)="$event.stopPropagation()">
                     <mat-option *ngFor="let level of entitlementOptions" [value]="level">{{ level }}</mat-option>
                   </mat-select>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="isPurchased">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Purchased</th>
+                <td mat-cell *matCellDef="let row">
+                  <mat-icon *ngIf="row.isPurchased" class="purchased-icon">check_circle</mat-icon>
                 </td>
               </ng-container>
 

@@ -53,6 +53,9 @@
                       <button mat-icon-button aria-label="Edit Setlist" (click)="$event.stopPropagation(); onEditSetlist($event, setlist);">
                         <mat-icon>edit</mat-icon>
                       </button>
+                      <button *ngIf="isSystemAdmin" mat-icon-button aria-label="Duplicate Setlist" (click)="$event.stopPropagation(); onDuplicateSetlist($event, setlist);">
+                        <mat-icon>content_copy</mat-icon>
+                      </button>
                     }
                     @else{
                       <button mat-icon-button aria-label="Edit Setlist" (click)="$event.stopPropagation(); onRemoveSetlist($event, setlist)">
@@ -135,9 +138,13 @@
               <th mat-header-cell *matHeaderCellDef>Details</th>
               <td mat-cell *matCellDef="let element">
                 <a title="Arrange the Setlist Songs."
-                 href="#" (click)="onViewSetlistSongs($event, element)" >View</a> | 
+                 href="#" (click)="onViewSetlistSongs($event, element)" >View</a> |
                 <a title="Edit the Setlist."
                  href="#" (click)="onEditSetlist($event, element)" >Edit</a>
+                <ng-container *ngIf="isSystemAdmin"> |
+                <a title="Duplicate this Setlist."
+                 href="#" (click)="onDuplicateSetlist($event, element)" >Duplicate</a>
+                </ng-container>
               </td>
             </ng-container>
 

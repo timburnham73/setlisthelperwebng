@@ -122,3 +122,8 @@ th.mat-header-cell {
 .email-sent {
     color: #4caf50;
 }
+
+.purchased-icon {
+    color: #4caf50;
+    font-size: 20px;
+}

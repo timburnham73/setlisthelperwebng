@@ -92,6 +92,88 @@ export class SetlistService {
     return from(setlistsRef.doc(setlistId).update(setlistForUpdate));
   }
 
+  duplicateSetlist(
+    accountId: string,
+    source: Setlist,
+    editingUser: BaseUser
+  ): Observable<Setlist> {
+    const sourceId = source.id!;
+    const setlistsPath = `/accounts/${accountId}/setlists`;
+    const songsPath = `/accounts/${accountId}/setlists/${sourceId}/songs`;
+    const accountRef = this.db.doc(`/accounts/${accountId}`);
+
+    const newSetlistData = SetlistHelper.getForAdd(
+      {
+        name: `${source.name} (Copy)`,
+        gigLocation: '',
+        gigDate: null as any,
+        deprecated: false,
+        makePublic: false,
+      },
+      editingUser
+    );
+
+    const newSetlistDocRef = this.db.firestore.collection(setlistsPath).doc();
+    const newSetlistId = newSetlistDocRef.id;
+
+    return from(this.db.firestore.collection(songsPath).get()).pipe(
+      switchMap((songsSnap) => {
+        const batch = this.db.firestore.batch();
+
+        batch.set(newSetlistDocRef, newSetlistData);
+
+        // Track (songId -> new setlistSong doc id) for non-break songs so we
+        // can add setlist refs on master song docs afterward.
+        const songRefMap: { songId: string; setlistSongId: string }[] = [];
+        const newSongsCollectionPath = `/accounts/${accountId}/setlists/${newSetlistId}/songs`;
+
+        songsSnap.forEach((doc) => {
+          const setlistSong = doc.data() as any;
+          const newSongDocRef = this.db.firestore.collection(newSongsCollectionPath).doc();
+          const cloned = { ...setlistSong };
+          delete cloned.id;
+          cloned.lastEdit = Timestamp.fromDate(new Date());
+          cloned.lastUpdatedByUser = editingUser;
+          batch.set(newSongDocRef, cloned);
+
+          if (!setlistSong.isBreak && setlistSong.songId) {
+            songRefMap.push({ songId: setlistSong.songId, setlistSongId: newSongDocRef.id });
+          }
+        });
+
+        return from(batch.commit()).pipe(
+          switchMap(() => {
+            const newSetlistForRef: Setlist = { ...newSetlistData, id: newSetlistId } as Setlist;
+            const refUpdates = songRefMap.map(({ songId, setlistSongId }) => {
+              const songDocRef = this.db.firestore.doc(`/accounts/${accountId}/songs/${songId}`);
+              return songDocRef.get().then((songSnap) => {
+                if (!songSnap.exists) return;
+                const song = songSnap.data() as any;
+                const existing = song.setlists || [];
+                existing.push({
+                  id: newSetlistId,
+                  name: newSetlistForRef.name,
+                  setlistSongId,
+                });
+                return songDocRef.update({ setlists: existing });
+              });
+            });
+            return from(Promise.all(refUpdates)).pipe(
+              switchMap(() => accountRef.valueChanges().pipe(take(1))),
+              tap((result) => {
+                const account = result as Account;
+                accountRef.update({
+                  countOfSetlists: account.countOfSetlists ? account.countOfSetlists + 1 : 1,
+                });
+              }),
+              map(() => newSetlistForRef)
+            );
+          })
+        );
+      })
+    );
+  }
+
   removeSetlist(
     setlistToDelete: Setlist,
     accountId: string,
