@@ -16,7 +16,15 @@ export interface SetlistBreak extends Base {
 }
 
 export class SetlistBreakHelper {
-   static getSetlistBreakForAddOrUpdate(setlistBreak: Partial<SetlistBreak>, editingUser: BaseUser): SetlistBreak {
+   static getSetlistBreakForAdd(setlistBreak: Partial<SetlistBreak>, editingUser: BaseUser): SetlistBreak {
+      return {
+         ...SetlistBreakHelper.getSetlistBreakForUpdate(setlistBreak, editingUser),
+         dateCreated: Timestamp.fromDate(new Date()),
+         createdByUser: UserHelper.getForUpdate(editingUser),
+      } as SetlistBreak;
+   }
+
+   static getSetlistBreakForUpdate(setlistBreak: Partial<SetlistBreak>, editingUser: BaseUser): Partial<SetlistBreak> {
       return {
          name: setlistBreak.name ?? "",
          nameLowered: setlistBreak.name?.toLocaleLowerCase() ?? "",
@@ -25,8 +33,6 @@ export class SetlistBreakHelper {
          isBreak: setlistBreak.isBreak ?? false,
          lastEdit: Timestamp.fromDate(new Date()),
          lastUpdatedByUser: UserHelper.getForUpdate(editingUser),
-         dateCreated: setlistBreak.dateCreated ?? Timestamp.fromDate(new Date()),
-         createdByUser: setlistBreak.createdByUser ?? UserHelper.getForUpdate(editingUser),
          totalTimeInSeconds: setlistBreak.totalTimeInSeconds ?? 0,
          countOfSongs: setlistBreak.countOfSongs ?? 0,
          lengthMin: setlistBreak.lengthMin ?? 10,

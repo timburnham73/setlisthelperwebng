@@ -18,23 +18,21 @@ export interface Account extends Base{
 
 export class AccountHelper{
   static getForAdd(user: BaseUser, account: Account): Account {
-    const accountForAdd = this.getForUpdate(user, account);
-    accountForAdd.dateCreated = Timestamp.fromDate(new Date());
-    accountForAdd.createdByUser = user;
-    accountForAdd.ownerUser = UserHelper.getForUpdate(user);
-
-    return accountForAdd;
+    return {
+      ...this.getForUpdate(user, account),
+      dateCreated: Timestamp.fromDate(new Date()),
+      createdByUser: user,
+      ownerUser: UserHelper.getForUpdate(user),
+    } as Account;
   }
 
-  static getForUpdate(user: BaseUser, data: Account): Account {
+  static getForUpdate(user: BaseUser, data: Account): Partial<Account> {
         return {
           name: data.name ?? "",
           nameLowered: data.name?.toLocaleLowerCase() ?? "",
           description: data.description ?? "",
           users: data.users ?? [],
           ownerUser: data.ownerUser ?? undefined,
-          createdByUser: data.createdByUser ?? "",
-          dateCreated: data.dateCreated ?? "",
           lastEdit: Timestamp.fromDate(new Date()),
           lastUpdatedByUser: user,
           importToken: data.importToken ?? "",

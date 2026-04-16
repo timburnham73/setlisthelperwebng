@@ -18,16 +18,14 @@ export class SetlistHelper {
       ...SetlistHelper.getForUpdate(data, editingUser),
       createdByUser: editingUser,
       dateCreated: Timestamp.fromDate(new Date()),
-    };
+    } as Setlist;
   }
-  static getForUpdate(data: Partial<Setlist>, editingUser: BaseUser): Setlist {
+  static getForUpdate(data: Partial<Setlist>, editingUser: BaseUser): Partial<Setlist> {
     return {
       name: data.name ?? "",
       nameLowered: data.name?.toLowerCase() ?? "",
       gigLocation: data.gigLocation ?? '',
       gigDate: data.gigDate ?? Timestamp.fromDate(new Date()),
-      createdByUser: data.createdByUser ?? editingUser,
-      dateCreated: data.dateCreated ?? Timestamp.fromDate(new Date()),
       lastEdit: Timestamp.fromDate(new Date()),
       deprecated: data.deprecated ?? false,
       makePublic: data.makePublic ?? false,

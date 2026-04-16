@@ -175,7 +175,7 @@ export class SetlistSongService {
     editingUser: BaseUser
   ): any {
     const breakForAdd =
-      SetlistBreakHelper.getSetlistBreakForAddOrUpdate(setlistBreak, editingUser);
+      SetlistBreakHelper.getSetlistBreakForAdd(setlistBreak, editingUser);
     
     //return a concat observable with the increment and add combined.
     return this.incrementSequenceOfSongs(breakForAdd.sequenceNumber, breakForAdd, accountId, setlist, editingUser).pipe(

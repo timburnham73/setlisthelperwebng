@@ -38,15 +38,14 @@ export interface AccountLyric extends Lyric {
 
 export class LyricHelper {
   static getForAdd(data: Lyric, editingUser: BaseUser): Lyric {
-    const lyricForAdd = {
+    return {
       ...this.getForUpdate(data, editingUser),
       dateCreated: Timestamp.fromDate(new Date()),
-      createdByUser: editingUser
-    };
-    return lyricForAdd;
+      createdByUser: editingUser,
+    } as Lyric;
   }
 
-  static getForUpdate(data: Lyric, editingUser: BaseUser): Lyric {
+  static getForUpdate(data: Lyric, editingUser: BaseUser): Partial<Lyric> {
     return {
       name: data.name ?? "",
       nameLowered: data.name.toLocaleLowerCase() ?? "",
@@ -60,8 +59,6 @@ export class LyricHelper {
       youTubeUrl: data.youTubeUrl ?? "",
       songId: data.songId ?? "",
       defaultForUsers: data.defaultForUsers ?? [],
-      createdByUser: data.createdByUser ?? editingUser,
-      dateCreated: data.dateCreated ?? Timestamp.now(),
       lastUpdatedByUser : UserHelper.getForUpdate(editingUser),
       documentLocation: data.documentLocation ?? "",
       documentFileName: data.documentFileName ?? "",
