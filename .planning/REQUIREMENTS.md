@@ -9,16 +9,16 @@ Requirements for this milestone. Each maps to roadmap phases.
 
 ### SSR / Prerendering
 
-- [ ] **SSR-01**: Public routes (~20 pages) are prerendered to static HTML at build time so Google indexes real content instead of an empty shell
-- [ ] **SSR-02**: Auth-gated routes (songs, setlists, admin) remain client-side rendered and are excluded from prerendering
-- [ ] **SSR-03**: Browser API access (window, document, localStorage) is guarded with `isPlatformBrowser()` so prerender builds do not crash
-- [ ] **SSR-04**: Prerendered HTML is served by Firebase Hosting; no runtime SSR server or Cloud Function is needed
+- [x] **SSR-01**: Public routes (~20 pages) are prerendered to static HTML at build time so Google indexes real content instead of an empty shell
+- [x] **SSR-02**: Auth-gated routes (songs, setlists, admin) remain client-side rendered and are excluded from prerendering
+- [x] **SSR-03**: Browser API access (window, document, localStorage) is guarded with `isPlatformBrowser()` so prerender builds do not crash
+- [x] **SSR-04**: Prerendered HTML is served by Firebase Hosting; no runtime SSR server or Cloud Function is needed
 
 ### SEO
 
-- [ ] **SEO-01**: Each public route has its own title, meta description, and Open Graph tags (not the global defaults from index.html)
-- [ ] **SEO-02**: sitemap.xml is generated from the route configuration rather than maintained manually
-- [ ] **SEO-03**: Each page type (tools, blog, pricing, home) has page-specific JSON-LD structured data
+- [x] **SEO-01**: Each public route has its own title, meta description, and Open Graph tags (not the global defaults from index.html)
+- [x] **SEO-02**: sitemap.xml is generated from the route configuration rather than maintained manually
+- [x] **SEO-03**: Each page type (tools, blog, pricing, home) has page-specific JSON-LD structured data
 
 ### RBAC
 
@@ -76,13 +76,13 @@ Requirements for this milestone. Each maps to roadmap phases.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SSR-01 | Phase 1 | Pending |
-| SSR-02 | Phase 1 | Pending |
-| SSR-03 | Phase 1 | Pending |
-| SSR-04 | Phase 1 | Pending |
-| SEO-01 | Phase 1 | Pending |
-| SEO-02 | Phase 1 | Pending |
-| SEO-03 | Phase 1 | Pending |
+| SSR-01 | Phase 1 | Complete |
+| SSR-02 | Phase 1 | Complete |
+| SSR-03 | Phase 1 | Complete |
+| SSR-04 | Phase 1 | Complete |
+| SEO-01 | Phase 1 | Complete |
+| SEO-02 | Phase 1 | Complete |
+| SEO-03 | Phase 1 | Complete |
 | RBAC-01 | Phase 2 | Pending |
 | RBAC-02 | Phase 2 | Pending |
 | RBAC-03 | Phase 2 | Pending |

@@ -13,7 +13,7 @@ This milestone makes Band Central discoverable by search engines, adds role-base
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [ ] **Phase 0.1: Release Notification Emails** - INSERTED: Cloud Function to email all users release notes when a new version is published
-- [ ] **Phase 1: SSR & SEO** - Prerender public routes and add per-page SEO so Google indexes the site
+- [x] **Phase 1: SSR & SEO** - Prerender public routes and add per-page SEO so Google indexes the site ✓ 2026-04-18
 - [ ] **Phase 2: Role-Based Access Control** - Enforce Owner/Admin/Member roles per band in Firestore rules and UI
 - [ ] **Phase 3: Cross-Band Sharing & Duplicate Setlist** - Let users copy songs between bands and unlock duplicate setlist for everyone
 
@@ -42,12 +42,12 @@ Plans:
   3. Each public page has a unique `<title>`, meta description, and Open Graph tags visible in page source
   4. A sitemap.xml is accessible at the site root and lists all public routes
   5. JSON-LD structured data is present in page source for home, pricing, tools, and blog pages
-**Plans**: 3 plans
+**Plans**: 3 plans (all complete)
 
 Plans:
-- [ ] 01-01-PLAN.md — Add @angular/ssr, configure prerender, guard browser APIs
-- [ ] 01-02-PLAN.md — Per-route SEO service with JSON-LD structured data
-- [ ] 01-03-PLAN.md — Sitemap automation from routes.txt + blog content
+- [x] 01-01-PLAN.md — Add @angular/ssr, configure prerender, guard browser APIs ✓
+- [x] 01-02-PLAN.md — Per-route SEO service with JSON-LD structured data ✓
+- [x] 01-03-PLAN.md — Sitemap automation from routes.txt + blog content ✓
 
 ### Phase 2: Role-Based Access Control
 **Goal**: Band members have scoped permissions — Members can view but not modify shared resources, Admins can manage content, Owners have full control
@@ -90,6 +90,6 @@ Phases execute in numeric order: 0.1 -> 1 -> 2 -> 3
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 0.1. Release Notification Emails | 0/0 | Not started | - |
-| 1. SSR & SEO | 0/0 | Not started | - |
+| 1. SSR & SEO | 3/3 | Complete | 2026-04-18 |
 | 2. Role-Based Access Control | 0/0 | Not started | - |
 | 3. Cross-Band Sharing & Duplicate Setlist | 0/0 | Not started | - |
