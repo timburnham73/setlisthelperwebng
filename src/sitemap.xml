@@ -1,25 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <!-- Main Pages -->
   <url>
-    <loc>https://www.bandcentral.com/</loc>
+    <loc>https://www.bandcentral.com/blog</loc>
     <changefreq>monthly</changefreq>
-    <priority>1.0</priority>
+    <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.bandcentral.com/why</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
+    <loc>https://www.bandcentral.com/blog/cover-band-repertoire-guide</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.bandcentral.com/home</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <loc>https://www.bandcentral.com/blog/essential-band-management-features</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.bandcentral.com/pricing</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
+    <loc>https://www.bandcentral.com/blog/organize-band-with-app</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.bandcentral.com/blog/worship-set-planning-guide</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://www.bandcentral.com/contact</loc>
@@ -27,24 +31,12 @@
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://www.bandcentral.com/about</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://www.bandcentral.com/privacy-policy</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
-
-  <!-- Help Pages -->
-  <url>
     <loc>https://www.bandcentral.com/help</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.bandcentral.com/help/migration</loc>
+    <loc>https://www.bandcentral.com/help/android</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -54,7 +46,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.bandcentral.com/help/android</loc>
+    <loc>https://www.bandcentral.com/help/migration</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -63,12 +55,30 @@
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
-
-  <!-- Free Musician Tools -->
+  <url>
+    <loc>https://www.bandcentral.com/home</loc>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://www.bandcentral.com/home/pricing</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.bandcentral.com/privacy-policy</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
   <url>
     <loc>https://www.bandcentral.com/tools</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.bandcentral.com/tools/metronome</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.bandcentral.com/tools/tap-tempo</loc>
@@ -81,35 +91,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.bandcentral.com/tools/metronome</loc>
+    <loc>https://www.bandcentral.com/why</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <!-- Blog -->
-  <url>
-    <loc>https://www.bandcentral.com/blog</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://www.bandcentral.com/blog/essential-band-management-features</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://www.bandcentral.com/blog/worship-set-planning-guide</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://www.bandcentral.com/blog/organize-band-with-app</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://www.bandcentral.com/blog/cover-band-repertoire-guide</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.9</priority>
   </url>
 </urlset>
