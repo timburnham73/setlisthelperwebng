@@ -10,8 +10,9 @@
     "watch": "ng build --watch --configuration development",
     "lint": "ng lint",
     "test": "ng test",
-    "build-production": "ng build --configuration=production --base-href=/",
-    "build-debug": "ng build --configuration=development",
+    "generate-sitemap": "node scripts/generate-sitemap.mjs",
+    "build-production": "npm run generate-sitemap && ng build --configuration=production --base-href=/",
+    "build-debug": "npm run generate-sitemap && ng build --configuration=development",
     "deploy-debug": "npm run build-debug && firebase deploy --only hosting",
     "deploy-production": "npm run build-production && firebase deploy --only hosting"
   },
