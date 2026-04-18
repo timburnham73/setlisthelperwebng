@@ -183,10 +183,39 @@ li.hide-number {
     }
 }
 
-h2, h4, h5 {
+// Fixed header sizes so they don't scale with the song font-size
+// When the user bumps up the song size for on-stage readability, the title
+// stays compact instead of eating half the page.
+.setlist-songs-static h2 {
+    font-size: 22px;
     text-align: center;
     margin-top: 0px;
-    margin-bottom: 5px;
+    margin-bottom: 4px;
+    font-weight: 700;
+}
+
+.setlist-songs-static h4 {
+    font-size: 14px;
+    text-align: center;
+    margin-top: 0px;
+    margin-bottom: 2px;
+    font-weight: 400;
+}
+
+.setlist-songs-static h5 {
+    font-size: 14px;
+    text-align: center;
+    margin-top: 0px;
+    margin-bottom: 4px;
+    font-weight: 400;
+}
+
+.setlist-songs-static .duration {
+    font-size: 12px;
+    text-align: center;
+    color: #666;
+    margin-top: 0px;
+    margin-bottom: 8px;
 }
 
 // Column layouts
