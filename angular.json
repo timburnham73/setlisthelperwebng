@@ -17,10 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": {
-              "base": "dist",
-              "browser": ""
-            },
+            "outputPath": "dist",
             "index": "src/index.html",
             "polyfills": [
               "src/polyfills.ts"
@@ -39,13 +36,19 @@
             ],
             "scripts": [],
             "allowedCommonJsDependencies": [
-                "lodash",
-                "lodash.get",
-                "moment",
-                "material-design-lite",
-                "dialog-polyfill"
+              "lodash",
+              "lodash.get",
+              "moment",
+              "material-design-lite",
+              "dialog-polyfill"
             ],
-            "browser": "src/main.ts"
+            "browser": "src/main.ts",
+            "server": "src/main.server.ts",
+            "prerender": {
+              "routesFile": "routes.txt",
+              "discoverRoutes": false
+            },
+            "ssr": false
           },
           "configurations": {
             "production": {

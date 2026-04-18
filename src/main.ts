@@ -1,107 +1,12 @@
-import { enableProdMode, importProvidersFrom } from "@angular/core";
-import { platformBrowserDynamic } from "@angular/platform-browser-dynamic";
+import { enableProdMode } from "@angular/core";
+import { bootstrapApplication } from "@angular/platform-browser";
 
 import { environment } from "./environments/environment";
 import { AppComponent } from "./app/app.component";
-import { MatProgressBarModule as MatProgressBarModule } from "@angular/material/progress-bar";
-import { MatButtonModule as MatButtonModule } from "@angular/material/button";
-import { MatDividerModule } from "@angular/material/divider";
-import { MatCardModule as MatCardModule } from "@angular/material/card";
+import { appConfig } from "./app/app.config";
 
-import { AngularFireModule } from "@angular/fire/compat";
-
-import {
-  AngularFireAnalyticsModule,
-  APP_NAME,
-  APP_VERSION,
-  DEBUG_MODE as ANALYTICS_DEBUG_MODE,
-  ScreenTrackingService,
-  UserTrackingService,
-  COLLECTION_ENABLED,
-} from "@angular/fire/compat/analytics";
-
-import {
-  AngularFirestoreModule,
-  USE_EMULATOR as USE_FIRESTORE_EMULATOR,
-  SETTINGS as FIRESTORE_SETTINGS,
-} from "@angular/fire/compat/firestore";
-import {
-  AngularFireAuthModule,
-  USE_DEVICE_LANGUAGE,
-  USE_EMULATOR as USE_AUTH_EMULATOR,
-} from "@angular/fire/compat/auth";
-import {
-  AngularFireFunctionsModule,
-  USE_EMULATOR as USE_FUNCTIONS_EMULATOR,
-} from "@angular/fire/compat/functions";
-import {
-  AngularFireStorageModule,
-  USE_EMULATOR as USE_STORAGE_EMULATOR,
-} from "@angular/fire/compat/storage";
-import { AngularFireAuthGuardModule } from "@angular/fire/compat/auth-guard";
-
-import { NgxsModule } from "@ngxs/store";
-import { provideStates } from "@ngxs/store";
-//import { LoggerModule } from "ngx-logger";
-import { AccountStateModule } from "./app/core/store/account-state.module";
-import { SongState } from "./app/core/store/song.state";
-import { ArtistState } from "./app/core/store/artist.state";
-import { GenreState } from "./app/core/store/genre.state";
-import { AppRoutingModule } from "./app/app-routing.module";
-import { CustomMaterialModule } from "./app/custom-material/custom-material.module";
-import { SharedModule } from "./app/shared/shared.module";
-import { CoreModule } from "./app/core/core.module";
-import { BrowserAnimationsModule, provideAnimations } from "@angular/platform-browser/animations";
-import { BrowserModule, bootstrapApplication } from "@angular/platform-browser";
-// Modular Firebase imports (unused — using compat API via AngularFireModule)
-// import { getFirestore, initializeFirestore, persistentLocalCache, provideFirestore } from "@angular/fire/firestore";
-// import { getApp, initializeApp, provideFirebaseApp } from "@angular/fire/app";
-// import { connectFunctionsEmulator, getFunctions, provideFunctions } from "@angular/fire/functions";
-// import { connectAuthEmulator, getAuth, provideAuth } from "@angular/fire/auth";
-// import { connectFirestoreEmulator } from "@angular/fire/firestore";
-//import { NgxMatDatetimePickerModule, NgxMatTimepickerModule } from '@angular-material-components/datetime-picker';
 if (environment.production) {
   enableProdMode();
 }
 
-bootstrapApplication(AppComponent, {
-  providers: [
-    importProvidersFrom(
-      AngularFireModule.initializeApp(environment.firebase),
-      AngularFirestoreModule,
-      AngularFireAuthModule,
-      AngularFireAuthGuardModule,
-      AngularFireAnalyticsModule,
-      AngularFireFunctionsModule,
-      AngularFireStorageModule,
-      BrowserModule,
-      BrowserAnimationsModule,
-      CoreModule,
-      SharedModule,
-      CustomMaterialModule.forRoot(),
-      AppRoutingModule,
-      NgxsModule.forRoot([], {
-        selectorOptions: {
-          injectContainerState: false,
-        },
-      }),
-      AccountStateModule,
-      MatCardModule,
-      MatDividerModule,
-      MatButtonModule,
-      MatProgressBarModule,
-    ),
-    provideStates([SongState, ArtistState, GenreState]),
-    provideAnimations(),
-    { provide: FIRESTORE_SETTINGS, useValue: { ignoreUndefinedProperties: true, merge: true } },
-    { provide: USE_AUTH_EMULATOR, useValue: environment.useEmulators ? ['http://localhost:9099'] : undefined },
-    { provide: USE_FIRESTORE_EMULATOR, useValue: environment.useEmulators ? ['localhost', 8080] : undefined },
-    { provide: USE_FUNCTIONS_EMULATOR, useValue: environment.useEmulators ? ['localhost', 5001] : undefined },
-    { provide: USE_STORAGE_EMULATOR, useValue: environment.useEmulators ? ['localhost', 9199] : undefined },
-    { provide: ANALYTICS_DEBUG_MODE, useValue: false },
-    { provide: COLLECTION_ENABLED, useValue: true },
-    { provide: USE_DEVICE_LANGUAGE, useValue: true },
-    { provide: APP_VERSION, useValue: '0.0.0' },
-    { provide: APP_NAME, useValue: 'Angular' },
-  ],
-}).catch((err) => console.error(err));
+bootstrapApplication(AppComponent, appConfig).catch((err) => console.error(err));
