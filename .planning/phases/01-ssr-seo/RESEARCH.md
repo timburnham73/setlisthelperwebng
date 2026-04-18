@@ -369,27 +369,22 @@ If `@angular/ssr` causes too many issues with the compat Firebase libraries, a s
 | A3 | `"ssr": false` in angular.json v18 disables server bundle generation while keeping prerender | Architecture Patterns | If not supported, may need to generate server bundle but not deploy it |
 | A4 | `trailingSlash: false` in firebase.json correctly serves `/home` from `/home/index.html` | Architecture | 404s for prerendered routes; would need to adjust output or hosting config |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Do any public-route components inject AngularFirestore or AngularFireAuth?**
-   - What we know: Auth-gated routes clearly inject them; public marketing pages likely don't
-   - What's unclear: Blog component may fetch posts from Firestore
-   - Recommendation: Grep for `AngularFirestore` / `AngularFireAuth` in public route components before starting
+   - **Answered:** NO. Grep across all public-route components (`home`, `why`, `tools/*`, `help/*`, `blog/*`, `contact`, `privacy-policy`, `auth/login`) confirms none inject `AngularFirestore` or `AngularFireAuth`. Blog posts are served from a static `BLOG_POSTS` array in `src/app/features/blog/blog-content.ts` — no Firestore fetch required. This removes the Pitfall 3 risk for the initial prerender build.
+   - **Evidence:** `grep -rn "AngularFirestore\|AngularFireAuth" src/app/features/{home,why-band-central,tools,help,blog,contact,privacy-policy,auth}` returns zero matches inside public-route component trees.
 
 2. **Does `AccountStateModule` trigger Firestore calls at app bootstrap?**
-   - What we know: It's imported in `main.ts` globally via `importProvidersFrom`
-   - What's unclear: Whether it dispatches actions that hit Firestore during initialization
-   - Recommendation: Review `AccountStateModule` and its state class; if it auto-dispatches, guard with platform check
+   - **Answered:** Partially. `AccountState` itself has no `ngxsOnInit` hook, so no Firestore dispatch fires at bootstrap. HOWEVER, the real bootstrap-time risk is the `NgxsStoragePluginModule.forRoot({ keys: '*' })` import in `AccountStateModule` — `@ngxs/storage-plugin` reads from `localStorage` at module-definition time and crashes the Node prerender with `ReferenceError: localStorage is not defined`. See **Blocker 1** in the plan-checker review and the fix applied in Plan 01-01 Task 2 (platform-guarded conditional import of the storage plugin).
+   - **Evidence:** `src/app/core/store/account-state.module.ts` line 13 imports `NgxsStoragePluginModule.forRoot({ keys: '*' })` at NgModule decorator level. `AccountState` class has no `ngxsOnInit` / auto-dispatch logic.
 
 3. **Blog route with `:slug` parameter -- prerender specific posts?**
-   - What we know: Blog has a `BlogPostComponent` with `:slug` dynamic route
-   - What's unclear: Whether blog posts should be prerendered (requires listing all slugs)
-   - Recommendation: Start by prerendering only `/blog` landing. Add individual posts later if needed.
+   - **Answered:** YES. `routes.txt` enumerates all 4 current blog slugs (`essential-band-management-features`, `worship-set-planning-guide`, `organize-band-with-app`, `cover-band-repertoire-guide`) individually. Since the slug list lives in a static `BLOG_POSTS` array and there are only 4 posts, enumerating them is cheap and gives each post a unique prerendered HTML file for SEO. New blog posts require adding the slug to `routes.txt` (automated in Plan 01-03's sitemap generator if extended later).
+   - **Evidence:** Plan 01-01 `<interfaces>` section lists the 4 blog slugs in the public routes enumeration.
 
 4. **Firebase App Hosting vs standard Hosting?**
-   - What we know: Firebase App Hosting went GA April 2025 and is the recommended path for SSR apps
-   - What's unclear: Whether it's worth migrating to App Hosting vs staying on standard Hosting with static prerender
-   - Recommendation: Stay on standard Firebase Hosting. Pure static prerendering doesn't need App Hosting's server capabilities. Revisit if full SSR is ever needed.
+   - **Answered:** Stay on standard Firebase Hosting. Pure static prerendering produces static HTML files that Firebase Hosting's CDN serves natively — no App Hosting server capabilities needed. App Hosting is only worth the migration cost if the app ever adds true per-request SSR (user-specific content in HTML). Revisit if that requirement appears.
 
 ## Environment Availability
 
