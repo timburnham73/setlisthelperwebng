@@ -1,13 +1,19 @@
-import { Directive, ElementRef, Attribute, OnInit, HostListener } from '@angular/core';
+import { Directive, ElementRef, Attribute, HostListener, PLATFORM_ID, Inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 
-@Directive({ 
+@Directive({
   selector: '[scrollTo]',
-  standalone: true, 
+  standalone: true,
 })
 export class ScrollToDirective {
-  constructor( @Attribute('scrollTo') public elmID: string, private el: ElementRef) { }
+  constructor(
+    @Attribute('scrollTo') public elmID: string,
+    private el: ElementRef,
+    @Inject(PLATFORM_ID) private platformId: object,
+  ) { }
 
   currentYPosition() {
+    if (!isPlatformBrowser(this.platformId)) return 0;
     // Firefox, Chrome, Opera, Safari
     if (self.pageYOffset) return self.pageYOffset;
     // Internet Explorer 6 - standards mode
@@ -19,6 +25,7 @@ export class ScrollToDirective {
   };
 
   elmYPosition(eID) {
+    if (!isPlatformBrowser(this.platformId)) return 0;
     var elm = document.getElementById(eID);
     if (!elm) return 0;
     var y = elm.offsetTop;
@@ -32,7 +39,8 @@ export class ScrollToDirective {
 
   @HostListener('click', ['$event'])
   smoothScroll() {
-    if(!this.elmID)
+    if (!isPlatformBrowser(this.platformId)) return;
+    if (!this.elmID)
       return;
     var startY = this.currentYPosition() || 0;
     var stopY = this.elmYPosition(this.elmID) || 0;
@@ -48,7 +56,7 @@ export class ScrollToDirective {
     var timer = 0;
     if (stopY > startY) {
       for (var i = startY; i < stopY; i += step) {
-        setTimeout("window.scrollTo(0, " + leapY + ")", timer * speed);
+        setTimeout(() => window.scrollTo(0, leapY), timer * speed);
         leapY += step;
         if (leapY > stopY) leapY = stopY;
         timer++;
@@ -56,7 +64,7 @@ export class ScrollToDirective {
       return;
     }
     for (var i = startY; i > stopY; i -= step) {
-      setTimeout("window.scrollTo(0, " + leapY + ")", timer * speed);
+      setTimeout(() => window.scrollTo(0, leapY), timer * speed);
       leapY -= step;
       if (leapY < stopY) leapY = stopY;
       timer++;

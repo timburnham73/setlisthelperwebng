@@ -1,6 +1,6 @@
 import { Component, OnInit, HostListener, HostBinding, Inject, Input } from '@angular/core';
 import { DOCUMENT, NgClass } from '@angular/common';
-import { WINDOW_PROVIDERS, WINDOW } from '../../../shared/helpers/window.helper';
+import { WINDOW } from '../../../shared/helpers/window.helper';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { FlexLayoutModule } from 'ngx-flexible-layout';
@@ -23,12 +23,13 @@ export class HeaderComponent {
   isFixed;
   constructor(
     @Inject(DOCUMENT) private document: Document,
-    @Inject(WINDOW) private window: Window,
+    @Inject(WINDOW) private window: Window | null,
     private router: Router
   ) { }
 
   @HostListener("window:scroll", [])
   onWindowScroll() {
+    if (!this.window) return;
     const offset = this.window.pageYOffset || this.document.documentElement.scrollTop || this.document.body.scrollTop || 0;
     if(offset > 10) {
       this.isFixed = true

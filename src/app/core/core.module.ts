@@ -1,5 +1,5 @@
-import { NgModule, Optional, SkipSelf, ErrorHandler } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { NgModule, Optional, SkipSelf, ErrorHandler, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { MediaMatcher } from '@angular/cdk/layout';
 //import { NGXLogger } from 'ngx-logger';
@@ -22,7 +22,11 @@ import { GlobalErrorHandler } from './services/globar-error.handler';
         //     useClass: GlobalErrorHandler
         // },
         //{ provide: NGXLogger, useClass: NGXLogger },
-        { provide: 'LOCALSTORAGE', useValue: window.localStorage },
+        {
+            provide: 'LOCALSTORAGE',
+            useFactory: (platformId: object) => isPlatformBrowser(platformId) ? window.localStorage : null,
+            deps: [PLATFORM_ID]
+        },
         provideHttpClient(withInterceptorsFromDi())
     ] })
 export class CoreModule {

@@ -13,7 +13,6 @@ import { LayoutComponent } from './layout/layout.component';
 import { LayoutNoSidebarComponent } from './layout-no-sidebar/layout-no-sidebar.component';
 import { AutoFocusDirective } from './directives/auto-focus/auto-focus.directive';
 import { SwipeDirective } from './directives/swipe/swipe.directive';
-import { WINDOW_PROVIDERS } from './helpers/window.helper';
 import { DATE_PIPE_DEFAULT_OPTIONS } from '@angular/common';
 
 @NgModule({
@@ -47,7 +46,6 @@ import { DATE_PIPE_DEFAULT_OPTIONS } from '@angular/common';
         SwipeDirective
     ],
     providers: [
-        WINDOW_PROVIDERS,
         {provide: DATE_PIPE_DEFAULT_OPTIONS, useValue: {dateFormat: 'mediumDate'}}
     ]
 })

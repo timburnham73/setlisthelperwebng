@@ -1,4 +1,5 @@
-import { Component, AfterViewInit, OnInit } from '@angular/core';
+import { Component, AfterViewInit, OnInit, PLATFORM_ID, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { Title, Meta } from '@angular/platform-browser';
 import { HeaderComponent } from '../header/header.component';
@@ -19,6 +20,8 @@ import { FooterComponent } from '../footer/footer.component';
   styleUrl: './home.component.scss'
 })
 export class HomeComponent implements AfterViewInit, OnInit {
+  private platformId = inject(PLATFORM_ID);
+
   constructor(
     private route: ActivatedRoute,
     private titleService: Title,
@@ -35,6 +38,7 @@ export class HomeComponent implements AfterViewInit, OnInit {
   }
 
   ngAfterViewInit() {
+    if (!isPlatformBrowser(this.platformId)) return;
     this.route.fragment.subscribe(fragment => {
       if (fragment) {
         setTimeout(() => {
