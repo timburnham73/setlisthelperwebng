@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { Title, Meta } from '@angular/platform-browser';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { HeaderComponent } from '../../home/header/header.component';
+import { SeoService } from '../../../core/services/seo.service';
 
 @Component({
   selector: 'app-help-landing',
@@ -14,13 +14,14 @@ import { HeaderComponent } from '../../home/header/header.component';
   styleUrls: ['./help-landing.component.css']
 })
 export class HelpLandingComponent implements OnInit {
-  constructor(
-    private titleService: Title,
-    private meta: Meta
-  ) {}
+  constructor(private seoService: SeoService) {}
 
   ngOnInit() {
-    this.titleService.setTitle('Band Central - Help & Support');
-    this.meta.updateTag({ name: 'description', content: 'Get help with Band Central for iOS, Android, and web. Find answers to common questions about songs, setlists, lyrics, ChordPro, and more.' });
+    this.seoService.setSeo({
+      title: 'Band Central Help & Support',
+      description: 'Get help using Band Central on iOS, Android, and web. Migration guide from Setlist Helper, tutorials, and troubleshooting.',
+      url: 'https://www.bandcentral.com/help',
+    });
+    this.seoService.clearJsonLd();
   }
 }

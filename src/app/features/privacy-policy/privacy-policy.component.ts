@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Title, Meta } from '@angular/platform-browser';
 import { MatCardModule } from '@angular/material/card';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterLink } from '@angular/router';
+import { SeoService } from '../../core/services/seo.service';
 
 @Component({
     selector: 'app-privacy-policy',
@@ -14,13 +14,14 @@ import { RouterLink } from '@angular/router';
 export class PrivacyPolicyComponent implements OnInit {
   lastUpdated = 'February 16, 2026';
 
-  constructor(
-    private titleService: Title,
-    private meta: Meta
-  ) {}
+  constructor(private seoService: SeoService) {}
 
   ngOnInit() {
-    this.titleService.setTitle('Privacy Policy - Band Central');
-    this.meta.updateTag({ name: 'description', content: 'Band Central privacy policy. Learn how we collect, use, and protect your data.' });
+    this.seoService.setSeo({
+      title: 'Band Central Privacy Policy',
+      description: 'Band Central privacy policy: what data we collect, how we use it, and your rights. GDPR compliant. Last updated April 2026.',
+      url: 'https://www.bandcentral.com/privacy-policy',
+    });
+    this.seoService.clearJsonLd();
   }
 }

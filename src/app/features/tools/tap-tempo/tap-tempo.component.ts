@@ -1,6 +1,6 @@
 import { Component, OnInit, HostListener } from '@angular/core';
-import { Title, Meta } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
+import { SeoService } from '../../../core/services/seo.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
@@ -26,14 +26,24 @@ export class TapTempoComponent implements OnInit {
   private maxTaps = 12;
   private resetTimeout = 3000;
 
-  constructor(private titleService: Title, private meta: Meta) {}
+  constructor(private seoService: SeoService) {}
 
   ngOnInit(): void {
-    this.titleService.setTitle('BPM Tap Tempo - Free Online Tool | Band Central');
-    this.meta.updateTag({ name: 'description', content: 'Tap your spacebar or screen to detect the tempo of any song in beats per minute. Free online BPM counter tool.' });
-    this.meta.updateTag({ property: 'og:title', content: 'BPM Tap Tempo - Free Online Tool | Band Central' });
-    this.meta.updateTag({ property: 'og:description', content: 'Tap your spacebar or screen to detect the tempo of any song in beats per minute.' });
-    this.meta.updateTag({ property: 'og:url', content: 'https://www.bandcentral.com/tools/tap-tempo' });
+    this.seoService.setSeo({
+      title: 'BPM Tap Tempo - Free Online Tool | Band Central',
+      description: 'Tap your spacebar or screen to detect the tempo of any song in beats per minute. Free online BPM counter tool.',
+      url: 'https://www.bandcentral.com/tools/tap-tempo',
+    });
+    this.seoService.setJsonLd({
+      '@context': 'https://schema.org',
+      '@type': 'SoftwareApplication',
+      name: 'BPM Tap Tempo',
+      applicationCategory: 'MusicApplication',
+      operatingSystem: 'Web',
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+      url: 'https://www.bandcentral.com/tools/tap-tempo',
+      description: 'Tap your spacebar or screen to detect the tempo of any song in beats per minute.',
+    });
   }
 
   @HostListener('document:keydown.space', ['$event'])

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Title, Meta, DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { MatCardModule } from '@angular/material/card';
+import { SeoService } from '../../core/services/seo.service';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
@@ -27,18 +28,18 @@ export class WhyBandCentralComponent implements OnInit {
   videoUrl: SafeResourceUrl;
 
   constructor(
-    private titleService: Title,
-    private metaService: Meta,
+    private seoService: SeoService,
     private sanitizer: DomSanitizer
   ) {
     this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl('https://www.youtube.com/embed/qHVv34gmEwk');
   }
 
   ngOnInit(): void {
-    this.titleService.setTitle('Why Band Central? | Band Central');
-    this.metaService.updateTag({
-      name: 'description',
-      content: 'Band Central is the collaboration platform for bands and worship teams. Real-time sync, per-member lyrics, multiple bands, and more.'
+    this.seoService.setSeo({
+      title: 'Why Band Central - Built for Working Musicians',
+      description: 'Why bands choose Band Central: real-time sync, ChordPro support, setlist planning, and cross-device collaboration. Built by musicians for musicians.',
+      url: 'https://www.bandcentral.com/why',
     });
+    this.seoService.clearJsonLd();
   }
 }

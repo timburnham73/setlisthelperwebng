@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { Title, Meta } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { HeaderComponent } from '../../home/header/header.component';
+import { SeoService } from '../../../core/services/seo.service';
 
 @Component({
   selector: 'app-tools-landing',
@@ -41,13 +41,24 @@ export class ToolsLandingComponent implements OnInit {
     },
   ];
 
-  constructor(private titleService: Title, private meta: Meta) {}
+  constructor(private seoService: SeoService) {}
 
   ngOnInit(): void {
-    this.titleService.setTitle('Free Musician Tools - Band Central');
-    this.meta.updateTag({ name: 'description', content: 'Free online tools for musicians: BPM tap tempo, chord transpose, and metronome. No signup required. Part of Band Central.' });
-    this.meta.updateTag({ property: 'og:title', content: 'Free Musician Tools - Band Central' });
-    this.meta.updateTag({ property: 'og:description', content: 'Free online tools for musicians: BPM tap tempo, chord transpose, and metronome.' });
-    this.meta.updateTag({ property: 'og:url', content: 'https://www.bandcentral.com/tools' });
+    this.seoService.setSeo({
+      title: 'Free Musician Tools - Metronome, Transpose, Tap Tempo',
+      description: 'Free online tools for musicians: metronome with visual beat indicator, chord transposition tool, and BPM tap-tempo counter. No signup required.',
+      url: 'https://www.bandcentral.com/tools',
+    });
+
+    this.seoService.setJsonLd({
+      '@context': 'https://schema.org',
+      '@type': 'ItemList',
+      name: 'Free Musician Tools',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Online Metronome', url: 'https://www.bandcentral.com/tools/metronome' },
+        { '@type': 'ListItem', position: 2, name: 'Chord Transpose Tool', url: 'https://www.bandcentral.com/tools/transpose' },
+        { '@type': 'ListItem', position: 3, name: 'BPM Tap Tempo', url: 'https://www.bandcentral.com/tools/tap-tempo' },
+      ],
+    });
   }
 }

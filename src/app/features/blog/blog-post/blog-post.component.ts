@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { Title, Meta } from '@angular/platform-browser';
 import { MatCardModule } from '@angular/material/card';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { BLOG_POSTS } from '../blog-content';
+import { SeoService } from '../../../core/services/seo.service';
 
 @Component({
   selector: 'app-blog-post',
@@ -18,16 +18,39 @@ export class BlogPostComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private titleService: Title,
-    private meta: Meta
+    private seoService: SeoService,
   ) {}
 
   ngOnInit() {
     this.slug = this.route.snapshot.paramMap.get('slug') || '';
     const post = BLOG_POSTS.find(p => p.slug === this.slug);
-    if (post) {
-      this.titleService.setTitle(post.title + ' - Band Central');
-      this.meta.updateTag({ name: 'description', content: post.metaDescription });
-    }
+    if (!post) return;
+
+    const url = `https://www.bandcentral.com/blog/${post.slug}`;
+
+    this.seoService.setSeo({
+      title: `${post.title} | Band Central Blog`,
+      description: post.metaDescription,
+      url,
+      ogType: 'article',
+    });
+
+    this.seoService.setJsonLd({
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: post.title,
+      description: post.metaDescription,
+      url,
+      datePublished: post.date,
+      author: { '@type': 'Organization', name: 'Band Central' },
+      publisher: {
+        '@type': 'Organization',
+        name: 'Band Central',
+        logo: {
+          '@type': 'ImageObject',
+          url: 'https://www.bandcentral.com/assets/favicon/android-icon-192x192.png',
+        },
+      },
+    });
   }
 }

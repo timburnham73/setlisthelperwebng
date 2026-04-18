@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { Title, Meta } from '@angular/platform-browser';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { HeaderComponent } from '../../home/header/header.component';
+import { SeoService } from '../../../core/services/seo.service';
 
 @Component({
   selector: 'app-help-migration',
@@ -14,14 +14,15 @@ import { HeaderComponent } from '../../home/header/header.component';
   styleUrls: ['./help-migration.component.css']
 })
 export class HelpMigrationComponent implements OnInit {
-  constructor(
-    private titleService: Title,
-    private meta: Meta
-  ) {}
+  constructor(private seoService: SeoService) {}
 
   ngOnInit() {
-    this.titleService.setTitle('Band Central - Migrate from Setlist Helper');
-    this.meta.updateTag({ name: 'description', content: 'Step-by-step guide to migrate your songs, setlists, and data from Setlist Helper to Band Central. Import your existing data easily.' });
+    this.seoService.setSeo({
+      title: 'Setlist Helper Migration Guide - Band Central',
+      description: 'Step-by-step guide to import your songs, setlists, and lyrics from Setlist Helper into Band Central. Free, automatic migration.',
+      url: 'https://www.bandcentral.com/help/migration',
+    });
+    this.seoService.clearJsonLd();
   }
 
   scrollTo(elementId: string): void {

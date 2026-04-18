@@ -1,7 +1,7 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Title, Meta } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
+import { SeoService } from '../../core/services/seo.service';
 import { Subject, takeUntil } from 'rxjs';
 
 import { AngularFirestore } from '@angular/fire/compat/firestore';
@@ -42,7 +42,7 @@ import { HeaderComponent } from '../home/header/header.component';
     HeaderComponent,
   ]
 })
-export class ContactComponent implements OnDestroy {
+export class ContactComponent implements OnInit, OnDestroy {
   submitting = false;
   submitted = false;
   selectedFile: File | null = null;
@@ -66,12 +66,8 @@ export class ContactComponent implements OnDestroy {
     private storage: AngularFireStorage,
     private auth: AngularFireAuth,
     private notificationService: NotificationService,
-    private titleService: Title,
-    private metaService: Meta,
+    private seoService: SeoService,
   ) {
-    this.titleService.setTitle('Contact Support - Band Central');
-    this.metaService.updateTag({ name: 'description', content: 'Contact Band Central support for help with purchases, billing, or technical issues.' });
-
     // Toggle conditional validators based on supportType and platform
     this.contactForm.controls.supportType.valueChanges
       .pipe(takeUntil(this.destroy$))
@@ -80,6 +76,15 @@ export class ContactComponent implements OnDestroy {
     this.contactForm.controls.platform.valueChanges
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => this.updateConditionalValidators());
+  }
+
+  ngOnInit(): void {
+    this.seoService.setSeo({
+      title: 'Contact Band Central - Support & Feedback',
+      description: 'Get in touch with the Band Central team. Report bugs, request features, or ask questions about songs, setlists, or billing.',
+      url: 'https://www.bandcentral.com/contact',
+    });
+    this.seoService.clearJsonLd();
   }
 
   get showDeviceFields(): boolean {

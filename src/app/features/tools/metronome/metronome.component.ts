@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Title, Meta } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
+import { SeoService } from '../../../core/services/seo.service';
 import { FormsModule } from '@angular/forms';
 import { NgClass } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
@@ -59,19 +59,28 @@ export class MetronomeComponent implements OnInit, OnDestroy {
   private beatSub: Subscription | null = null;
 
   constructor(
-    private titleService: Title,
-    private meta: Meta,
+    private seoService: SeoService,
     private audioService: MetronomeAudioService,
   ) {
     this.selectedTimeSignature = this.timeSignatures[2]; // 4/4
   }
 
   ngOnInit(): void {
-    this.titleService.setTitle('Online Metronome - Free Tool | Band Central');
-    this.meta.updateTag({ name: 'description', content: 'Free online metronome with adjustable BPM, time signatures, tempo markings from Largo to Presto, and visual beat indicator. Uses Web Audio for precise timing.' });
-    this.meta.updateTag({ property: 'og:title', content: 'Online Metronome - Free Tool | Band Central' });
-    this.meta.updateTag({ property: 'og:description', content: 'Free online metronome with adjustable BPM, time signatures, and visual beat indicator.' });
-    this.meta.updateTag({ property: 'og:url', content: 'https://www.bandcentral.com/tools/metronome' });
+    this.seoService.setSeo({
+      title: 'Online Metronome - Free Tool | Band Central',
+      description: 'Free online metronome with visual beat indicator. Set BPM, time signature, and practice at any tempo. Works in your browser — no download.',
+      url: 'https://www.bandcentral.com/tools/metronome',
+    });
+    this.seoService.setJsonLd({
+      '@context': 'https://schema.org',
+      '@type': 'SoftwareApplication',
+      name: 'Online Metronome',
+      applicationCategory: 'MusicApplication',
+      operatingSystem: 'Web',
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+      url: 'https://www.bandcentral.com/tools/metronome',
+      description: 'Free online metronome with visual beat indicator. Set BPM, time signature, and practice at any tempo.',
+    });
 
     this.beatSub = this.audioService.beat$.subscribe(beat => {
       this.currentBeat = beat;

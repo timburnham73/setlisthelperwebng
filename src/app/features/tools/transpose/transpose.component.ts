@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Title, Meta } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
+import { SeoService } from '../../../core/services/seo.service';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -58,14 +58,24 @@ Amazing grace, how sweet the sound
 Dm       G7       C
 That saved a wretch like me`;
 
-  constructor(private titleService: Title, private meta: Meta) {}
+  constructor(private seoService: SeoService) {}
 
   ngOnInit(): void {
-    this.titleService.setTitle('Chord Transpose Tool - Free Online | Band Central');
-    this.meta.updateTag({ name: 'description', content: 'Free online chord transpose tool. Paste chords or lyrics and transpose up or down by semitones. Supports sharp and flat notation.' });
-    this.meta.updateTag({ property: 'og:title', content: 'Chord Transpose Tool - Free Online | Band Central' });
-    this.meta.updateTag({ property: 'og:description', content: 'Paste chords or lyrics and transpose up or down by semitones.' });
-    this.meta.updateTag({ property: 'og:url', content: 'https://www.bandcentral.com/tools/transpose' });
+    this.seoService.setSeo({
+      title: 'Chord Transpose Tool - Free Online | Band Central',
+      description: 'Free online chord transposition tool. Paste ChordPro or chord-over-lyrics and shift to any key instantly. No signup required.',
+      url: 'https://www.bandcentral.com/tools/transpose',
+    });
+    this.seoService.setJsonLd({
+      '@context': 'https://schema.org',
+      '@type': 'SoftwareApplication',
+      name: 'Chord Transpose Tool',
+      applicationCategory: 'MusicApplication',
+      operatingSystem: 'Web',
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+      url: 'https://www.bandcentral.com/tools/transpose',
+      description: 'Free online chord transposition tool. Paste ChordPro or chord-over-lyrics and shift to any key instantly.',
+    });
   }
 
   transposeUp(): void {
