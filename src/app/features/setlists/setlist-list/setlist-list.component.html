@@ -53,7 +53,7 @@
                       <button mat-icon-button aria-label="Edit Setlist" (click)="$event.stopPropagation(); onEditSetlist($event, setlist);">
                         <mat-icon>edit</mat-icon>
                       </button>
-                      <button *ngIf="isSystemAdmin" mat-icon-button aria-label="Duplicate Setlist" (click)="$event.stopPropagation(); onDuplicateSetlist($event, setlist);">
+                      <button mat-icon-button aria-label="Duplicate Setlist" (click)="$event.stopPropagation(); onDuplicateSetlist($event, setlist);">
                         <mat-icon>content_copy</mat-icon>
                       </button>
                     }
@@ -141,10 +141,6 @@
                  href="#" (click)="onViewSetlistSongs($event, element)" >View</a> |
                 <a title="Edit the Setlist."
                  href="#" (click)="onEditSetlist($event, element)" >Edit</a>
-                <ng-container *ngIf="isSystemAdmin"> |
-                <a title="Duplicate this Setlist."
-                 href="#" (click)="onDuplicateSetlist($event, element)" >Duplicate</a>
-                </ng-container>
               </td>
             </ng-container>
 
@@ -190,8 +186,17 @@
       </button>
       <button
         mat-icon-button
-        aria-label="Edit Setlist Songs"
-        title="Edit Setlist Songs"
+        aria-label="Duplicate Setlist"
+        title="Duplicate Setlist"
+        [disabled]="!selectedSetlist"
+        (click)="selectedSetlist && onDuplicateSetlist($event, selectedSetlist)"
+      >
+        <mat-icon>content_copy</mat-icon>
+      </button>
+      <button
+        mat-icon-button
+        aria-label="Print Setlist"
+        title="Print Setlist"
         (click)="onPrintSetlist()"
       >
         <mat-icon>print</mat-icon>

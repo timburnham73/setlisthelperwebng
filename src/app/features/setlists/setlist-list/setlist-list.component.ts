@@ -168,15 +168,22 @@ export class SetlistListComponent implements OnInit {
       );
       return;
     }
+    const editingUser = {
+      uid: this.currentUser?.uid,
+      displayName: this.currentUser?.displayName ?? '',
+      email: this.currentUser?.email ?? '',
+    };
     this.setlistService
-      .duplicateSetlist(this.accountId!, source, this.currentUser)
+      .duplicateSetlist(this.accountId!, source, editingUser as any)
       .pipe(first())
       .subscribe({
         next: (newSetlist) => {
           this.notificationService.openSnackBar(`Duplicated "${source.name}"`);
         },
-        error: () => {
-          this.notificationService.openSnackBar('Could not duplicate setlist. Please try again.');
+        error: (err) => {
+          console.error('Duplicate setlist failed:', err);
+          const msg = err?.message || err?.code || 'unknown error';
+          this.notificationService.openSnackBar(`Could not duplicate setlist: ${msg}`);
         }
       });
   }
