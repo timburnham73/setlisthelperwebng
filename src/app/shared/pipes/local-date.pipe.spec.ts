@@ -15,7 +15,7 @@ describe('LocalDatePipe', () => {
   });
 
   it('returns empty string when date is null', () => {
-    const date = null;
+    const date = null as unknown as Date;
 
     const pipe = new LocalDatePipe();
     const result = pipe.transform(date, 'DD MMM YYYY HH:mm');
@@ -26,7 +26,7 @@ describe('LocalDatePipe', () => {
     const date = new Date('2018-05-04T08:17:57.8979116Z');
 
     const pipe = new LocalDatePipe();
-    const result = pipe.transform(date, null);
+    const result = pipe.transform(date, null as unknown as string);
     expect(result).toBe('');
   });
 

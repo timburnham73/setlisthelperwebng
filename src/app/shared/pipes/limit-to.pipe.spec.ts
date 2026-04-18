@@ -26,19 +26,19 @@ describe('LimitToPipe', () => {
 
   it('returns empty string when value is null', () => {
     const pipe = new LimitToPipe();
-    const result = pipe.transform(null, '3');
+    const result = pipe.transform(null as unknown as string, '3');
     expect(result).toBe('');
   });
 
   it('returns empty string when value is undefined', () => {
     const pipe = new LimitToPipe();
-    const result = pipe.transform(undefined, '3');
+    const result = pipe.transform(undefined as unknown as string, '3');
     expect(result).toBe('');
   });
 
   it('returns empty string when limit to is 0', () => {
     const pipe = new LimitToPipe();
-    const result = pipe.transform(undefined, '0');
+    const result = pipe.transform(undefined as unknown as string, '0');
     expect(result).toBe('');
   });
 });
