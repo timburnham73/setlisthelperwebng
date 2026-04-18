@@ -42,11 +42,12 @@ Plans:
   3. Each public page has a unique `<title>`, meta description, and Open Graph tags visible in page source
   4. A sitemap.xml is accessible at the site root and lists all public routes
   5. JSON-LD structured data is present in page source for home, pricing, tools, and blog pages
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 01-01: TBD
-- [ ] 01-02: TBD
+- [ ] 01-01-PLAN.md — Add @angular/ssr, configure prerender, guard browser APIs
+- [ ] 01-02-PLAN.md — Per-route SEO service with JSON-LD structured data
+- [ ] 01-03-PLAN.md — Sitemap automation from routes.txt + blog content
 
 ### Phase 2: Role-Based Access Control
 **Goal**: Band members have scoped permissions — Members can view but not modify shared resources, Admins can manage content, Owners have full control
