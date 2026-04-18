@@ -14,8 +14,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [ ] **Phase 0.1: Release Notification Emails** - INSERTED: Cloud Function to email all users release notes when a new version is published
 - [x] **Phase 1: SSR & SEO** - Prerender public routes and add per-page SEO so Google indexes the site ✓ 2026-04-18
-- [ ] **Phase 2: Role-Based Access Control** - Enforce Owner/Admin/Member roles per band in Firestore rules and UI
-- [ ] **Phase 3: Cross-Band Sharing & Duplicate Setlist** - Let users copy songs between bands and unlock duplicate setlist for everyone
+- [ ] **Phase 2: Cross-Band Sharing & Duplicate Setlist** - Let owners copy songs between their bands and unlock duplicate setlist for everyone
+- [ ] **Phase 3: Role-Based Access Control** - Enforce Owner/Admin/Member roles per band in Firestore rules and UI (adds destination role check to Phase 2 sharing)
 
 ## Phase Details
 
@@ -49,32 +49,34 @@ Plans:
 - [x] 01-02-PLAN.md — Per-route SEO service with JSON-LD structured data ✓
 - [x] 01-03-PLAN.md — Sitemap automation from routes.txt + blog content ✓
 
-### Phase 2: Role-Based Access Control
-**Goal**: Band members have scoped permissions — Members can view but not modify shared resources, Admins can manage content, Owners have full control
+### Phase 2: Cross-Band Sharing & Duplicate Setlist
+**Goal**: Band owners can copy songs (with their own lyrics) from one of their bands to another; all users can duplicate setlists
 **Depends on**: Phase 1
+**Requirements**: SHARE-01, SHARE-02, SHARE-03, SHARE-04, SHARE-05, SHARE-06, DUP-01
+**Success Criteria** (what must be TRUE):
+  1. A user who is the OWNER of Band A (and a member of Band B) can select songs in Band A and copy them to Band B; the copies appear in Band B's song list with only the user's own lyrics attached
+  2. Copied songs do not carry over tags or setlist references from the source band
+  3. Sharing into a band is blocked with a clear message when the target band's song count would exceed its entitlement limit
+  4. Non-owner users see no share option on songs they do not own (they cannot share from a band they do not own)
+  5. Any user (not just systemAdmin) can duplicate a setlist from the setlist list page
+**Plans**: TBD
+**UI hint**: yes
+**Note on SHARE-06 (interim)**: In Phase 2, "permission to share" is enforced by source-band ownership only (`ownerUser.uid === currentUser.uid`). Phase 3 RBAC adds the destination-band role check (Admin/Owner in target) as part of that phase's work.
+
+Plans:
+- [ ] 02-01: TBD
+- [ ] 02-02: TBD
+
+### Phase 3: Role-Based Access Control
+**Goal**: Band members have scoped permissions — Members can view but not modify shared resources, Admins can manage content, Owners have full control. Adds destination-band role check to Phase 2 sharing.
+**Depends on**: Phase 1 (independent from Phase 2, but Phase 3 extends Phase 2's share flow with the destination role check)
 **Requirements**: RBAC-01, RBAC-02, RBAC-03, RBAC-04, RBAC-05, RBAC-06
 **Success Criteria** (what must be TRUE):
   1. A Member-role user can view songs and setlists but cannot delete songs, edit other members' songs, or access band settings — both in the UI and when attempting direct Firestore writes
   2. An Owner can open the member list, see role badges next to each name, and change a member's role
   3. UI controls (delete, edit, share, settings) are hidden or disabled for users without the required role, with a message explaining the restriction
   4. AccountUser documents use UID-based keys so Firestore security rules can resolve the requesting user's role without a secondary query
-**Plans**: TBD
-**UI hint**: yes
-
-Plans:
-- [ ] 02-01: TBD
-- [ ] 02-02: TBD
-
-### Phase 3: Cross-Band Sharing & Duplicate Setlist
-**Goal**: Musicians can copy songs (with their own lyrics) from one band to another, and all users can duplicate setlists
-**Depends on**: Phase 2 (sharing enforces RBAC roles on the target band)
-**Requirements**: SHARE-01, SHARE-02, SHARE-03, SHARE-04, SHARE-05, SHARE-06, DUP-01
-**Success Criteria** (what must be TRUE):
-  1. A user belonging to two bands can select songs in Band A and copy them to Band B; the copies appear in Band B's song list with only the user's own lyrics attached
-  2. Copied songs do not carry over tags or setlist references from the source band
-  3. Sharing into a band is blocked with a clear message when the target band's song count would exceed its entitlement limit
-  4. Only users with Admin or Owner role in the target band can share songs into it; Members see the share option disabled
-  5. Any user (not just systemAdmin) can duplicate a setlist from the setlist list page
+  5. Cross-band sharing from Phase 2 now also requires the user to be an Admin or Owner in the TARGET band (in addition to owning the source band)
 **Plans**: TBD
 **UI hint**: yes
 
@@ -91,5 +93,5 @@ Phases execute in numeric order: 0.1 -> 1 -> 2 -> 3
 |-------|----------------|--------|-----------|
 | 0.1. Release Notification Emails | 0/0 | Not started | - |
 | 1. SSR & SEO | 3/3 | Complete | 2026-04-18 |
-| 2. Role-Based Access Control | 0/0 | Not started | - |
-| 3. Cross-Band Sharing & Duplicate Setlist | 0/0 | Not started | - |
+| 2. Cross-Band Sharing & Duplicate Setlist | 0/0 | Not started | - |
+| 3. Role-Based Access Control | 0/0 | Not started | - |

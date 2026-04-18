@@ -36,7 +36,7 @@ Requirements for this milestone. Each maps to roadmap phases.
 - [ ] **SHARE-03**: Only the current user's lyrics are copied — other members' lyrics stay in the source band
 - [ ] **SHARE-04**: Tags and setlist references are not copied (band-specific)
 - [ ] **SHARE-05**: Sharing respects entitlement limits — user cannot share songs into a band that would exceed its song count limit
-- [ ] **SHARE-06**: Only users with Admin or Owner role in the target band can share songs into it
+- [ ] **SHARE-06**: Sharing is permission-gated. Phase 2: only the owner of the source band (`ownerUser.uid === currentUser.uid`) can initiate a share. Phase 3 extends this with a destination-band role check (target band role must be Admin or Owner) once RBAC ships.
 
 ### Duplicate Setlist
 
@@ -83,19 +83,19 @@ Requirements for this milestone. Each maps to roadmap phases.
 | SEO-01 | Phase 1 | Complete |
 | SEO-02 | Phase 1 | Complete |
 | SEO-03 | Phase 1 | Complete |
-| RBAC-01 | Phase 2 | Pending |
-| RBAC-02 | Phase 2 | Pending |
-| RBAC-03 | Phase 2 | Pending |
-| RBAC-04 | Phase 2 | Pending |
-| RBAC-05 | Phase 2 | Pending |
-| RBAC-06 | Phase 2 | Pending |
-| SHARE-01 | Phase 3 | Pending |
-| SHARE-02 | Phase 3 | Pending |
-| SHARE-03 | Phase 3 | Pending |
-| SHARE-04 | Phase 3 | Pending |
-| SHARE-05 | Phase 3 | Pending |
-| SHARE-06 | Phase 3 | Pending |
-| DUP-01 | Phase 3 | Pending |
+| RBAC-01 | Phase 3 | Pending |
+| RBAC-02 | Phase 3 | Pending |
+| RBAC-03 | Phase 3 | Pending |
+| RBAC-04 | Phase 3 | Pending |
+| RBAC-05 | Phase 3 | Pending |
+| RBAC-06 | Phase 3 | Pending |
+| SHARE-01 | Phase 2 | Pending |
+| SHARE-02 | Phase 2 | Pending |
+| SHARE-03 | Phase 2 | Pending |
+| SHARE-04 | Phase 2 | Pending |
+| SHARE-05 | Phase 2 | Pending |
+| SHARE-06 | Phase 2 | Pending |
+| DUP-01 | Phase 2 | Pending |
 
 **Coverage:**
 - v1 requirements: 20 total
