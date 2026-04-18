@@ -125,6 +125,29 @@ export const Account_OnUpdate_SendSubscriptionEmail =
     });
 
 // ////////////////////////////////
+// Release Notification Email functions
+// eslint-disable-next-line camelcase
+export const Release_OnCreate_SendEmail =
+  onDocumentCreated(
+    {
+      document: "releases/{releaseId}",
+      secrets: [SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS],
+      timeoutSeconds: 540,
+      memory: "512MiB",
+    },
+    async event => {
+      await (
+        await import("./release-email/on-create-release-email"))
+        .default(
+          event,
+          SMTP_HOST.value(),
+          SMTP_PORT.value(),
+          SMTP_USER.value(),
+          SMTP_PASS.value(),
+        );
+    });
+
+// ////////////////////////////////
 // Sync functions
 export const accoutImportOnAddStartSLHSync =
   onDocumentCreated(

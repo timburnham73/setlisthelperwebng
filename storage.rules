@@ -11,6 +11,11 @@ service firebase.storage {
       allow read: if false;
     }
 
+    match /downloads/{fileName} {
+      allow read: if true;
+      allow write: if false;
+    }
+
     match /{allPaths=**} {
       allow read, write: if false;
     }
