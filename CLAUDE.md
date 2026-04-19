@@ -17,3 +17,21 @@ All requirements, feature specs, and project management docs are in **bandcentra
 - Web app (Angular) — serves as bandcentral.com
 - Handles legacy data import from setlisthelper.com
 - See `setlisthelperwebng/todo.md` in central docs for web-specific task tracking
+
+## Revenue / User Analytics — Accounts to ALWAYS Exclude
+When calculating revenue, paid-user counts, or any business metric from the user/account data, NEVER include these accounts — they are Tim's own test/dev accounts:
+
+- **timburnham73@gmail.com** — Tim's primary dev account (also the systemAdmin)
+- **bimturnham@gmail.com** — "Bim Turn" — Tim's secondary test account
+
+These accounts may appear with paid entitlements (granted for testing) but do not represent real revenue. Filter them out of any revenue calculation, purchased-user count, or growth metric before reporting numbers.
+
+Pricing reference (for revenue math, from `src/app/features/home/pricings/pricings.component.html`):
+- free: $0
+- solo / solo-free-trial: $14.99/yr
+- band-small / band-small-free-trial: $29.99/yr
+- band-medium / band-medium-free-trial: $59.99/yr
+- band-large / band-large-free-trial: $79.99/yr
+- band-extra-large / band-extra-large-free-trial: $99.99/yr
+
+Free-trial tiers generate $0 actual revenue until the trial converts to paid.
