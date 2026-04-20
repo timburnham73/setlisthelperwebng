@@ -363,14 +363,25 @@ export class ChordProParser {
           // Chord
           const rawChord = chord;
           const chordForParse = (rawChord ?? '').replace(/\|/g, '').trim();
-          const chord1 = chordForParse ? Chord.parse(chordForParse) : undefined;
-          const chord2 = chord1?.transpose(this.transpose);
-          const chordText = chord2?.toString() ?? '';
+          let chordText = '';
+          try {
+            const chord1 = chordForParse ? Chord.parse(chordForParse) : undefined;
+            const chord2 = chord1?.transpose(this.transpose);
+            chordText = chord2?.toString() ?? '';
+          } catch {
+            // chordsheetjs threw on an unusual chord; fall through to raw-text fallback
+          }
+          // Fallback: chordsheetjs rejects extended jazz chords with slashes
+          // like E6/9, C6/9, A6/9 (treats the `/` as a bass separator). Render
+          // the original chord text so it's visible even if we can't transpose it.
+          if (!chordText && chordForParse) {
+            chordText = chordForParse;
+          }
           if (chordText) {
             const chordStyle = this.lyricPartStyles.find(style => style.name === "chord")?.style ?? '';
             chordRow += `<span style='display: inline;${chordStyle}' class='chord'>${chordText}</span>${chordSpacesAfter}`;
           } else {
-            // no valid chord -> render nothing (prevents "undefined")
+            // empty chord brackets `[]` — render nothing
             chordRow += `${chordSpacesAfter}`;
           }
 
