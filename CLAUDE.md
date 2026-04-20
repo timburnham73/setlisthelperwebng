@@ -22,7 +22,11 @@ All requirements, feature specs, and project management docs are in **bandcentra
 When calculating revenue, paid-user counts, or any business metric from the user/account data, NEVER include these accounts — they are Tim's own test/dev accounts:
 
 - **timburnham73@gmail.com** — Tim's primary dev account (also the systemAdmin)
+- **tim@bandcentral.com** — Tim's bandcentral.com email account
 - **bimturnham@gmail.com** — "Bim Turn" — Tim's secondary test account
+- **bysydsdesign@gmail.com** — Sydney Osten (family/team account, not real revenue)
+- **sydney@bandcentral.com** — Sydney Osten (bandcentral.com account, not real revenue)
+- **sydburnhammusic@gmail.com** — Sydney Burnham (family account, not real revenue)
 
 These accounts may appear with paid entitlements (granted for testing) but do not represent real revenue. Filter them out of any revenue calculation, purchased-user count, or growth metric before reporting numbers.
 
