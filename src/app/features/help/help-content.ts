@@ -27,6 +27,10 @@ export const HELP_CONTENT: Record<string, HelpPageContent> = {
         icon: 'rocket_launch',
         topics: [
           {
+            question: 'What iPhones and iPads are supported?',
+            answer: 'Band Central for iOS requires iOS 16 or later. That covers iPhone 8 and newer, iPad (5th generation) and newer, iPad mini 5 and newer, iPad Air 3 and newer, and all iPad Pro models. If your device runs an older iOS version, you can still use the Band Central website at www.bandcentral.com in Safari.'
+          },
+          {
             question: 'How do I create an account?',
             answer: 'When you open Band Central for the first time, you\'ll see the login screen with three options: Sign in with Google, Sign in with Apple, or Sign in with Email. If you don\'t already have an account, one will be created automatically when you sign in. Your email address is what identifies your account — if your email is banduser@gmail.com, signing in with Google, Apple, or Email using that address will all connect to the same account. Once signed in, you can create or join a band to start adding songs and setlists.'
           },
@@ -299,6 +303,10 @@ export const HELP_CONTENT: Record<string, HelpPageContent> = {
         icon: 'rocket_launch',
         topics: [
           {
+            question: 'What Android phones and tablets are supported?',
+            answer: 'Band Central for Android requires Android 6.0 (Marshmallow) or later — that\'s API level 23 and above. Most Android devices made in 2016 or later meet this requirement. If your device runs an older Android version, you can still use the Band Central website at www.bandcentral.com in any modern browser.'
+          },
+          {
             question: 'How do I create an account?',
             answer: 'When you open Band Central for the first time, you\'ll see the login screen with two options: Sign in with Google or Sign in with Email. If you don\'t already have an account, one will be created automatically when you sign in. Your email address is what identifies your account — if your email is banduser@gmail.com, signing in with Google or Email using that address will connect to the same account. Once signed in, you can create or join a band to start adding songs and setlists.'
           },
@@ -570,6 +578,10 @@ export const HELP_CONTENT: Record<string, HelpPageContent> = {
         title: 'Getting Started',
         icon: 'rocket_launch',
         topics: [
+          {
+            question: 'What browsers and operating systems are supported?',
+            answer: 'Band Central\'s website at www.bandcentral.com works in any modern desktop or mobile browser — Chrome, Firefox, Safari, and Edge (latest two major versions of each). No downloads or installs required; sign in and go. On Windows, macOS, ChromeOS, or Linux, the website is your full-featured option since there\'s no native desktop app.'
+          },
           {
             question: 'How do I create an account?',
             answer: 'Visit bandcentral.com and click "Login." You can sign in with Google or with your email address. If you don\'t already have an account, one will be created automatically when you sign in. Your email address is what identifies your account — if your email is banduser@gmail.com, signing in with Google or Email using that address will connect to the same account.'
