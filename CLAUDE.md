@@ -1,17 +1,32 @@
 # Claude Project Notes
 
-## Change Logging (ALWAYS FOLLOW — NEVER SKIP)
-Every code change MUST include doc updates in `/Users/timburnham/src/bandcentral-pm/`:
-1. **`backlog/TODO.md`** — Add `[x]` completed item as changelog entry
-2. **`bandcentralios/requirements.md`** — Update the relevant section to reflect the change (iOS requirements is the reference for all platforms)
-3. Add planned `[ ]` TODO items for other platforms if the feature applies cross-platform
+## Wiki Knowledge Base
 
-## Central Docs
-All requirements, feature specs, and project management docs are in **bandcentraldocs** (GitHub: timburnham73/bandcentraldocs), located at `/Users/timburnham/src/bandcentral-pm/`.
+All cross-project requirements, feature specs, roadmap, architecture decisions, and support knowledge now live in the **SLH Brain** Obsidian wiki at `~/src/SLH Brain` (GitHub: timburnham73/slh-brain). The old `bandcentral-pm` directory was archived on 2026-04-24 — the wiki is authoritative for anything that spans projects.
 
-- Check `backlog/TODO.md` for planned and completed features
-- Check `bandcentralios/requirements.md` for the full feature inventory (iOS is the reference implementation)
-- Feature parity across all platforms is the default goal
+When you need context beyond this project, read the wiki in this order:
+1. `~/src/SLH Brain/wiki/hot.md` — recent context cache (fast)
+2. `~/src/SLH Brain/wiki/index.md` — master catalog
+3. The relevant domain sub-index (`apps/`, `domains/`, `features/`, `roadmap/`, `support/`)
+4. Specific wiki pages as needed
+
+Key pages for this project:
+- `~/src/SLH Brain/wiki/apps/setlisthelperwebng.md` — this app's architecture, conventions, and open issues
+- `~/src/SLH Brain/wiki/roadmap/_index.md` — planned and in-flight features across all platforms
+- `~/src/SLH Brain/wiki/features/*.md` — completed and in-flight feature specs
+- `~/src/SLH Brain/wiki/support/*` — recurring user issues + canned replies
+
+### Change Logging (ALWAYS FOLLOW — NEVER SKIP)
+Every code change MUST update the wiki:
+1. **`wiki/roadmap/_index.md`** — Mark the completed item; add planned items for other platforms if cross-platform.
+2. **`wiki/apps/setlisthelperwebng.md`** — Reflect the architectural / behavioral change.
+3. **`wiki/features/<feature>.md`** — If the change is feature-scoped, update or create the feature page and its parity matrix.
+
+Do this as part of the same work session — never defer.
+
+**Feature parity across all platforms is the default goal.** BC iOS is the reference implementation.
+
+**Do NOT** read the wiki for general coding questions or tasks unrelated to the Setlist Helper / Band Central ecosystem.
 
 ## Project-Specific Notes
 - Web app (Angular) — serves as bandcentral.com
@@ -42,7 +57,7 @@ Free-trial tiers generate $0 actual revenue until the trial converts to paid.
 
 ## Support Knowledge Base
 
-Canned reference answers for recurring support topics live at `/Users/timburnham/src/bandcentral-pm/support/knowledge-base.md`. **Consult it before drafting any support reply.** It currently covers: subscription complaints, multi-user / multi-band subscriptions, migration from SLH, and known platform bug triage shortcuts. Add new sections when a pattern emerges (same question from 2+ users) — don't rewrite canned answers from scratch each time.
+Canned reference answers for recurring support topics live in the SLH Brain wiki at `~/src/SLH Brain/wiki/support/` (formerly `bandcentral-pm/support/knowledge-base.md`, archived 2026-04-24). **Consult the wiki's support section before drafting any support reply.** It covers: subscription complaints, multi-user / multi-band subscriptions, migration from SLH, and known platform bug triage shortcuts. Add new sections when a pattern emerges (same question from 2+ users) — don't rewrite canned answers from scratch each time.
 
 ## Support Email Workflow (support@bandcentral.com via `gmail-support` MCP)
 
