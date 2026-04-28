@@ -11,6 +11,8 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { FlexLayoutModule } from 'ngx-flexible-layout';
 import { FormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { UserService } from 'src/app/core/services/user.service';
 import { AccountService } from 'src/app/core/services/account.service';
 import { AuthenticationService } from 'src/app/core/services/auth.service';
@@ -36,6 +38,8 @@ export interface AdminBandRow {
     name: string;
     ownerName: string;
     ownerEmail: string;
+    ownerUid: string;
+    userIds: string[];
     countOfSongs: number;
     countOfSetlists: number;
     memberCount: number;
@@ -57,6 +61,8 @@ export interface AccountDetail {
     memberCount: number;
     entitlementLevel: string;
     accountId: string;
+    ownerUid: string;
+    userIds: string[];
 }
 
 export interface AdminUserRow {
@@ -90,6 +96,8 @@ export interface AdminUserRow {
         FlexLayoutModule,
         FormsModule,
         MatSelectModule,
+        MatFormFieldModule,
+        MatInputModule,
         MatSnackBarModule,
         NgIf,
         NgFor,
@@ -101,6 +109,8 @@ export class AdminDashboardComponent implements OnInit {
     // Bands tab
     bandDisplayedColumns: string[] = ['expand', 'name', 'ownerName', 'countOfSongs', 'countOfSetlists', 'memberCount', 'entitlementLevel', 'isPurchased', 'dateCreated', 'actions'];
     bandDataSource: AdminBandRow[] = [];
+    filteredBandDataSource: AdminBandRow[] = [];
+    bandSearch = '';
     isLoadingBands = true;
     bandCount = 0;
     expandedBandId: string | null = null;
@@ -108,6 +118,8 @@ export class AdminDashboardComponent implements OnInit {
     // Users tab
     userDisplayedColumns: string[] = ['expand', 'email', 'displayName', 'countOfAccounts', 'entitlementLevel', 'isPurchased', 'dateCreated', 'lastLoginDate', 'actions'];
     userDataSource: AdminUserRow[] = [];
+    filteredUserDataSource: AdminUserRow[] = [];
+    userSearch = '';
     isLoadingUsers = true;
     userCount = 0;
     expandedUid: string | null = null;
@@ -174,6 +186,8 @@ export class AdminDashboardComponent implements OnInit {
                 name: a.name || '',
                 ownerName: a.ownerUser?.displayName || '',
                 ownerEmail: a.ownerUser?.email || '',
+                ownerUid: a.ownerUser?.uid || '',
+                userIds: a.users || [],
                 countOfSongs: a.countOfSongs || 0,
                 countOfSetlists: a.countOfSetlists || 0,
                 memberCount: a.users?.length || 0,
@@ -182,6 +196,7 @@ export class AdminDashboardComponent implements OnInit {
                 dateCreated: this.toDateSafe(a.dateCreated),
                 members: [],
             }));
+            this.applyBandFilter();
             this.isLoadingBands = false;
         });
     }
@@ -209,6 +224,10 @@ export class AdminDashboardComponent implements OnInit {
                             role: 'Admin',
                             systemAdmin: true,
                         });
+                        if (!row.userIds.includes(this.currentAdminUid)) {
+                            row.userIds.push(this.currentAdminUid);
+                            row.memberCount = row.userIds.length;
+                        }
                         this.snackBar.open(`Added to ${row.name}`, 'OK', { duration: 3000 });
                     }
                 });
@@ -229,6 +248,11 @@ export class AdminDashboardComponent implements OnInit {
             accountUserRef.ref.where('uid', '==', this.currentAdminUid).get().then(snapshot => {
                 snapshot.forEach(doc => doc.ref.delete());
             });
+            const rowIdx = row.userIds.indexOf(this.currentAdminUid);
+            if (rowIdx > -1) {
+                row.userIds.splice(rowIdx, 1);
+                row.memberCount = row.userIds.length;
+            }
             this.snackBar.open(`Removed from ${row.name}`, 'OK', { duration: 3000 });
         });
     }
@@ -237,6 +261,7 @@ export class AdminDashboardComponent implements OnInit {
         const data = [...this.bandDataSource];
         if (!sort.active || sort.direction === '') {
             this.bandDataSource = data;
+            this.applyBandFilter();
             return;
         }
         this.bandDataSource = data.sort((a, b) => {
@@ -253,6 +278,29 @@ export class AdminDashboardComponent implements OnInit {
                 default: return 0;
             }
         });
+        this.applyBandFilter();
+    }
+
+    applyBandFilter(): void {
+        const q = this.bandSearch.toLowerCase().trim();
+        if (!q) {
+            this.filteredBandDataSource = [...this.bandDataSource];
+            return;
+        }
+        this.filteredBandDataSource = this.bandDataSource.filter(b =>
+            b.name.toLowerCase().includes(q) ||
+            b.ownerName.toLowerCase().includes(q) ||
+            b.ownerEmail.toLowerCase().includes(q) ||
+            b.entitlementLevel.toLowerCase().includes(q)
+        );
+    }
+
+    isCurrentUserBandOwner(row: AdminBandRow): boolean {
+        return !!this.currentAdminUid && row.ownerUid === this.currentAdminUid;
+    }
+
+    isCurrentUserBandMember(row: AdminBandRow): boolean {
+        return !!this.currentAdminUid && row.userIds.includes(this.currentAdminUid);
     }
 
     // ==================== USERS TAB ====================
@@ -282,6 +330,8 @@ export class AdminDashboardComponent implements OnInit {
                             memberCount: a.users?.length || 0,
                             entitlementLevel: a.entitlementLevel || 'free',
                             accountId: a.id || '',
+                            ownerUid: a.ownerUser?.uid || '',
+                            userIds: a.users || [],
                         }));
                         return {
                             uid: user.uid,
@@ -313,6 +363,7 @@ export class AdminDashboardComponent implements OnInit {
 
             forkJoin(userQueries).subscribe(rows => {
                 this.userDataSource = rows;
+                this.applyUserFilter();
                 this.isLoadingUsers = false;
             });
         });
@@ -341,6 +392,10 @@ export class AdminDashboardComponent implements OnInit {
                             role: 'Admin',
                             systemAdmin: true,
                         });
+                        if (!account.userIds.includes(this.currentAdminUid)) {
+                            account.userIds.push(this.currentAdminUid);
+                            account.memberCount = account.userIds.length;
+                        }
                     }
                 });
             }
@@ -358,6 +413,11 @@ export class AdminDashboardComponent implements OnInit {
             accountUserRef.ref.where('uid', '==', this.currentAdminUid).get().then(snapshot => {
                 snapshot.forEach(doc => doc.ref.delete());
             });
+            const accountIdx = account.userIds.indexOf(this.currentAdminUid);
+            if (accountIdx > -1) {
+                account.userIds.splice(accountIdx, 1);
+                account.memberCount = account.userIds.length;
+            }
         });
     }
 
@@ -386,6 +446,7 @@ export class AdminDashboardComponent implements OnInit {
         const data = [...this.userDataSource];
         if (!sort.active || sort.direction === '') {
             this.userDataSource = data;
+            this.applyUserFilter();
             return;
         }
 
@@ -402,6 +463,28 @@ export class AdminDashboardComponent implements OnInit {
                 default: return 0;
             }
         });
+        this.applyUserFilter();
+    }
+
+    applyUserFilter(): void {
+        const q = this.userSearch.toLowerCase().trim();
+        if (!q) {
+            this.filteredUserDataSource = [...this.userDataSource];
+            return;
+        }
+        this.filteredUserDataSource = this.userDataSource.filter(u =>
+            u.email.toLowerCase().includes(q) ||
+            u.displayName.toLowerCase().includes(q) ||
+            u.entitlementLevel.toLowerCase().includes(q)
+        );
+    }
+
+    isCurrentUserAccountOwner(account: AccountDetail): boolean {
+        return !!this.currentAdminUid && account.ownerUid === this.currentAdminUid;
+    }
+
+    isCurrentUserAccountMember(account: AccountDetail): boolean {
+        return !!this.currentAdminUid && account.userIds.includes(this.currentAdminUid);
     }
 
     private toDateSafe(value: any): Date | null {

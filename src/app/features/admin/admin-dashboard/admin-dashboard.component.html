@@ -16,10 +16,14 @@
       <mat-card *ngIf="!isLoadingBands" class="table-card">
         <mat-card-content>
           <div class="tab-header">
-            <span class="count-label">{{ bandCount }} bands</span>
+            <mat-form-field appearance="outline" class="search-field">
+              <mat-icon matPrefix>search</mat-icon>
+              <input matInput [(ngModel)]="bandSearch" (ngModelChange)="applyBandFilter()" placeholder="Search by name, owner, email, or entitlement">
+            </mat-form-field>
+            <span class="count-label">{{ filteredBandDataSource.length }} of {{ bandCount }} bands</span>
           </div>
           <div class="table-container">
-            <table mat-table [dataSource]="bandDataSource" matSort (matSortChange)="sortBandData($event)" matSortActive="dateCreated" matSortDirection="desc" multiTemplateDataRows>
+            <table mat-table [dataSource]="filteredBandDataSource" matSort (matSortChange)="sortBandData($event)" matSortActive="dateCreated" matSortDirection="desc" multiTemplateDataRows>
 
               <ng-container matColumnDef="expand">
                 <th mat-header-cell *matHeaderCellDef></th>
@@ -79,10 +83,12 @@
               <ng-container matColumnDef="actions">
                 <th mat-header-cell *matHeaderCellDef>Actions</th>
                 <td mat-cell *matCellDef="let row">
-                  <button mat-icon-button (click)="addAdminToBand(row); $event.stopPropagation()" title="Add Me">
+                  <button *ngIf="!isCurrentUserBandOwner(row) && !isCurrentUserBandMember(row)"
+                          mat-icon-button (click)="addAdminToBand(row); $event.stopPropagation()" title="Add Me">
                     <mat-icon>person_add</mat-icon>
                   </button>
-                  <button mat-icon-button (click)="removeAdminFromBand(row); $event.stopPropagation()" title="Remove Me">
+                  <button *ngIf="!isCurrentUserBandOwner(row) && isCurrentUserBandMember(row)"
+                          mat-icon-button (click)="removeAdminFromBand(row); $event.stopPropagation()" title="Remove Me">
                     <mat-icon>person_remove</mat-icon>
                   </button>
                 </td>
@@ -135,10 +141,14 @@
       <mat-card *ngIf="!isLoadingUsers" class="table-card">
         <mat-card-content>
           <div class="tab-header">
-            <span class="count-label">{{ userCount }} users</span>
+            <mat-form-field appearance="outline" class="search-field">
+              <mat-icon matPrefix>search</mat-icon>
+              <input matInput [(ngModel)]="userSearch" (ngModelChange)="applyUserFilter()" placeholder="Search by email, name, or entitlement">
+            </mat-form-field>
+            <span class="count-label">{{ filteredUserDataSource.length }} of {{ userCount }} users</span>
           </div>
           <div class="table-container">
-            <table mat-table [dataSource]="userDataSource" matSort (matSortChange)="sortUserData($event)" matSortActive="lastLoginDate" matSortDirection="desc" multiTemplateDataRows>
+            <table mat-table [dataSource]="filteredUserDataSource" matSort (matSortChange)="sortUserData($event)" matSortActive="lastLoginDate" matSortDirection="desc" multiTemplateDataRows>
 
               <ng-container matColumnDef="expand">
                 <th mat-header-cell *matHeaderCellDef></th>
@@ -228,10 +238,12 @@
                             <td>{{ account.memberCount }}</td>
                             <td>{{ account.entitlementLevel }}</td>
                             <td>
-                              <button mat-stroked-button color="primary" (click)="addAdminToAccount(row, account)" class="admin-action-btn">
+                              <button *ngIf="!isCurrentUserAccountOwner(account) && !isCurrentUserAccountMember(account)"
+                                      mat-stroked-button color="primary" (click)="addAdminToAccount(row, account)" class="admin-action-btn">
                                 <mat-icon>person_add</mat-icon> Add Me
                               </button>
-                              <button mat-stroked-button color="warn" (click)="removeAdminFromAccount(row, account)" class="admin-action-btn">
+                              <button *ngIf="!isCurrentUserAccountOwner(account) && isCurrentUserAccountMember(account)"
+                                      mat-stroked-button color="warn" (click)="removeAdminFromAccount(row, account)" class="admin-action-btn">
                                 <mat-icon>person_remove</mat-icon> Remove Me
                               </button>
                             </td>

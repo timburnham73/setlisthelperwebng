@@ -29,6 +29,20 @@
     padding: 12px 16px 4px;
     font-size: 14px;
     opacity: 0.8;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.search-field {
+    flex: 1 1 320px;
+    max-width: 480px;
+    min-width: 240px;
+}
+
+.search-field .mat-mdc-form-field-subscript-wrapper {
+    display: none;
 }
 
 .count-label {
