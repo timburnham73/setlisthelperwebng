@@ -4,7 +4,6 @@ import { MatTableModule } from '@angular/material/table';
 import { NgIf, NgFor, AsyncPipe, DatePipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -85,7 +84,6 @@ export interface AdminUserRow {
     styleUrls: ['./admin-dashboard.component.css'],
     standalone: true,
     imports: [
-        MatToolbarModule,
         MatButtonModule,
         MatIconModule,
         MatTableModule,
