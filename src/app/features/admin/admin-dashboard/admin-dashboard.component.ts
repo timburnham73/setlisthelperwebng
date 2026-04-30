@@ -20,8 +20,6 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { User } from 'src/app/core/model/user';
 import { Account } from 'src/app/core/model/account';
 import { ENTITLEMENT_LIMITS } from 'src/app/core/model/entitlement-limits';
-import { forkJoin, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
 
 // --- Bands Tab Interfaces ---
 export interface BandMember {
@@ -74,6 +72,8 @@ export interface AdminUserRow {
     dateCreated: Date | null;
     lastLoginDate: Date | null;
     accounts: AccountDetail[];
+    accountsLoaded: boolean;
+    accountsLoading: boolean;
     isSystemAdmin: boolean;
     welcomeEmailSent?: boolean;
 }
@@ -304,66 +304,59 @@ export class AdminDashboardComponent implements OnInit {
     // ==================== USERS TAB ====================
 
     toggleUserExpand(row: AdminUserRow): void {
-        this.expandedUid = this.expandedUid === row.uid ? null : row.uid;
+        if (this.expandedUid === row.uid) {
+            this.expandedUid = null;
+            return;
+        }
+        this.expandedUid = row.uid;
+        if (row.accountsLoaded || row.accountsLoading) return;
+
+        row.accountsLoading = true;
+        this.accountService.getAccounts(row.uid).subscribe({
+            next: accounts => {
+                row.accounts = accounts.map(a => ({
+                    name: a.name,
+                    countOfSongs: a.countOfSongs || 0,
+                    countOfSetlists: a.countOfSetlists || 0,
+                    memberCount: a.users?.length || 0,
+                    entitlementLevel: a.entitlementLevel || 'free',
+                    accountId: a.id || '',
+                    ownerUid: a.ownerUser?.uid || '',
+                    userIds: a.users || [],
+                }));
+                row.countOfAccounts = row.accounts.length;
+                row.accountsLoaded = true;
+                row.accountsLoading = false;
+            },
+            error: () => {
+                row.accounts = [];
+                row.countOfAccounts = 0;
+                row.accountsLoaded = true;
+                row.accountsLoading = false;
+            }
+        });
     }
 
     private loadUsers(): void {
         this.isLoadingUsers = true;
         this.userService.getAllUsers().subscribe(users => {
             this.userCount = users.length;
-
-            const userQueries = users.map(user =>
-                this.accountService.getAccounts(user.uid).pipe(
-                    map(accounts => {
-                        const accountDates = accounts
-                            .map(a => this.toDateSafe(a.dateCreated))
-                            .filter((d): d is Date => d !== null)
-                            .sort((a, b) => a.getTime() - b.getTime());
-                        const createdDate = accountDates.length > 0 ? accountDates[0]
-                            : this.toDateSafe(user.dateCreated);
-                        const accountDetails: AccountDetail[] = accounts.map(a => ({
-                            name: a.name,
-                            countOfSongs: a.countOfSongs || 0,
-                            countOfSetlists: a.countOfSetlists || 0,
-                            memberCount: a.users?.length || 0,
-                            entitlementLevel: a.entitlementLevel || 'free',
-                            accountId: a.id || '',
-                            ownerUid: a.ownerUser?.uid || '',
-                            userIds: a.users || [],
-                        }));
-                        return {
-                            uid: user.uid,
-                            email: user.email || '',
-                            displayName: user.displayName || '',
-                            countOfAccounts: accounts.length,
-                            entitlementLevel: user.entitlementLevel || 'free',
-                            isPurchased: isPaidEntitlement(user.entitlementLevel || 'free'),
-                            dateCreated: createdDate,
-                            lastLoginDate: this.toDateSafe(user.lastLoginDate),
-                            accounts: accountDetails,
-                            isSystemAdmin: user.systemAdmin === true,
-                        } as AdminUserRow;
-                    }),
-                    catchError(() => of({
-                        uid: user.uid,
-                        email: user.email || '',
-                        displayName: user.displayName || '',
-                        countOfAccounts: 0,
-                        entitlementLevel: user.entitlementLevel || 'free',
-                        isPurchased: isPaidEntitlement(user.entitlementLevel || 'free'),
-                        dateCreated: this.toDateSafe(user.dateCreated),
-                        lastLoginDate: this.toDateSafe(user.lastLoginDate),
-                        accounts: [],
-                        isSystemAdmin: user.systemAdmin === true,
-                    } as AdminUserRow))
-                )
-            );
-
-            forkJoin(userQueries).subscribe(rows => {
-                this.userDataSource = rows;
-                this.applyUserFilter();
-                this.isLoadingUsers = false;
-            });
+            this.userDataSource = users.map(user => ({
+                uid: user.uid,
+                email: user.email || '',
+                displayName: user.displayName || '',
+                countOfAccounts: 0,
+                entitlementLevel: user.entitlementLevel || 'free',
+                isPurchased: isPaidEntitlement(user.entitlementLevel || 'free'),
+                dateCreated: this.toDateSafe(user.dateCreated),
+                lastLoginDate: this.toDateSafe(user.lastLoginDate),
+                accounts: [],
+                accountsLoaded: false,
+                accountsLoading: false,
+                isSystemAdmin: user.systemAdmin === true,
+            }));
+            this.applyUserFilter();
+            this.isLoadingUsers = false;
         });
     }
 
