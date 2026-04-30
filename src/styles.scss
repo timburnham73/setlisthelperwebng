@@ -843,3 +843,33 @@ p .mat-mdc-icon {
 .m-l-auto {
   margin-left: auto !important;
 }
+
+.page-break {
+  @media screen {
+    border-top: 1px dashed #b0b0b0;
+    margin: 12px 0;
+    height: 0;
+    position: relative;
+  }
+  @media screen {
+    &::after {
+      content: 'Page break';
+      position: absolute;
+      top: -0.7em;
+      right: 0;
+      background: white;
+      padding: 0 6px;
+      color: #888;
+      font-size: 0.75em;
+      font-style: italic;
+    }
+  }
+  @media print {
+    page-break-before: always;
+    break-before: page;
+    height: 0;
+    margin: 0;
+    border: 0;
+    &::after { content: none; }
+  }
+}

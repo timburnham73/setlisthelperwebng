@@ -140,6 +140,9 @@ export class ChordProParser {
           this.inTab = false;
           break;
         }
+        case ChordproEnum.new_page:
+          parsedSong += '<div class="page-break" aria-hidden="true"></div>\n';
+          break;
         case ChordproEnum.noprintcomment:
           break;
         default:
@@ -209,6 +212,20 @@ export class ChordProParser {
       return ChordproEnum.endofhighlight;
     } else if (stringToTextTrimmed.startsWith('capo') === true) {
       return ChordproEnum.capo;
+    } else if (stringToTextTrimmed.startsWith('pagebreak') === true) {
+      return ChordproEnum.new_page;
+    } else if (stringToTextTrimmed.startsWith('page_break') === true) {
+      return ChordproEnum.new_page;
+    } else if (stringToTextTrimmed.startsWith('page break') === true) {
+      return ChordproEnum.new_page;
+    } else if (stringToTextTrimmed.startsWith('new_page') === true) {
+      return ChordproEnum.new_page;
+    } else if (stringToTextTrimmed.startsWith('new_physical_page') === true) {
+      return ChordproEnum.new_page;
+    } else if (stringToTextTrimmed.startsWith('npp}') === true) {
+      return ChordproEnum.new_page;
+    } else if (stringToTextTrimmed.startsWith('np}') === true) {
+      return ChordproEnum.new_page;
     } else if (stringToTextTrimmed.startsWith('document') === true) {
       return ChordproEnum.noprintcomment;
     } else if (stringToTextTrimmed.startsWith('audio') === true) {
