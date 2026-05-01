@@ -1,10 +1,8 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { SetlistEditDialogComponent } from "../setlist-edit-dialog/setlist-edit-dialog.component";
-import { MatTableDataSource as MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { AccountActions } from "src/app/core/store/account.actions";
 import { AccountState } from "src/app/core/store/account.state";
 import { MatDialog as MatDialog } from "@angular/material/dialog";
-import { MatSort, MatSortModule, Sort } from "@angular/material/sort";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Select, Store } from "@ngxs/store";
@@ -23,12 +21,18 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatCardModule } from "@angular/material/card";
+import { MatMenuModule } from "@angular/material/menu";
+import { MatDividerModule } from "@angular/material/divider";
+import { MatTooltipModule } from "@angular/material/tooltip";
 import { FlexLayoutModule } from "ngx-flexible-layout";
 import { AuthenticationService } from "src/app/core/services/auth.service";
 import { CONFIRM_DIALOG_RESULT, ConfirmDialogComponent } from "src/app/shared/confirm-dialog/confirm-dialog.component";
 import { NotificationService } from "src/app/core/services/notification.service";
 import { UserService } from "src/app/core/services/user.service";
 import { getEntitlementLimits } from "src/app/core/model/entitlement-limits";
+
+type SortField = "name" | "gigDate" | "gigLocation";
+type SortDirection = "asc" | "desc";
 
 @Component({
     selector: "app-setlist-list",
@@ -41,11 +45,12 @@ import { getEntitlementLimits } from "src/app/core/model/entitlement-limits";
         MatToolbarModule,
         MatButtonModule,
         MatIconModule,
+        MatMenuModule,
+        MatDividerModule,
+        MatTooltipModule,
         FormsModule,
         MatFormFieldModule,
         MatInputModule,
-        MatTableModule,
-        MatSortModule,
         NgIf,
         NgClass,
         NgFor,
@@ -57,10 +62,8 @@ export class SetlistListComponent implements OnInit {
   selectedAccount$!: Observable<Account>;
   currentUser: any;
   showRemove = false;
-  showFind = false;
   isSystemAdmin = false;
-  displayedColumns: string[] = ["name", "gigLocation", "gigDate", "setlistedit", "remove"];
-  
+
   loading = false;
 
   setlists: Setlist[];
@@ -70,17 +73,17 @@ export class SetlistListComponent implements OnInit {
   selectedSetlist?: Setlist;
   setlistSongs: SetlistSong[];
 
+  // Default sort: newest gig first
+  currentSortField: SortField = "gigDate";
+  currentSortDirection: SortDirection = "desc";
+
   //Used to display the sequence for the setlist songs.
   displaySequence = 1;
   //Used for numbering the rows to skip the
   setlistBreakCount = 0;
 
-  
-
-  @ViewChild(MatSort, { static: true })
-  sort: MatSort = new MatSort();
-
   private selectedAccount: Account;
+  private isWideScreen = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -107,25 +110,38 @@ export class SetlistListComponent implements OnInit {
     this.selectedAccount = this.store.selectSnapshot(
       AccountState.selectedAccount
     );
-    
+
     this.loading = true;
 
     const id = this.route.snapshot.paramMap.get("accountid");
     if (id) {
       this.accountId = id;
-      this.setlistService.getSetlists(this.accountId, "gigDate").subscribe((setlists) => {
-        this.loading = false;
-        this.setlists = this.filteredSetlists = setlists;
-        
-        if (setlists && setlists.length && this.selectedSetlist === undefined) {
-          this.selectRow(setlists[0]);
-        }
-      });
+      this.fetchSetlists(true);
+    }
+
+    if (typeof window !== "undefined" && window.matchMedia) {
+      const wideQuery = window.matchMedia("(min-width: 1280px)");
+      this.isWideScreen = wideQuery.matches;
+      wideQuery.addEventListener?.("change", (e) => (this.isWideScreen = e.matches));
     }
   }
 
   ngOnInit() {
     this.titleService.setTitle("Setlists");
+  }
+
+  private fetchSetlists(autoSelectFirst = false) {
+    if (!this.accountId) return;
+    this.loading = true;
+    this.setlistService
+      .getSetlists(this.accountId, this.currentSortField, this.currentSortDirection)
+      .pipe(finalize(() => (this.loading = false)))
+      .subscribe((setlists) => {
+        this.setlists = this.filteredSetlists = setlists;
+        if (autoSelectFirst && setlists?.length && this.selectedSetlist === undefined) {
+          this.selectRow(setlists[0]);
+        }
+      });
   }
 
   onAddSetlist() {
@@ -137,7 +153,7 @@ export class SetlistListComponent implements OnInit {
       );
       return;
     }
-    const dialogRef = this.dialog.open(SetlistEditDialogComponent, {
+    this.dialog.open(SetlistEditDialogComponent, {
       data: { accountId: this.accountId } as AccountSetlist,
       panelClass: "dialog-responsive",
     }).afterClosed().subscribe((setlist) => {
@@ -145,13 +161,11 @@ export class SetlistListComponent implements OnInit {
         this.router.navigate([setlist.id + '/songs'], { relativeTo: this.route } );
       }
     });
-
-    
   }
 
   onEditSetlist(event, row: any) {
-    event.preventDefault();
-    const dialogRef = this.dialog.open(SetlistEditDialogComponent, {
+    event?.preventDefault();
+    this.dialog.open(SetlistEditDialogComponent, {
       data: { accountId: this.accountId, setlist: row } as AccountSetlist,
       panelClass: "dialog-responsive",
     });
@@ -177,7 +191,7 @@ export class SetlistListComponent implements OnInit {
       .duplicateSetlist(this.accountId!, source, editingUser as any)
       .pipe(first())
       .subscribe({
-        next: (newSetlist) => {
+        next: () => {
           this.notificationService.openSnackBar(`Duplicated "${source.name}"`);
         },
         error: (err) => {
@@ -194,47 +208,79 @@ export class SetlistListComponent implements OnInit {
   }
 
   onPrintSetlist(){
-    this.router.navigate([this.selectedSetlist?.id + '/print'], { relativeTo: this.route } ); 
+    if (!this.selectedSetlist) return;
+    this.router.navigate([this.selectedSetlist.id + '/print'], { relativeTo: this.route } );
+  }
+
+  /**
+   * Row tap behavior:
+   *  - delete mode → no-op (the trash icon handles delete via stopPropagation)
+   *  - wide screen master-detail → select row, load preview pane
+   *  - narrow screen → navigate to /songs
+   */
+  onRowClick(event: Event, row: Setlist) {
+    if (this.showRemove) return;
+    if (this.isWideScreen) {
+      this.selectRow(row);
+    } else {
+      this.onViewSetlistSongs(event, row);
+    }
   }
 
   onRemoveSetlist(event, setlistToDelete: Setlist) {
-    event.preventDefault();
+    event?.preventDefault();
     if (this.currentUser?.uid !== this.selectedAccount?.ownerUser?.uid) {
-      this.notificationService.openSnackBar(`Only the band owner, ${this.selectedAccount?.ownerUser?.displayName}, can delete this item.`);
+      this.notificationService.openSnackBar(
+        `Only the band owner, ${this.selectedAccount?.ownerUser?.displayName}, can delete this item.`
+      );
       return;
     }
-    let message = "Are you sure you want to delete this setlist?";
-    let message2 = "";
-    
+
+    const message = `Are you sure you want to delete "${setlistToDelete.name}"?`;
+    const message2 = this.formatGigContext(setlistToDelete);
+
     this.dialog.open(ConfirmDialogComponent, {
-      data: { title: "Delete", message: message, message2, okButtonText: "Yes", cancelButtonText: "Cancel"},
+      data: {
+        title: "Delete setlist",
+        message,
+        message2,
+        okButtonText: "Delete",
+        cancelButtonText: "Cancel"
+      },
       panelClass: "dialog-responsive",
-      width: '300px',
-      enterAnimationDuration: '200ms', 
+      width: '320px',
+      enterAnimationDuration: '200ms',
       exitAnimationDuration: '200ms',
-      
     })
     .afterClosed().subscribe((data) => {
       if(data && data.result === CONFIRM_DIALOG_RESULT.OK){
-        
-          this.setlistService
-              .removeSetlist(setlistToDelete, this.accountId!, this.currentUser)
-              .pipe(first())
-              .subscribe(); 
+        this.setlistService
+          .removeSetlist(setlistToDelete, this.accountId!, this.currentUser)
+          .pipe(first())
+          .subscribe();
       }
     });
   }
 
-  onShowFind(){
-    this.showFind = !this.showFind;
+  /** Returns "Chilliwack · May 1, 2026 5:30 PM" or just the date or location, or empty. */
+  private formatGigContext(setlist: Setlist): string {
+    const parts: string[] = [];
+    if (setlist.gigLocation) parts.push(setlist.gigLocation);
+    const ms = this.getSetlistDateInSeconds(setlist);
+    if (ms && !isNaN(ms)) {
+      const d = new Date(ms);
+      parts.push(d.toLocaleString(undefined, {
+        month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit",
+      }));
+    }
+    return parts.join(" · ");
   }
-  
+
   onEnableDeleteMode() {
     this.showRemove = !this.showRemove;
   }
-  
+
   selectRow(row) {
-    
     if (this.selectedSetlist === undefined || this.selectedSetlist?.id !== row.id) {
       this.setlistSongs = [];
       this.displaySequence = 1;
@@ -244,49 +290,43 @@ export class SetlistListComponent implements OnInit {
         .getOrderedSetlistSongs(this.accountId!, this.selectedSetlist!.id!)
         .subscribe((setlistSongs) => {
           this.setlistSongs = setlistSongs.map((song, index) => {
-            let breakCount = setlistSongs.slice(0, index).filter(song => song.isBreak === true).length;;
+            const breakCount = setlistSongs.slice(0, index).filter(s => s.isBreak === true).length;
             const sequenceNumber = (index + 1) - breakCount;
             if(!song.isBreak){
-              return {...song, sequenceNumber : sequenceNumber};
+              return {...song, sequenceNumber};
             }
-            
-            return {...song, sequenceNumber : sequenceNumber + .01};
-          
+            return {...song, sequenceNumber: sequenceNumber + .01};
           });
-          
         });
-    } 
-  }
-
-  getSequenceNumber(rowIndex: number, isBreak){
-    if(isBreak){
-      this.setlistBreakCount++;
     }
-    
-    const breakCount = this.setlistSongs.splice(0, rowIndex).filter(song => song.isBreak === true);
-    if(breakCount){
-      return rowIndex - breakCount.length;
-    }
-    
-    return rowIndex + 1;
   }
 
   search(search: string){
-    this.filteredSetlists = this.setlists.filter((setlist) => setlist.name.toLowerCase().includes(search));
+    const q = (search ?? "").toLowerCase();
+    this.filteredSetlists = this.setlists.filter((setlist) => setlist.name?.toLowerCase().includes(q));
   }
 
-  sortChange(sortState: Sort) {
-    this.setlistService.getSetlists(this.accountId!, sortState.active, sortState.direction === "asc" ? "asc" : "desc")
-        .pipe(
-          finalize(() => this.loading = false)
-        )
-        .subscribe((setlists) => {
-          this.setlists = this.filteredSetlists = setlists;
-        });
+  onSortChange(field: SortField, direction: SortDirection) {
+    this.currentSortField = field;
+    this.currentSortDirection = direction;
+    this.fetchSetlists();
   }
 
-  getSetlistDateInSeconds(setlist: Setlist){
-    return setlist.gigDate?.seconds * 1000;
+  isCurrentSort(field: SortField, direction: SortDirection): boolean {
+    return this.currentSortField === field && this.currentSortDirection === direction;
   }
 
+  getSortLabel(): string {
+    if (this.currentSortField === "name") {
+      return this.currentSortDirection === "asc" ? "Name A→Z" : "Name Z→A";
+    }
+    if (this.currentSortField === "gigDate") {
+      return this.currentSortDirection === "desc" ? "Newest first" : "Oldest first";
+    }
+    return "Location";
+  }
+
+  getSetlistDateInSeconds(setlist: Setlist): number | null {
+    return setlist.gigDate?.seconds ? setlist.gigDate.seconds * 1000 : null;
+  }
 }
