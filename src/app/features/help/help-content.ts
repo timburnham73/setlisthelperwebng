@@ -222,7 +222,7 @@ export const HELP_CONTENT: Record<string, HelpPageContent> = {
           },
           {
             question: 'Can I use the app offline?',
-            answer: 'Yes! Your data is cached locally on your device. You can view and edit songs and setlists without an internet connection. Changes will sync automatically when you reconnect.'
+            answer: 'Yes — Band Central is designed for offline use. While you\'re offline (for example, at a venue with no signal), you can keep editing songs, lyrics, setlists, font sizes, and scroll speeds as normal. Every change is saved to a local cache on your device.<br><br>When your device regains an internet connection:<br>• If Band Central is open or has been recently open, queued changes start syncing within a few seconds, automatically. There is no "Sync" button to press.<br>• If Band Central was closed while you were offline, your changes are still safely stored locally and will sync the next time you open the app.<br><br>In practice: at the end of an offline session, open Band Central once when you\'re back on wifi or cellular data and give it a moment. That\'s all that\'s needed. Don\'t uninstall the app while changes are pending — that would discard the local cache.'
           },
           {
             question: 'What if there\'s a sync conflict?',
@@ -498,7 +498,7 @@ export const HELP_CONTENT: Record<string, HelpPageContent> = {
           },
           {
             question: 'Can I use the app offline?',
-            answer: 'Yes! Your data is cached locally on your device. You can view and edit songs and setlists without an internet connection. Changes will sync automatically when you reconnect.'
+            answer: 'Yes — Band Central is designed for offline use. While you\'re offline (for example, at a venue with no signal), you can keep editing songs, lyrics, setlists, font sizes, and scroll speeds as normal. Every change is saved to a local cache on your device.<br><br>When your device regains an internet connection:<br>• If Band Central is open or has been recently open, queued changes start syncing within a few seconds, automatically. There is no "Sync" button to press.<br>• If Band Central was closed while you were offline, your changes are still safely stored locally and will sync the next time you open the app.<br><br>In practice: at the end of an offline session, open Band Central once when you\'re back on wifi or cellular data and give it a moment. That\'s all that\'s needed. Don\'t uninstall the app while changes are pending — that would discard the local cache.'
           },
           {
             question: 'What if there\'s a sync conflict?',
