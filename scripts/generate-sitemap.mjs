@@ -4,6 +4,7 @@
 // Generates src/sitemap.xml from a single source of truth:
 //   - routes.txt at the repo root (canonical public routes)
 //   - BLOG_POSTS in src/app/features/blog/blog-content.ts (blog slugs)
+//   - RELEASE_NOTES in src/app/features/release-notes/release-notes-content.ts
 //
 // Pure generateSitemap() function is exported for unit tests; CLI block at
 // the bottom reads the real files and writes src/sitemap.xml when invoked
@@ -52,6 +53,12 @@ export function getPriorityAndFreq(path) {
   if (path.startsWith('/blog/')) {
     return { priority: '0.6', changefreq: 'yearly' };
   }
+  if (path === '/release-notes') {
+    return { priority: '0.7', changefreq: 'monthly' };
+  }
+  if (path.startsWith('/release-notes/')) {
+    return { priority: '0.6', changefreq: 'yearly' };
+  }
   if (path.startsWith('/tools/') || path.startsWith('/help/')) {
     return { priority: '0.7', changefreq: 'monthly' };
   }
@@ -84,6 +91,15 @@ export function parseBlogSlugs(source) {
 }
 
 /**
+ * Extract release-notes slugs from the raw text of
+ * src/app/features/release-notes/release-notes-content.ts.
+ * Same shape as parseBlogSlugs; isolated for clarity.
+ */
+export function parseReleaseNotesSlugs(source) {
+  return parseBlogSlugs(source);
+}
+
+/**
  * Escape XML-significant characters in a URL. Paths are ASCII slug-like in
  * this project so this is mostly defensive.
  */
@@ -102,10 +118,11 @@ function xmlEscape(s) {
  * @param {object} opts
  * @param {string[]} opts.routes - Paths from routes.txt (or fixture).
  * @param {string[]} opts.blogSlugs - Slugs from BLOG_POSTS (or fixture).
+ * @param {string[]} [opts.releaseNotesSlugs] - Slugs from RELEASE_NOTES.
  * @param {string} [opts.siteUrl] - Override base URL.
  * @returns {string} XML sitemap document ending with a newline.
  */
-export function generateSitemap({ routes, blogSlugs, siteUrl = SITE_URL }) {
+export function generateSitemap({ routes, blogSlugs, releaseNotesSlugs = [], siteUrl = SITE_URL }) {
   const excluded = (path) => EXCLUDE_PATTERNS.some((re) => re.test(path));
 
   // Merge and dedupe. Use a Set to collapse any overlap between routes.txt
@@ -120,6 +137,15 @@ export function generateSitemap({ routes, blogSlugs, siteUrl = SITE_URL }) {
     const path = `/blog/${slug}`;
     if (excluded(path)) continue;
     merged.add(path);
+  }
+  for (const slug of releaseNotesSlugs) {
+    const path = `/release-notes/${slug}`;
+    if (excluded(path)) continue;
+    merged.add(path);
+  }
+  // Always advertise the release-notes landing too, regardless of routes.txt.
+  if (!excluded('/release-notes')) {
+    merged.add('/release-notes');
   }
 
   // Deterministic output — sort alphabetically.
@@ -154,6 +180,7 @@ if (isCli) {
 
   const routesPath = resolve(repoRoot, 'routes.txt');
   const blogPath = resolve(repoRoot, 'src/app/features/blog/blog-content.ts');
+  const releaseNotesPath = resolve(repoRoot, 'src/app/features/release-notes/release-notes-content.ts');
   const outPath = resolve(repoRoot, 'src/sitemap.xml');
 
   const routes = readFileSync(routesPath, 'utf8')
@@ -164,7 +191,10 @@ if (isCli) {
   const blogSource = readFileSync(blogPath, 'utf8');
   const blogSlugs = parseBlogSlugs(blogSource);
 
-  const xml = generateSitemap({ routes, blogSlugs });
+  const releaseNotesSource = readFileSync(releaseNotesPath, 'utf8');
+  const releaseNotesSlugs = parseReleaseNotesSlugs(releaseNotesSource);
+
+  const xml = generateSitemap({ routes, blogSlugs, releaseNotesSlugs });
   writeFileSync(outPath, xml, 'utf8');
 
   const urlCount = (xml.match(/<url>/g) || []).length;

@@ -1,0 +1,23 @@
+<mat-toolbar color="primary" class="rn-toolbar">
+  <a routerLink="/home">Band Central</a>
+</mat-toolbar>
+
+<div class="rn-container">
+  <h1>Release Notes</h1>
+  <p class="rn-intro">What's new, improved, and fixed in each version of Band Central — across iOS, Android, and the web.</p>
+
+  <div class="rn-list">
+    <mat-card *ngFor="let note of notes" class="rn-card">
+      <mat-card-content>
+        <div class="rn-meta">
+          <span class="rn-platform">{{note.app}}</span>
+          <span class="rn-version">{{note.version}}</span>
+        </div>
+        <h2><a [routerLink]="['/release-notes', note.slug]">{{note.title}}</a></h2>
+        <p class="rn-date">{{note.date}}</p>
+        <p>{{note.summary}}</p>
+        <a [routerLink]="['/release-notes', note.slug]" class="read-more">Read full notes &rarr;</a>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

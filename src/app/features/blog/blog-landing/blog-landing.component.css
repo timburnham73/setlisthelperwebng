@@ -28,6 +28,58 @@ h1 {
   margin-bottom: 32px;
 }
 
+.release-notes-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  margin-bottom: 32px;
+  background: #f3f8ff;
+  border: 1px solid #d2e3fc;
+  border-radius: 8px;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.release-notes-banner:hover {
+  background: #e8f0fe;
+  border-color: #a8c7fa;
+}
+
+.release-notes-banner-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.release-notes-banner-text strong {
+  color: #0a66c2;
+  font-size: 15px;
+}
+
+.release-notes-banner-text span {
+  color: rgba(0, 0, 0, 0.65);
+  font-size: 14px;
+}
+
+.release-notes-banner-arrow {
+  color: #1976d2;
+  font-size: 22px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.blog-section-header {
+  font-size: 18px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.65);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 16px 0;
+}
+
 .blog-list {
   display: flex;
   flex-direction: column;

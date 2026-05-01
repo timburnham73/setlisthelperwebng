@@ -1,0 +1,68 @@
+<mat-toolbar color="primary" class="rn-toolbar">
+  <a routerLink="/home">Band Central</a>
+</mat-toolbar>
+
+<div class="rn-container">
+  <mat-card>
+    <mat-card-content>
+      <p class="rn-breadcrumb"><a routerLink="/release-notes">&larr; All release notes</a></p>
+
+      <div [ngSwitch]="slug">
+
+        <!-- Band Central for Android 2.1.1 -->
+        <article *ngSwitchCase="'band-central-android-2-1-1'">
+          <div class="rn-meta">
+            <span class="rn-platform">Android</span>
+            <span class="rn-version">2.1.1</span>
+          </div>
+          <h1>Band Central for Android 2.1.1</h1>
+          <p class="rn-date">April 2026</p>
+
+          <p>Band Central for Android 2.1.1 is rolling out on Google Play. The focus of this release was making the app feel faster, fixing several recurring crashes, and shipping features people have asked for around navigating large song catalogs. Here's everything that's in it.</p>
+
+          <h2>New</h2>
+          <ul>
+            <li><strong>Jump to any song with the A-Z alphabet rail.</strong> Drag the letter rail on the right side of the Songs view to jump straight to any song or artist in your catalog. The rail adapts to whichever sort you've picked.</li>
+            <li><strong>Swipe between songs while viewing lyrics.</strong> Open a song from the Songs view and swipe sideways to flip through the surrounding songs without backing out to the list, the same way it already works inside a setlist.</li>
+            <li><strong>Pick which file types to see when importing.</strong> When you import songs from your phone or Dropbox, you now choose up front whether you're looking for ChordPro/text, PDFs, audio, images, or Word documents — so the picker isn't cluttered with files you don't need. Files outside your selection are greyed out in the folder browser rather than hidden, so you always know what's there.</li>
+            <li><strong>Detect Pedals settings screen.</strong> A dedicated screen for confirming your Bluetooth pedal is recognized and seeing exactly which key presses it sends.</li>
+          </ul>
+
+          <h2>Improvements</h2>
+          <ul>
+            <li><strong>The whole app feels faster and stays current.</strong> Songs, Lyrics, Setlists, and Tags all paint instantly from your local cache, then refresh in the background. When a bandmate edits something on another device, the change shows up on yours without a manual refresh.</li>
+            <li><strong>Lyric search stops cleanly.</strong> The Stop button on the lyric search spinner now works, and Band Central pulls lyrics out of the page as soon as they're available instead of waiting for slow ad-heavy websites to finish loading.</li>
+            <li><strong>Better lyric capture from Ultimate Guitar.</strong> Band Central now reads the song title and artist from Ultimate Guitar's structured metadata, so imported songs come in correctly named more often.</li>
+            <li><strong>Setlist breaks and lyric-less songs keep the navigation row.</strong> The previous/next setlist navigation stays visible when you land on a break or a song with no lyrics, so you can always swipe forward.</li>
+            <li><strong>Import dialog cleaned up.</strong> The file-type selector got a polish pass (edge-to-edge layout, smarter Dropbox folder recursion, clearer labels), and all 11 supported languages were updated to match.</li>
+            <li><strong>Setlists list defaults to sort by gig date.</strong> New installs land on gig date (newest first); your saved sort is unchanged on existing installs.</li>
+          </ul>
+
+          <h2>Fixes</h2>
+          <ul>
+            <li><strong>API 23 crashes on Android 6 / 7 fixed.</strong> Band Central now uses core library desugaring so older devices no longer crash on date, time, and stream operations.</li>
+            <li><strong>Crash fixes.</strong> Several rare crashes when launching the editor without intent data, when the document/audio picker returned after the app was backgrounded, when fragments were detached mid-update, and when songs / lyrics arrived after the lyric viewer had already closed.</li>
+            <li><strong>Large catalog crash (TransactionTooLargeException) on swipe.</strong> The song list is now passed to the lyric viewer through application state instead of an Android intent, so swipe paging from Songs into the lyric viewer no longer crashes for users with large libraries.</li>
+            <li><strong>Setlist loading spinner that wouldn't go away</strong> — fixed.</li>
+            <li><strong>Pedal navigation restored.</strong> Previous/next bar and scroll actions on Bluetooth pedals work again.</li>
+          </ul>
+
+          <h2>How to get it</h2>
+          <p>Open Google Play, search for Band Central, and tap Update. If the new version isn't available yet, give it a few hours to propagate across regions.</p>
+
+          <h2>Coming soon on iPhone and iPad</h2>
+          <p>The matching iOS update is in final testing now and will follow shortly with the same speed improvements, Bluetooth pedal fixes, and lyric-view enhancements.</p>
+
+          <p class="rn-cta"><a routerLink="/release-notes">&larr; All release notes</a></p>
+        </article>
+
+        <!-- Default: not found -->
+        <div *ngSwitchDefault>
+          <h1>Release notes not found</h1>
+          <p>The release notes you are looking for don't exist. <a routerLink="/release-notes">Return to all release notes</a>.</p>
+        </div>
+
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

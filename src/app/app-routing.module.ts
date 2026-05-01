@@ -85,6 +85,13 @@ const appRoutes: Routes = [
       import("./features/blog/blog.module").then((m) => m.BlogModule),
   },
   {
+    path: "release-notes",
+    loadChildren: () =>
+      import("./features/release-notes/release-notes.module").then(
+        (m) => m.ReleaseNotesModule
+      ),
+  },
+  {
     path: "tools",
     loadChildren: () =>
       import("./features/tools/tools.module").then((m) => m.ToolsModule),

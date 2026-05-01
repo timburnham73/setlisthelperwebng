@@ -6,6 +6,16 @@
   <h1>Band Central Blog</h1>
   <p class="blog-intro">Tips, guides, and best practices for bands, worship teams, and gigging musicians.</p>
 
+  <a routerLink="/release-notes" class="release-notes-banner">
+    <div class="release-notes-banner-text">
+      <strong>Looking for what's new in the apps?</strong>
+      <span>See the release notes for every Band Central version.</span>
+    </div>
+    <span class="release-notes-banner-arrow">&rarr;</span>
+  </a>
+
+  <h2 class="blog-section-header">Articles</h2>
+
   <div class="blog-list">
     <mat-card *ngFor="let post of posts" class="blog-card">
       <mat-card-content>

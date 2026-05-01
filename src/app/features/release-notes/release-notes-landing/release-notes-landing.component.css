@@ -1,0 +1,95 @@
+:host {
+  display: block;
+}
+
+.rn-toolbar {
+  margin-bottom: 24px;
+}
+
+.rn-toolbar a {
+  color: white;
+  text-decoration: none;
+}
+
+.rn-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+h1 {
+  font-size: 28px;
+  margin-bottom: 4px;
+}
+
+.rn-intro {
+  font-size: 16px;
+  color: rgba(0, 0, 0, 0.54);
+  margin-bottom: 32px;
+}
+
+.rn-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.rn-card h2 {
+  margin: 4px 0 8px 0;
+  font-size: 20px;
+}
+
+.rn-card h2 a {
+  color: #1976d2;
+  text-decoration: none;
+}
+
+.rn-card h2 a:hover {
+  text-decoration: underline;
+}
+
+.rn-meta {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.rn-platform {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 12px;
+  background: #e3f2fd;
+  color: #0a66c2;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+}
+
+.rn-version {
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.54);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.rn-date {
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.38);
+  margin-bottom: 8px;
+}
+
+.rn-card p {
+  color: rgba(0, 0, 0, 0.65);
+  line-height: 1.6;
+}
+
+.read-more {
+  color: #1976d2;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.read-more:hover {
+  text-decoration: underline;
+}
