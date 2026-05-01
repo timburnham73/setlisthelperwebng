@@ -1,0 +1,54 @@
+.profile-readonly {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 4px 16px;
+  margin: 8px 0 0;
+
+  dt {
+    color: rgba(0, 0, 0, 0.6);
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+
+  dd {
+    margin: 0;
+    font-size: 0.95rem;
+    word-break: break-word;
+  }
+}
+
+.profile-divider {
+  margin: 16px 0;
+}
+
+.profile-security {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  button mat-spinner {
+    display: inline-block;
+    margin-left: 8px;
+  }
+}
+
+.set-password-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
+}
+
+.set-password-hint {
+  margin: 0 0 4px;
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 0.85rem;
+}
+
+.set-password-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}

@@ -23,6 +23,8 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { AccountService } from "src/app/core/services/account.service";
 import { Account } from "src/app/core/model/account";
+import { MatDialog } from "@angular/material/dialog";
+import { ProfileDialogComponent } from "src/app/features/users/profile-dialog/profile-dialog.component";
 @Component({
     selector: "app-layout-no-sidebar",
     templateUrl: "./layout-no-sidebar.component.html",
@@ -61,8 +63,8 @@ export class LayoutNoSidebarComponent
     private media: MediaMatcher,
     public spinnerService: SpinnerService,
     private authService: AuthenticationService,
-    private accountService: AccountService
-    
+    private accountService: AccountService,
+    private dialog: MatDialog
   ) {
     this.displayUserName$ = authService.displayName$;
     this.mobileQuery = this.media.matchMedia("(max-width: 1000px)");
@@ -95,5 +97,14 @@ export class LayoutNoSidebarComponent
 
   onLogout() {
     this.authService.logout();
+  }
+
+  onProfile() {
+    this.dialog.open(ProfileDialogComponent, {
+      width: "480px",
+      maxWidth: "95vw",
+      autoFocus: "first-tabbable",
+      restoreFocus: true,
+    });
   }
 }

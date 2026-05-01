@@ -24,6 +24,8 @@ import { MatToolbarModule } from "@angular/material/toolbar";
 import { AccountService } from "src/app/core/services/account.service";
 import { Account } from "src/app/core/model/account";
 import { FlexLayoutModule, FlexModule } from "ngx-flexible-layout";
+import { MatDialog } from "@angular/material/dialog";
+import { ProfileDialogComponent } from "src/app/features/users/profile-dialog/profile-dialog.component";
 @Component({
     selector: "app-layout-no-sidebar-child-view",
     templateUrl: "./layout-no-sidebar-child-view.component.html",
@@ -62,8 +64,8 @@ export class LayoutNoSidebarChildViewComponent implements OnDestroy, AfterViewIn
     private changeDetectorRef: ChangeDetectorRef,
     private media: MediaMatcher,
     public spinnerService: SpinnerService,
-    private authService: AuthenticationService
-    
+    private authService: AuthenticationService,
+    private dialog: MatDialog
   ) {
     this.displayUserName$ = authService.displayName$;
     this.mobileQuery = this.media.matchMedia("(max-width: 1000px)");
@@ -85,5 +87,14 @@ export class LayoutNoSidebarChildViewComponent implements OnDestroy, AfterViewIn
 
   onLogout() {
     this.authService.logout();
+  }
+
+  onProfile() {
+    this.dialog.open(ProfileDialogComponent, {
+      width: "480px",
+      maxWidth: "95vw",
+      autoFocus: "first-tabbable",
+      restoreFocus: true,
+    });
   }
 }

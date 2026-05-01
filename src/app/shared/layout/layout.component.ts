@@ -24,6 +24,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { AccountService } from 'src/app/core/services/account.service';
 import { FlexLayoutModule, FlexModule } from 'ngx-flexible-layout';
+import { MatDialog } from '@angular/material/dialog';
+import { ProfileDialogComponent } from 'src/app/features/users/profile-dialog/profile-dialog.component';
 
 @Component({
     selector: 'app-layout',
@@ -72,6 +74,7 @@ export class LayoutComponent implements OnInit, OnDestroy, AfterViewInit {
         private accountService: AccountService,
         private userService: UserService,
         private location: Location,
+        private dialog: MatDialog,
         private authService: AuthenticationService) {
         this.displayUserName$ = authService.displayName$;
         this.mobileQuery = this.media.matchMedia('(max-width: 1000px)');
@@ -121,5 +124,14 @@ export class LayoutComponent implements OnInit, OnDestroy, AfterViewInit {
 
     onLogout() {
         this.authService.logout();
+    }
+
+    onProfile() {
+        this.dialog.open(ProfileDialogComponent, {
+            width: '480px',
+            maxWidth: '95vw',
+            autoFocus: 'first-tabbable',
+            restoreFocus: true,
+        });
     }
 }

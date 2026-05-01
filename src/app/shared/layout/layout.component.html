@@ -42,6 +42,11 @@
     </button>
     <mat-menu #userMenu="matMenu" xPosition="before" yPosition="above" [overlapTrigger]="false">
 
+      <a mat-menu-item (click)="onProfile()">
+        <mat-icon>account_circle</mat-icon>
+        <span>Profile</span>
+      </a>
+
       <a mat-menu-item (click)="onLogout()">
         <mat-icon>exit_to_app</mat-icon>
         <span>Log out</span>

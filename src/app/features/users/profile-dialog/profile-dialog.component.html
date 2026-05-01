@@ -1,0 +1,151 @@
+<h2 mat-dialog-title>Profile</h2>
+
+<form
+  class="dialog-form"
+  [formGroup]="profileForm"
+  (ngSubmit)="onSave()"
+  novalidate
+>
+  <div mat-dialog-content>
+    <mat-form-field appearance="outline" class="dialog-input-full-width">
+      <mat-label>Display name</mat-label>
+      <input
+        matInput
+        formControlName="displayName"
+        maxlength="50"
+        autocomplete="name"
+        cdkFocusInitial
+        aria-required="true"
+      />
+      <mat-hint align="end">{{ profileForm.controls.displayName.value.length }} / 50</mat-hint>
+      <mat-error *ngIf="profileForm.controls.displayName.hasError('required')">
+        Display name is required
+      </mat-error>
+      <mat-error *ngIf="profileForm.controls.displayName.hasError('whitespace')">
+        Display name can't be blank
+      </mat-error>
+      <mat-error *ngIf="profileForm.controls.displayName.hasError('maxlength')">
+        Display name must be 50 characters or fewer
+      </mat-error>
+    </mat-form-field>
+
+    <dl class="profile-readonly" aria-label="Account details">
+      <dt>Email</dt>
+      <dd>{{ email || '—' }}</dd>
+
+      <dt>Subscription</dt>
+      <dd>{{ entitlementLabel }}</dd>
+
+      <dt>Sign-in method</dt>
+      <dd>{{ signInMethodsLabel }}</dd>
+
+      <dt *ngIf="memberSince">Member since</dt>
+      <dd *ngIf="memberSince">{{ memberSince | date:'MMMM y' }}</dd>
+    </dl>
+
+    <mat-divider class="profile-divider"></mat-divider>
+
+    <div class="profile-security">
+      <button
+        *ngIf="hasPasswordProvider"
+        type="button"
+        mat-stroked-button
+        (click)="onSendPasswordReset()"
+        [disabled]="sendingReset"
+      >
+        <mat-icon>lock_reset</mat-icon>
+        <span>Send password reset email</span>
+        <mat-spinner *ngIf="sendingReset" diameter="16"></mat-spinner>
+      </button>
+
+      <ng-container *ngIf="!hasPasswordProvider">
+        <button
+          *ngIf="!showSetPasswordForm"
+          type="button"
+          mat-stroked-button
+          (click)="toggleSetPasswordForm()"
+          aria-expanded="false"
+          aria-controls="set-password-form"
+        >
+          <mat-icon>password</mat-icon>
+          <span>Set a password</span>
+        </button>
+
+        <div
+          *ngIf="showSetPasswordForm"
+          id="set-password-form"
+          class="set-password-form"
+          [formGroup]="setPasswordForm"
+          role="group"
+          aria-label="Set a password"
+        >
+          <p class="set-password-hint">
+            Adds email & password sign-in to your account so you can sign in without {{ signInMethodsLabel }}.
+          </p>
+          <mat-form-field appearance="outline" class="dialog-input-full-width">
+            <mat-label>New password</mat-label>
+            <input
+              matInput
+              type="password"
+              formControlName="newPassword"
+              autocomplete="new-password"
+              minlength="8"
+            />
+            <mat-error *ngIf="setPasswordForm.controls.newPassword.hasError('required')">
+              Password is required
+            </mat-error>
+            <mat-error *ngIf="setPasswordForm.controls.newPassword.hasError('minlength')">
+              Password must be at least 8 characters
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="dialog-input-full-width">
+            <mat-label>Confirm password</mat-label>
+            <input
+              matInput
+              type="password"
+              formControlName="confirmPassword"
+              autocomplete="new-password"
+            />
+            <mat-error *ngIf="setPasswordForm.controls.confirmPassword.hasError('required')">
+              Please confirm your password
+            </mat-error>
+            <mat-error *ngIf="setPasswordForm.hasError('mismatch') && !setPasswordForm.controls.confirmPassword.hasError('required')">
+              Passwords don't match
+            </mat-error>
+          </mat-form-field>
+          <div class="set-password-actions">
+            <button
+              type="button"
+              mat-button
+              (click)="toggleSetPasswordForm()"
+              [disabled]="linking"
+            >Cancel</button>
+            <button
+              type="button"
+              mat-raised-button
+              class="mat-primary"
+              (click)="onSetPassword()"
+              [disabled]="setPasswordForm.invalid || linking"
+            >
+              Set password
+              <mat-spinner *ngIf="linking" diameter="16"></mat-spinner>
+            </button>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+
+  <div mat-dialog-actions align="end">
+    <button type="button" mat-button (click)="onClose()" [disabled]="saving">Close</button>
+    <button
+      type="submit"
+      mat-raised-button
+      class="mat-primary"
+      [disabled]="profileForm.invalid || !profileForm.dirty || saving"
+    >
+      Save
+      <mat-spinner *ngIf="saving" diameter="16"></mat-spinner>
+    </button>
+  </div>
+</form>
