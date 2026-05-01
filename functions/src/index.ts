@@ -148,6 +148,18 @@ export const Release_OnCreate_SendEmail =
     });
 
 // ////////////////////////////////
+// User trigger: cascade displayName changes to owned accounts
+// eslint-disable-next-line camelcase
+export const User_OnUpdate_SyncOwnerDisplayName =
+  onDocumentUpdated(
+    "users/{uid}",
+    async event => {
+      await (
+        await import("./user-trigger/on-update-user-display-name"))
+        .default(event);
+    });
+
+// ////////////////////////////////
 // Sync functions
 export const accoutImportOnAddStartSLHSync =
   onDocumentCreated(

@@ -266,7 +266,7 @@ export class LyricsComponent {
 
   onDeleteLyric() {
     if (!this.isOwner) {
-      this.notificationService.openSnackBar(`Only the band owner, ${this.selectedAccount?.ownerUser?.displayName}, can delete this item.`);
+      this.notificationService.openSnackBar("Only the band owner can delete this item.");
       return;
     }
     this.dialog.open(ConfirmDialogComponent, {

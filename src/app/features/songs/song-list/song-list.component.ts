@@ -195,7 +195,7 @@ export class SongListComponent implements OnInit {
   onRemoveSong(event, songToDelete: Song) {
     event.preventDefault();
     if (this.currentUser?.uid !== this.selectedAccount?.ownerUser?.uid) {
-      this.notificationService.openSnackBar(`Only the band owner, ${this.selectedAccount?.ownerUser?.displayName}, can delete this item.`);
+      this.notificationService.openSnackBar("Only the band owner can delete this item.");
       return;
     }
     const message = "Are you sure you want to delete this song?";

@@ -214,7 +214,7 @@ export class TagSongsComponent implements OnInit {
   onRemoveTagFromSong($event, song){
     $event.preventDefault();
     if (this.currentUser?.uid !== this.selectedAccount?.ownerUser?.uid) {
-      this.notificationService.openSnackBar(`Only the band owner, ${this.selectedAccount?.ownerUser?.displayName}, can delete this item.`);
+      this.notificationService.openSnackBar("Only the band owner can delete this item.");
       return;
     }
     if(this.selectedTag){

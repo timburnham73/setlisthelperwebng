@@ -230,7 +230,7 @@ export class TagListComponent implements OnInit {
 
   onDeleteTag(tagToDelete){
     if (this.currentUser?.uid !== this.selectedAccount?.ownerUser?.uid) {
-      this.notificationService.openSnackBar(`Only the band owner, ${this.selectedAccount?.ownerUser?.displayName}, can delete this item.`);
+      this.notificationService.openSnackBar("Only the band owner can delete this item.");
       return;
     }
     let message = "Are you sure you want to delete this Tag?";
@@ -318,7 +318,7 @@ export class TagListComponent implements OnInit {
   onRemoveTagFromSong($event, song){
     $event.preventDefault();
     if (this.currentUser?.uid !== this.selectedAccount?.ownerUser?.uid) {
-      this.notificationService.openSnackBar(`Only the band owner, ${this.selectedAccount?.ownerUser?.displayName}, can delete this item.`);
+      this.notificationService.openSnackBar("Only the band owner can delete this item.");
       return;
     }
     this.tagService.removeTagsToSongs([song], this.accountId!, this.selectedTags.map(tag => tag.name.toLowerCase()), this.currentUser).subscribe((songs) => {
