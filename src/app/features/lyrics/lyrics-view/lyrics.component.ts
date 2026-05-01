@@ -111,10 +111,7 @@ export class LyricsComponent {
   }
 
   get canEditOrDelete(): boolean {
-    const uid = this.currentUser?.uid;
-    if (!uid) return false;
-    return uid === this.selectedAccount?.ownerUser?.uid
-        || uid === this.selectedLyric?.createdByUser?.uid;
+    return !!this.currentUser?.uid;
   }
   
   
