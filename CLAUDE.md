@@ -61,6 +61,8 @@ Canned reference answers for recurring support topics live in the SLH Brain wiki
 
 ## Support Email Workflow (support@bandcentral.com via `gmail-support` MCP)
 
+**Scope (STRICT): only handle emails addressed to `support@bandcentral.com`.** The connected Gmail mailbox (`setlisthelperapp@gmail.com`) also receives mail addressed to legacy aliases — `support@setlisthelper.com`, `tim@setlisthelper.com`, `setlisthelperapp@gmail.com`, etc. **Ignore those entirely** in this workflow; they are handled elsewhere. When listing or processing the queue, always filter with `to:support@bandcentral.com` (combined with `is:unread` / `in:inbox` as appropriate). Do NOT summarize, draft, send, or archive anything outside that filter unless the user explicitly asks.
+
 When handling any email from the support@bandcentral.com mailbox, ALWAYS follow this two-step flow. Never send a reply without explicit approval.
 
 **Step 1 — Summarize the incoming email, then draft the reply.**
